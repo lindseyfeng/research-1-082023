@@ -1,6 +1,6 @@
 # Training configurations
-SEED = 1234
-TRAIN = False
+SEED = 1111
+TRAIN = TRUE
 BATCH_SIZE = 128
 N_EPOCHS = 5
 
