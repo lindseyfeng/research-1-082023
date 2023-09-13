@@ -7,7 +7,8 @@ import torch.optim as optim
 # Bert model and its tokenizer
 from transformers import BertTokenizer, BertModel
 # Text data
-from torchtext import data, datasets
+from torchtext import datasets
+from torchtext.legacy import data
 # Numerical computation
 import numpy as np
 # standard library
