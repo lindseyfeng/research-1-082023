@@ -34,7 +34,8 @@ max_input_len = tokenizer.max_model_input_sizes['bert-base-uncased']
 # Tokensize and crop sentence to 510 (for 1st and last token) instead of 512 (i.e. `max_input_len`)
 def tokenize_and_crop(sentence):
   tokens = tokenizer.tokenize(sentence)
-  tokens = tokens[:max_input_len - 2]
+  print('max_input_len', max_input_len)
+  tokens = tokens[:512]
   return tokens
 
 # Load the IMDB dataset and
