@@ -208,7 +208,7 @@ if __name__ == "__main__":
     criterion = nn.BCEWithLogitsLoss().to(device)
     model = model.to(device)
 
-    best_val_loss = float('inf')
+    best_valid_loss = float('inf')
 
     for epoch in range(N_EPOCHS):
       # start time
