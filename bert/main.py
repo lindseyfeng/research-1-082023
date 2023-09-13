@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 # Bert model and its tokenizer
-from transformers import BertTokenizer, BertModel
+from transformers import AutoTokenizer, BertModel
 # Text data
 from torchtext import datasets
 from torchtext.legacy import data
@@ -24,7 +24,7 @@ torch.manual_seed(SEED)
 torch.backends.cudnn.deterministic = True
 
 # Get tokens for BERT
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 init_token_id = tokenizer.cls_token_id
 eos_token_id  = tokenizer.sep_token_id
 pad_token_id  = tokenizer.pad_token_id
