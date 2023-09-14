@@ -8,6 +8,9 @@ import torch.optim as optim
 from transformers import AutoTokenizer, BertModel
 # Text data
 from torchtext import datasets, data
+#t scaling
+from torch.utils.data import DataLoader
+from torch.utils.data.sampler import SubsetRandomSampler
 # Numerical computation
 import numpy as np
 # standard library
@@ -15,6 +18,7 @@ import random
 import time
 # Configuration
 from config import *
+from temperature_scaling import ModelWithTemperature
 
 # Set random seed for reproducible experiments
 random.seed(SEED)
@@ -30,6 +34,7 @@ pad_token_id  = tokenizer.pad_token_id
 unk_token_id  = tokenizer.unk_token_id
 
 max_input_len = tokenizer.max_model_input_sizes['bert-base-uncased']
+
 
 # Tokensize and crop sentence to 510 (for 1st and last token) instead of 512 (i.e. `max_input_len`)
 def tokenize_and_crop(sentence):
@@ -233,6 +238,12 @@ if __name__ == "__main__":
     model.load_state_dict(torch.load('model.pt'))
     test_loss, test_acc = evaluate(model, test_iter, criterion)
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc*100:.2f}%')
+
+    #t-scaling
+    orig_model = model
+    valid_loader = DataLoader(valid_iter, pin_memory=True, batch_size=256)
+    scaled_model = ModelWithTemperature(orig_model)
+    scaled_model.set_temperature(valid_loader)
   
   # Infer from BERT
   else:
