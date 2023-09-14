@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*_
 
 # NN library
+from asyncio.windows_events import NULL
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -42,7 +43,7 @@ def tokenize_and_crop(sentence):
   return tokens
 
 # Load the IMDB dataset and
-# return (train_iter, valid_iter, test_iter) tuple
+# return (train_iter, valid_iter, test_iter, valid_dataloader) tuple
 def load_data():
   text = data.Field(
     batch_first=True,
@@ -70,8 +71,10 @@ def load_data():
     batch_size=BATCH_SIZE,
     device=device
   )
+  valid_dataloader = DataLoader(valid_data, pin_memory=True, batch_size=256)
 
-  return train_iter, valid_iter, test_iter
+
+  return train_iter, valid_iter, test_iter, valid_dataloader
 
 # Get the device
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -207,7 +210,7 @@ if __name__ == "__main__":
   # Train BERT
   if TRAIN:
     # load data
-    train_iter, valid_iter, test_iter = load_data()
+    train_iter, valid_iter, test_iter, valid_set = load_data()
 
     optimizer = optim.Adam(model.parameters())
     criterion = nn.BCEWithLogitsLoss().to(device)
@@ -241,9 +244,8 @@ if __name__ == "__main__":
 
     #t-scaling
     orig_model = model
-    valid_loader = DataLoader(valid_iter, pin_memory=True, batch_size=256)
     scaled_model = ModelWithTemperature(orig_model)
-    scaled_model.set_temperature(valid_loader)
+    scaled_model.set_temperature(valid_set)
     ece_loss = _ECELoss(scaled_model)
     torch.save(scaled_model.state_dict(), 'model.pt')
     print(f'ECE Loss: {ece_loss:.3f}')
