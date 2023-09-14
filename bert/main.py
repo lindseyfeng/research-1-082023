@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*_
 
 # NN library
-from asyncio.windows_events import NULL
 import torch
 import torch.nn as nn
 import torch.optim as optim
