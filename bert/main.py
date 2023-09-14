@@ -69,7 +69,6 @@ def load_data():
     batch_size=BATCH_SIZE,
     device=device
   )
-  valid_dataloader = DataLoader(valid_data)
 
 
   return train_iter, valid_iter, test_iter, valid_dataloader

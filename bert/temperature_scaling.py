@@ -1,3 +1,4 @@
+from cProfile import label
 import torch
 from torch import nn, optim
 from torch.nn import functional as F
@@ -34,7 +35,7 @@ class ModelWithTemperature(nn.Module):
         """
         Tune the tempearature of the model (using the validation set).
         We're going to set it to optimize NLL.
-        valid_loader (DataLoader): validation set loader
+        valid_loader (iterator): validation set loader
         """
         self.cuda()
         nll_criterion = nn.CrossEntropyLoss().cuda()
@@ -44,7 +45,10 @@ class ModelWithTemperature(nn.Module):
         logits_list = []
         labels_list = []
         with torch.no_grad():
-            for input, label in valid_loader:
+            print('valid_loader' )
+            for batch in valid_loader:
+                input = batch.text
+                label  = batch.label
                 input = input.cuda()
                 logits = self.model(input)
                 logits_list.append(logits)
