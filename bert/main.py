@@ -71,7 +71,7 @@ def load_data():
   )
 
 
-  return train_iter, valid_iter, test_iter, valid_dataloader
+  return train_iter, valid_iter, test_iter
 
 # Get the device
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -207,7 +207,7 @@ if __name__ == "__main__":
   # Train BERT
   if TRAIN:
     # load data
-    train_iter, valid_iter, test_iter, valid_set = load_data()
+    train_iter, valid_iter, test_iter = load_data()
 
     optimizer = optim.Adam(model.parameters())
     criterion = nn.BCEWithLogitsLoss().to(device)
