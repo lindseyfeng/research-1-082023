@@ -1,6 +1,7 @@
 import torch
 from torch import nn, optim
 from torch.nn import functional as F
+from tqdm.notebook import tqdm as tqdm
 
 
 class ModelWithTemperature(nn.Module):
@@ -43,8 +44,8 @@ class ModelWithTemperature(nn.Module):
         logits_list = []
         labels_list = []
         with torch.no_grad():
-            for input, label in valid_loader:
-                input = input.cuda()
+            for i, data in enumerate(tqdm(valid_loader,0)):
+                inputs, labels = data[0].to(device), data[1].to(device)
                 logits = self.model(input)
                 logits_list.append(logits)
                 labels_list.append(label)
