@@ -49,6 +49,7 @@ class ModelWithTemperature(nn.Module):
                 input = batch.text
                 label  = batch.label
                 label = label.type(torch.LongTensor)
+                print('label', label)
                 input = input.cuda()
                 logits = self.model(input)
                 logits_list.append(logits)
