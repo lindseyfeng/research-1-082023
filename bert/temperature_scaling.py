@@ -45,10 +45,10 @@ class ModelWithTemperature(nn.Module):
         logits_list = []
         labels_list = []
         with torch.no_grad():
-            print('valid_loader' )
             for batch in valid_loader:
                 input = batch.text
                 label  = batch.label
+                labels = labels.type(torch.LongTensor)
                 input = input.cuda()
                 logits = self.model(input)
                 logits_list.append(logits)
