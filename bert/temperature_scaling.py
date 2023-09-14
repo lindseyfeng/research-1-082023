@@ -44,8 +44,8 @@ class ModelWithTemperature(nn.Module):
         logits_list = []
         labels_list = []
         with torch.no_grad():
-            for i, data in enumerate(tqdm(valid_loader,0)):
-                inputs, labels = data[0].to(device), data[1].to(device)
+            for input, label in valid_loader:
+                input = input.cuda()
                 logits = self.model(input)
                 logits_list.append(logits)
                 labels_list.append(label)
