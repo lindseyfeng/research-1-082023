@@ -48,7 +48,7 @@ class ModelWithTemperature(nn.Module):
             for batch in valid_loader:
                 input = batch.text
                 label  = batch.label
-                label = label.type(torch.LongTensor)
+                label = label.type(torch.FloatTensor)
                 input = input.cuda()
                 logits = self.model(input)
                 logits_list.append(logits)
