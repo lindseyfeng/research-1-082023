@@ -57,8 +57,8 @@ class ModelWithTemperature(nn.Module):
             labels = torch.cat(labels_list).cuda()
 
         # Calculate NLL and ECE before temperature scaling
-        print("l:"+labels)
-        print("logits:"+logits)
+        print("l:"+ label.size())
+        print("logits:"+logits.size())
         before_temperature_nll = nll_criterion(logits, labels).item()
         before_temperature_ece = ece_criterion(logits, labels).item()
         print('Before temperature - NLL: %.3f, ECE: %.3f' % (before_temperature_nll, before_temperature_ece))
