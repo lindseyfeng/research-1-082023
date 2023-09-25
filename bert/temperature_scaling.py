@@ -53,15 +53,12 @@ class ModelWithTemperature(nn.Module):
                 logits = self.model(input)
                 logits_list.append(logits)
                 labels_list.append(label)
-            print(len(logits_list))
-            print(len(labels_list))
             logits = torch.cat(logits_list).cuda()
             labels = torch.cat(labels_list).cuda()
 
 
         # Calculate NLL and ECE before temperature scaling
-        print(labels.shape)
-        print(logits.shape)
+        logits = logits.squeeze(1)
         before_temperature_nll = nll_criterion(logits, labels).item()
         before_temperature_ece = ece_criterion(logits, labels).item()
         print('Before temperature - NLL: %.3f, ECE: %.3f' % (before_temperature_nll, before_temperature_ece))
