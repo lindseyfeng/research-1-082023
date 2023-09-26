@@ -114,7 +114,7 @@ class _ECELoss(nn.Module):
         print(logits.shape)
         print(labels.shape)
         softmaxes = F.softmax(logits, dim=0)
-        confidences, predictions = torch.max(softmaxes, 1)
+        confidences, predictions = torch.max(softmaxes, 0)
         accuracies = predictions.eq(labels)
 
         ece = torch.zeros(1, device=logits.device)
