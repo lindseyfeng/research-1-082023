@@ -244,11 +244,11 @@ if __name__ == "__main__":
     scaled_model = ModelWithTemperature(orig_model)
     scaled_model.set_temperature(valid_iter)
     ece_loss = _ECELoss(scaled_model)
-    torch.save(scaled_model.state_dict(), 'model.pt')
+    torch.save(scaled_model.state_dict(), 'model2.pt')
     print(ece_loss)
   
   # Infer from BERT
   else:
-    model.load_state_dict(torch.load('model.pt', map_location=device))
+    model.load_state_dict(torch.load('model.pt'))
     sentiment = predict_sentiment(model, tokenizer, TEXT)
     print(sentiment)
