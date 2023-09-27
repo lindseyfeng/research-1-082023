@@ -204,7 +204,7 @@ def predict_sentiment(model, tokenizer, sentence):
   return prediction.item()
 
 #t-scaled prediction
-def predict_scaled_sentiment(scaled_model, tokenizer, sentence):
+def predict_scaled_sentiment(scaled_model, tokenizer, sentence, best_temp):
     scaled_model.eval().to(device)
     tokens = tokenizer.tokenize(sentence)
     tokens = tokens[:max_input_len - 2]
@@ -212,7 +212,7 @@ def predict_scaled_sentiment(scaled_model, tokenizer, sentence):
     tensor = torch.LongTensor(indexed).to(device)
     tensor = tensor.unsqueeze(0)
     logits = scaled_model(tensor)
-    probabilities = scaled_model.temperature_scaled_softmax(logits)
+    probabilities = nn.Softmax(dim=-1)(logits / best_temp)
     return probabilities
 
 if __name__ == "__main__":
@@ -265,5 +265,6 @@ if __name__ == "__main__":
 
     scaled_model = ModelWithTemperature(model)
     scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-    scaled_sentiment = predict_scaled_sentiment(scaled_model, tokenizer, TEXT)
+    best_temperature = scaled_model.temperature.item()
+    scaled_sentiment = predict_scaled_sentiment(scaled_model, tokenizer, TEXT, best_temperature)
     print(scaled_sentiment)
