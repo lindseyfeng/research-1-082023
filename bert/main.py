@@ -206,7 +206,7 @@ def predict_sentiment(model, tokenizer, sentence):
 #t-scaled prediction
 def predict_scaled_sentiment(scaled_model, tokenizer, sentence):
     scaled_model.eval().to(device)
-    tokens = tokenizer(TEXT)
+    tokens = tokenizer.tokenize(sentence)
     tokens = tokens[:max_input_len - 2]
     indexed = [init_token_id] + tokenizer.convert_tokens_to_ids(tokens) + [eos_token_id]
     tensor = torch.LongTensor(indexed).to(device)
