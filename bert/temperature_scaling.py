@@ -46,7 +46,7 @@ class ModelWithTemperature(nn.Module):
         """
         self.freeze_base_model()
         self.cuda()
-        nll_criterion = nn.CrossEntropyLoss().cuda()
+        nll_criterion = nn.BCEWithLogitsLoss().cuda()
 
         # First: collect all the logits and labels for the validation set
         logits_list = []
