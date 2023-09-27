@@ -250,6 +250,6 @@ if __name__ == "__main__":
     model.load_state_dict(torch.load('model.pt', map_location=device))
     sentiment = predict_sentiment(model, tokenizer, TEXT)
     print(sentiment)
-    model.load_state_dict(torch.load('model_with_temperature.pth', strict=False, map_location=device))
+    model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device), strict=False)
     sentiment = predict_sentiment(model, tokenizer, TEXT)
     print(sentiment)
