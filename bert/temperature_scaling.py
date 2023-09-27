@@ -20,10 +20,8 @@ class ModelWithTemperature(nn.Module):
 
     def forward(self, input):
         logits = self.model(input)
-        print(" in forward"
-        )
-        print(logits)
-        return self.temperature_scale(logits)
+        scores = nn.functional.softmax(logits, dim=-1)[:, 1]
+        return self.temperature_scale(scores)
 
     def temperature_scale(self, logits):
         """
