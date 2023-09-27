@@ -31,7 +31,7 @@ class ModelWithTemperature(nn.Module):
     
     def temperature_scaled_softmax(logits, self):
     
-        return nn.Softmax(dim=-1)(logits / self.temperature)
+        return nn.Softmax(dim=-1)(self.temperature_scale(logits))
    
     def freeze_base_model(self):
         """remember to freeze base model's parameters when training temperature scaler"""
