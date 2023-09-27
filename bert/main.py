@@ -252,7 +252,11 @@ if __name__ == "__main__":
     print(sentiment)
     scaled_model = ModelWithTemperature(model)
     scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-    input = tokenizer(TEXT, return_tensors="pt")
-    logits = scaled_model(**input).logits
+    tokens = tokenizer(TEXT, return_tensors="pt").to(device)
+    tokens = tokens[:max_input_len - 2]
+    indexed = [init_token_id] + tokenizer.convert_tokens_to_ids(tokens) + [eos_token_id]
+    tensor = torch.LongTensor(indexed).to(device)
+    tensor = tensor.unsqueeze(0)
+    logits = scaled_model(tensor).logits
     probabilities = scaled_model.temperature_scaled_softmax(logits)
     print(probabilities)
