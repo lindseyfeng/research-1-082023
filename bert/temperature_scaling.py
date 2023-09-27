@@ -30,7 +30,6 @@ class ModelWithTemperature(nn.Module):
         Perform temperature scaling on logits
         """
         # Expand temperature to match the size of logits
-        temperature = self.temperature.unsqueeze(1).expand(logits.size(0))
         return logits / temperature
    
     def freeze_base_model(self):
