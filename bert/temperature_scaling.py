@@ -29,6 +29,13 @@ class ModelWithTemperature(nn.Module):
         # Expand temperature to match the size of logits
         temperature = self.temperature.unsqueeze(1).expand(logits.size(0), logits.size(1))
         return logits / temperature
+   
+    def freeze_base_model(self):
+        """remember to freeze base model's parameters when training temperature scaler"""
+        self.model.eval()
+        for parameter in self.model.parameters():
+            parameter.requires_grad = False
+        return self
 
     # This function probably should live outside of this class, but whatever
     def set_temperature(self, valid_loader):
@@ -37,6 +44,7 @@ class ModelWithTemperature(nn.Module):
         We're going to set it to optimize NLL.
         valid_loader (iterator): validation set loader
         """
+        self.freeze_base_model()
         self.cuda()
         nll_criterion = nn.CrossEntropyLoss().cuda()
         ece_criterion = _ECELoss().cuda()
@@ -50,7 +58,9 @@ class ModelWithTemperature(nn.Module):
                 label  = batch.label
                 label = label.type(torch.FloatTensor)
                 input = input.cuda()
+                print(label)
                 logits = self.model(input)
+                print(logits)
                 logits_list.append(logits)
                 labels_list.append(label)
             logits = torch.cat(logits_list).cuda()
@@ -58,6 +68,8 @@ class ModelWithTemperature(nn.Module):
 
 
         # Calculate NLL and ECE before temperature scaling
+        print(labels)
+        print(logits)
         labels = labels.unsqueeze(1)
         before_temperature_nll = nll_criterion(logits, labels).item()
         before_temperature_ece = ece_criterion(logits, labels).item()
