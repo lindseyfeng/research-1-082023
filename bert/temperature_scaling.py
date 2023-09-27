@@ -69,7 +69,7 @@ class ModelWithTemperature(nn.Module):
 
 
         # Calculate NLL and ECE before temperature scaling
-        logits = logits.squeeze(1)
+        labels = labels.unsqueeze(1).expand(logits.size(0), logits.size(1))
         before_temperature_nll = nll_criterion(logits, labels).item()
         before_temperature_ece = ece_criterion(logits, labels).item()
         print('Before temperature - NLL: %.3f, ECE: %.3f' % (before_temperature_nll, before_temperature_ece))
@@ -122,8 +122,8 @@ class _ECELoss(nn.Module):
         self.bin_uppers = bin_boundaries[1:]
 
     def forward(self, logits, labels):
-        softmaxes = F.softmax(logits, dim=0)
-        confidences, predictions = torch.max(softmaxes, 0)
+        softmaxes = F.softmax(logits, dim=1)
+        confidences, predictions = torch.max(softmaxes, 1)
         accuracies = predictions.eq(labels)
 
         ece = torch.zeros(1, device=logits.device)
