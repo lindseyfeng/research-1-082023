@@ -11,5 +11,5 @@ N_LAYERS = 2
 BIDIRECTIONAL = True
 DROPOUT = 0.25
 
-TEXT = "I am extremely disappointed with the product and will be returning it immediately."
+TEXT = "The concert was a disaster, the sound quality was poor and the band played terribly."
 
