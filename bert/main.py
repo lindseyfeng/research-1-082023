@@ -214,7 +214,7 @@ def predict_scaled_sentiment(scaled_model, tokenizer, sentence, best_temp):
     logits = scaled_model(tensor)
     print(logits)
     probabilities = nn.Softmax(dim=0)(logits / best_temp)
-    return probabilities
+    return probabilities.item()
 
 if __name__ == "__main__":
   # Train BERT
