@@ -61,9 +61,7 @@ class ModelWithTemperature(nn.Module):
                 label  = batch.label
                 label = label.type(torch.FloatTensor)
                 input = input.cuda()
-                print(label)
                 logits = self.model(input)
-                print(logits)
                 logits_list.append(logits)
                 labels_list.append(label)
             logits = torch.cat(logits_list).cuda()
