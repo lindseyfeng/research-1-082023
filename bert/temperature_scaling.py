@@ -16,13 +16,10 @@ class ModelWithTemperature(nn.Module):
     def __init__(self, model):
         super(ModelWithTemperature, self).__init__()
         self.model = model
-        self.temperature = nn.Parameter(torch.ones(1) * 1.5)
+        self.temperature = nn.Parameter(torch.ones(1))
 
     def forward(self, input):
         logits = self.model(input)
-        print(" in forward"
-        )
-        print(logits)
         return self.temperature_scale(logits)
 
     def temperature_scale(self, logits):
@@ -76,7 +73,9 @@ class ModelWithTemperature(nn.Module):
 
         def eval():
             optimizer.zero_grad()
-            loss = nll_criterion(self.temperature_scale(logits), labels)
+            m = nn.Softmax(dim=1)
+            print(self.temperature_scale(logits))
+            loss = nll_criterion(m(self.temperature_scale(logits)), labels)
             loss.backward()
             return loss
         optimizer.step(eval)
