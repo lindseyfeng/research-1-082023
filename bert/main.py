@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*_
 
 # NN library
-import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -245,14 +244,14 @@ if __name__ == "__main__":
     scaled_model = ModelWithTemperature(orig_model)
     scaled_model.set_temperature(valid_iter)
     ece_loss = _ECELoss(scaled_model)
-    torch.save(model.state_dict(), 'model_with_temperature.pth')
+    torch.save(scaled_model.state_dict(), 'model_with_temperature.pth')
     print(ece_loss)
   
   # Infer from BERT
   else:
-    model.load_state_dict(torch.load('model.pt'))
+    model.load_state_dict(torch.load('model.pt', map_location=device))
     sentiment = predict_sentiment(model, tokenizer, TEXT)
     print(sentiment)
-    model.load_state_dict(torch.load('model_with_temperature.pth'))
+    model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
     sentiment = predict_sentiment(model, tokenizer, TEXT)
     print(sentiment)
