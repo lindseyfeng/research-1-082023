@@ -17,7 +17,7 @@ import random
 import time
 # Configuration
 from config import *
-from temperature_scaling import ModelWithTemperature, _ECELoss
+from temperature_scaling import ModelWithTemperature
 
 # Set random seed for reproducible experiments
 random.seed(SEED)
@@ -243,9 +243,7 @@ if __name__ == "__main__":
     orig_model = model
     scaled_model = ModelWithTemperature(orig_model)
     scaled_model.set_temperature(valid_iter)
-    ece_loss = _ECELoss(scaled_model)
     torch.save(scaled_model.state_dict(), 'model_with_temperature.pth')
-    print(ece_loss)
   
   # Infer from BERT
   else:
