@@ -28,6 +28,10 @@ class ModelWithTemperature(nn.Module):
         """
         # Expand temperature to match the size of logits
         return logits / self.temperature
+    
+    def temperature_scaled_softmax(logits, self):
+    
+        return nn.Softmax(dim=-1)(logits / self.temperature)
    
     def freeze_base_model(self):
         """remember to freeze base model's parameters when training temperature scaler"""
@@ -73,9 +77,7 @@ class ModelWithTemperature(nn.Module):
 
         def eval():
             optimizer.zero_grad()
-            m = nn.Softmax(dim=1)
-            print(self.temperature_scale(logits))
-            loss = nll_criterion(m(self.temperature_scale(logits)), labels)
+            loss = nll_criterion(self.temperature_scale(logits), labels)
             loss.backward()
             return loss
         optimizer.step(eval)
