@@ -213,6 +213,7 @@ def predict_scaled_sentiment(scaled_model, tokenizer, sentence, best_temp):
     tensor = tensor.unsqueeze(0)
     logits = scaled_model(tensor)
     probabilities = nn.Softmax(dim=0)(logits / best_temp)
+    print(logits)
     return probabilities.item()
 
 if __name__ == "__main__":
