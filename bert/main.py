@@ -212,7 +212,8 @@ def predict_scaled_sentiment(scaled_model, tokenizer, sentence, best_temp):
     tensor = torch.LongTensor(indexed).to(device)
     tensor = tensor.unsqueeze(0)
     logits = scaled_model(tensor)
-    probabilities = nn.Softmax(dim=-1)(logits / best_temp)
+    print(logits)
+    probabilities = nn.Softmax(dim=0)(logits / best_temp)
     return probabilities
 
 if __name__ == "__main__":
