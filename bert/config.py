@@ -11,4 +11,4 @@ N_LAYERS = 2
 BIDIRECTIONAL = True
 DROPOUT = 0.25
 
-TEXT = "Forget it, everyone do their own thing"
+TEXT = "I hate you!!!"
