@@ -194,7 +194,7 @@ def evaluate(model, iterator, criterion):
 
 # function to make sentiment prediction during inference
 def predict_sentiment(model, tokenizer, sentence):
-  model.eval()
+  model.eval().to(device)
   tokens = tokenizer.tokenize(sentence)
   tokens = tokens[:max_input_len - 2]
   indexed = [init_token_id] + tokenizer.convert_tokens_to_ids(tokens) + [eos_token_id]
