@@ -117,13 +117,13 @@ class _ECELoss(nn.Module):
         n_bins (int): number of confidence interval bins
         """
         super(_ECELoss, self).__init__()
-        bin_boundaries = torch.linspace(0, 1, 16)
+        bin_boundaries = torch.linspace(0, 1, n_bins+1)
         self.bin_lowers = bin_boundaries[:-1]
         self.bin_uppers = bin_boundaries[1:]
 
     def forward(self, logits, labels):
-        softmaxes = F.softmax(logits, dim=1)
-        confidences, predictions = torch.max(softmaxes, 1)
+        softmaxes = F.softmax(logits, dim=0)
+        confidences, predictions = torch.max(softmaxes, 0)
         accuracies = predictions.eq(labels)
 
         ece = torch.zeros(1, device=logits.device)
