@@ -20,7 +20,10 @@ class ModelWithTemperature(nn.Module):
 
     def forward(self, input):
         logits = self.model(input)
-        return F.softmax(self.temperature_scale(logits), dim=-1)
+        print(" in forward"
+        )
+        print(logits)
+        return self.temperature_scale(logits)
 
     def temperature_scale(self, logits):
         """
@@ -29,12 +32,12 @@ class ModelWithTemperature(nn.Module):
         # Expand temperature to match the size of logits
         return logits / self.temperature
    
-    # def freeze_base_model(self):
-    #     """remember to freeze base model's parameters when training temperature scaler"""
-    #     self.model.eval()
-    #     for parameter in self.model.parameters():
-    #         parameter.requires_grad = False
-    #     return self
+    def freeze_base_model(self):
+        """remember to freeze base model's parameters when training temperature scaler"""
+        self.model.eval()
+        for parameter in self.model.parameters():
+            parameter.requires_grad = False
+        return self
 
     # This function probably should live outside of this class, but whatever
     def set_temperature(self, valid_loader):
@@ -43,6 +46,7 @@ class ModelWithTemperature(nn.Module):
         We're going to set it to optimize NLL.
         valid_loader (iterator): validation set loader
         """
+        self.freeze_base_model()
         self.cuda()
         nll_criterion = nn.CrossEntropyLoss().cuda()
 

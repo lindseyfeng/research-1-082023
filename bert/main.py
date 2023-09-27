@@ -252,5 +252,6 @@ if __name__ == "__main__":
     print(sentiment)
     scaled_model = ModelWithTemperature(model)
     scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device), strict=False)
-    sentiment = predict_sentiment(scaled_model, tokenizer, TEXT)
-    print(scaled_model.forward(sentiment))
+    sentiment = scaled_model.forward(TEXT)
+    print(sentiment)
+    print(nn.functional.softmax(sentiment, dim=-1)[:, 1])
