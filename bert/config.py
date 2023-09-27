@@ -11,4 +11,4 @@ N_LAYERS = 2
 BIDIRECTIONAL = True
 DROPOUT = 0.25
 
-TEXT = "I don't think edgerunner is the best anime of the year, but we will see"
+TEXT = "Forget it, everyone do their own thing"
