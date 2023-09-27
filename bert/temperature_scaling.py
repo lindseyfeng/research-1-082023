@@ -30,7 +30,7 @@ class ModelWithTemperature(nn.Module):
         Perform temperature scaling on logits
         """
         # Expand temperature to match the size of logits
-        return logits / temperature
+        return logits / self.temperature
    
     def freeze_base_model(self):
         """remember to freeze base model's parameters when training temperature scaler"""
