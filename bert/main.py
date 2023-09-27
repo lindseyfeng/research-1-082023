@@ -203,6 +203,18 @@ def predict_sentiment(model, tokenizer, sentence):
   prediction = torch.sigmoid(model(tensor))
   return prediction.item()
 
+#t-scaled prediction
+def predict_scaled_sentiment(scaled_model, tokenizer, sentence):
+    scaled_model.eval().to(device)
+    tokens = tokenizer(TEXT)
+    tokens = tokens[:max_input_len - 2]
+    indexed = [init_token_id] + tokenizer.convert_tokens_to_ids(tokens) + [eos_token_id]
+    tensor = torch.LongTensor(indexed).to(device)
+    tensor = tensor.unsqueeze(0)
+    logits = scaled_model(tensor).logits
+    probabilities = scaled_model.temperature_scaled_softmax(logits)
+    return probabilities
+
 if __name__ == "__main__":
   # Train BERT
   if TRAIN:
@@ -250,13 +262,8 @@ if __name__ == "__main__":
     model.load_state_dict(torch.load('model.pt', map_location=device))
     sentiment = predict_sentiment(model, tokenizer, TEXT)
     print(sentiment)
+
     scaled_model = ModelWithTemperature(model)
     scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-    tokens = tokenizer(TEXT, return_tensors="pt").to(device)
-    tokens = tokens[:max_input_len - 2]
-    indexed = [init_token_id] + tokenizer.convert_tokens_to_ids(tokens) + [eos_token_id]
-    tensor = torch.LongTensor(indexed).to(device)
-    tensor = tensor.unsqueeze(0)
-    logits = scaled_model(tensor).logits
-    probabilities = scaled_model.temperature_scaled_softmax(logits)
-    print(probabilities)
+    scaled_sentiment = predict_scaled_sentiment(scaled_model, tokenizer, TEXT)
+    print(scaled_sentiment)
