@@ -245,7 +245,7 @@ if __name__ == "__main__":
     scaled_model.set_temperature(valid_iter)
     ece_loss = _ECELoss(scaled_model)
     torch.save(scaled_model.state_dict(), 'model.pt')
-    print(f'ECE Loss: {ece_loss:.3f}')
+    print(ece_loss)
   
   # Infer from BERT
   else:

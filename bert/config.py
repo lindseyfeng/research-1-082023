@@ -1,6 +1,6 @@
 # Training configurations
 SEED = 1111
-TRAIN = True
+TRAIN = False
 BATCH_SIZE = 128
 N_EPOCHS = 5
 
@@ -11,4 +11,4 @@ N_LAYERS = 2
 BIDIRECTIONAL = True
 DROPOUT = 0.25
 
-TEXT = "I hate you!"
+TEXT = "I really hate you"
