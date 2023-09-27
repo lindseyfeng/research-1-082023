@@ -211,9 +211,9 @@ def predict_scaled_sentiment(scaled_model, tokenizer, sentence, best_temp):
     indexed = [init_token_id] + tokenizer.convert_tokens_to_ids(tokens) + [eos_token_id]
     tensor = torch.LongTensor(indexed).to(device)
     tensor = tensor.unsqueeze(0)
-    logits = scaled_model(tensor).item()
+    logits = scaled_model(tensor)
     probabilities = logits / best_temp
-    return torch.sigmoid(probabilities)
+    return torch.sigmoid(probabilities).item()
 
 if __name__ == "__main__":
   # Train BERT
