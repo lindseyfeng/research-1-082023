@@ -69,9 +69,7 @@ class ModelWithTemperature(nn.Module):
 
 
         # Calculate NLL and ECE before temperature scaling
-        print(labels)
-        print(logits)
-        labels = labels.unsqueeze(1)
+        logits = logits.squeeze(1)
         before_temperature_nll = nll_criterion(logits, labels).item()
         before_temperature_ece = ece_criterion(logits, labels).item()
         print('Before temperature - NLL: %.3f, ECE: %.3f' % (before_temperature_nll, before_temperature_ece))
