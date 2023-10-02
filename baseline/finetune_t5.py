@@ -27,11 +27,11 @@ model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 # Load the IMDB dataset
 data = load_dataset("imdb")
 
-length = LengthSampler(4, 510)
+length = LengthSampler(4, 128)
 
 def prepare_dataset(examples):
   split_ids = [length() for _ in range(len(examples["text"]))]
-  token_ids = tokenizer(examples["text"], truncation=True, max_length=128)
+  token_ids = tokenizer(examples["text"], truncation=True, max_length=512)
   input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
   label_ids = [ids[idx:] for idx, ids in zip(split_ids, token_ids["input_ids"])]
 

@@ -16,6 +16,7 @@ from config import *
 from datasets import load_dataset, load_metric
 
 from transformers import T5TokenizerFast, T5ForConditionalGeneration
+from finetune_t5 import LengthSampler, prepare_dataset
 # Set random seed for reproducible experiments
 
 random.seed(SEED)
@@ -54,9 +55,10 @@ if __name__ == "__main__":
     saved_directory = "./t5_imdb"
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
-    input_text = "complete the following: A dog eats"
-    input_ids = tokenizer(input_text, return_tensors="pt").input_ids
+    input_text = "complete the following: A dog eats a pretty"
+    length = LengthSampler(4, 2)
     # Generate output
+    input_ids = prepare_dataset(input_text)["input_ids"]
     output_ids = model.generate(input_ids)
     # Decode the generated text
     generated_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
