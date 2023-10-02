@@ -23,6 +23,7 @@ tokenized_datasets = data.map(tokenize_function, batched=True)
 train_dataset = tokenized_datasets["train"]
 test_dataset = tokenized_datasets["test"]
 
+print(train_dataset)
 print("length of train_dataset {}").format(len(train_dataset))
 print("length of test_dataset {}").format(len(test_dataset))
 
