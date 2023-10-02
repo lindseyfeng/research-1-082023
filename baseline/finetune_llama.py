@@ -17,10 +17,10 @@ if tokenizer.pad_token is None:
 data = load_dataset("imdb")
 
 def tokenize_function(examples):
-    return tokenizer(examples['text'], padding='max_length', truncation=True, max_length=510)
+    return tokenizer(examples['text'], padding='max_length', truncation=True, max_length=400)
 
 tokenized_datasets = data.map(tokenize_function, batched=True)
-train_dataset = tokenized_datasets["train"].shuffle(seed=42).select(range(10000))
+train_dataset = tokenized_datasets["train"]
 test_dataset = tokenized_datasets["test"].shuffle(seed=42).select(range(5000))
 
 print(train_dataset)
@@ -34,7 +34,7 @@ training_args = TrainingArguments(
     evaluation_strategy="epoch",
     save_strategy="epoch",
     logging_dir='./logs',
-    logging_steps=50,
+    logging_steps=128,
     do_train=True,
     do_eval=True,
     output_dir='./llama_7b_imdb'
