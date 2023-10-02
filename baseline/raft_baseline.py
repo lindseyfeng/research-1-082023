@@ -68,7 +68,7 @@ if __name__ == "__main__":
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
     input_text = ["complete the following: A dog eats a pretty", "complete the following: A cat eats a pretty"]
     tokenized_inputs = tokenize_for_infer(input_text)
-    print(tokenized_inputs)
+    print(**tokenized_inputs)
     # Feed tokenized inputs to the model for generation
     output_ids = model.generate(**tokenized_inputs, max_new_tokens=50)  # Adjust max_new_tokens as per your requirements
 
