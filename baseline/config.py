@@ -1,9 +1,7 @@
-# Training configurations
-from msvcrt import kbhit
-
 
 SEED = 1111
-TRAIN = False
+FINETUNE = False  #finetune llama
+INFER = false #infer from llama
 
 # finetune llama
 ACCEPTANCE_RATIO = 0.2
