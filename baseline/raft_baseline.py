@@ -52,8 +52,8 @@ if __name__ == "__main__":
   #infer from t5
   if INFER:
     saved_directory = "./t5_imdb"
-    model = T5ForConditionalGeneration.from_pretrained(saved_directory).to(device)
-    tokenizer = T5TokenizerFast.from_pretrained(saved_directory).to(device)
-    inputs = tokenizer.encode("complete the following: A dog eats a pretty", return_tensors="pt").to(device)
-    outputs = model.generate(inputs).to(device)
+    model = T5ForConditionalGeneration.from_pretrained(saved_directory)
+    tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
+    inputs = tokenizer.encode("complete the following: A dog eats a pretty", return_tensors="pt")
+    outputs = model.generate(inputs)
     print(tokenizer.decode(outputs[0]))
