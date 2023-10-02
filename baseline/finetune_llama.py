@@ -8,9 +8,11 @@ from datasets import load_dataset
 import torch
 
 tokenizer = LLaMATokenizer.from_pretrained("decapoda-research/llama-7b-hf")
-tokenizer.pad_token = tokenizer.eos_token
 model = LlamaForCausalLM.from_pretrained("decapoda-research/llama-7b-hf")
-
+if tokenizer.pad_token is None:
+    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+    model.resize_token_embeddings(len(tokenizer))
+    
 # Load the IMDB dataset
 data = load_dataset("imdb")
 
