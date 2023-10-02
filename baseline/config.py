@@ -1,7 +1,6 @@
 
 SEED = 1111
-FINETUNE = False  #finetune llama
-INFER = false #infer from llama
+INFER = True #infer from llama
 
 # finetune llama
 ACCEPTANCE_RATIO = 0.2
