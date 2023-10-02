@@ -6,21 +6,38 @@ from datasets import load_dataset
 import torch
 
 # Load model directly
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import T5TokenizerFast, AutoModelForSeq2SeqLM
+import numpy as np
 
-tokenizer = AutoTokenizer.from_pretrained("t5-base")
+class LengthSampler:
+    """
+    Samples a length
+    """
+
+    def __init__(self, min_value, max_value):
+        self.values = list(range(min_value, max_value))
+
+    def __call__(self):
+        return np.random.choice(self.values)
+
+
+tokenizer = T5TokenizerFast.from_pretrained("t5-base", model_max_length=512)
 model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
-if tokenizer.pad_token is None:
-    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-    model.resize_token_embeddings(len(tokenizer))
 
 # Load the IMDB dataset
 data = load_dataset("imdb")
 
-def tokenize_function(examples):
-    return tokenizer(examples['text'], padding='max_length', truncation=True, max_length=510)
+length = LengthSampler(4, 510)
 
-tokenized_datasets = data.map(tokenize_function, batched=True)
+def prepare_dataset(examples):
+  split_ids = [length() for _ in range(len(examples["text"]))]
+  token_ids = tokenizer(examples["text"], truncation=True, max_length=128)
+  input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
+  label_ids = [ids[idx:] for idx, ids in zip(split_ids, token_ids["input_ids"])]
+
+  return {"input_ids": input_ids, "labels": label_ids}
+
+tokenized_datasets = data.map(prepare_dataset, batched=True)
 train_dataset = tokenized_datasets["train"]
 test_dataset = tokenized_datasets["test"].shuffle(seed=42).select(range(5000))
 
@@ -32,9 +49,6 @@ training_args = TrainingArguments(
     per_device_train_batch_size=64,
     per_device_eval_batch_size=64,
     num_train_epochs=1,
-    optim="adafactor", 
-    fp16=True, 
-    gradient_accumulation_steps=4, 
     evaluation_strategy="epoch",
     save_strategy="epoch",
     logging_dir='./logs',
