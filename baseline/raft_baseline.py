@@ -55,7 +55,7 @@ def tokenize_for_infer(texts):
         eos_position = (ids == tokenizer.eos_token_id).nonzero(as_tuple=True)[0]
         # If EOS token is found, truncate everything after it. Otherwise, keep the whole sequence.
         input_ids.append(ids[:eos_position[0] + 1] if eos_position.numel() > 0 else ids)
-    return {"input_ids": input_ids}
+    return input_ids
 
 
 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     tokenized_inputs = tokenize_for_infer(input_text)
     print(tokenized_inputs)
     # Feed tokenized inputs to the model for generation
-    output_ids = model.generate(tokenized_inputs, max_new_tokens=50)  # Adjust max_new_tokens as per your requirements
+    output_ids = model.generate(tokenized_inputs[0], max_new_tokens=50)  # Adjust max_new_tokens as per your requirements
 
     # Decode the generated output
     generated_texts = [tokenizer.decode(ids, skip_special_tokens=True) for ids in output_ids]
