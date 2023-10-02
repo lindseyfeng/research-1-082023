@@ -15,7 +15,7 @@ from config import *
 #huggingface dataset
 from datasets import load_dataset, load_metric
 
-from transformers import T5Tokenizer, T5ForConditionalGeneration
+from transformers import T5TokenizerFast, T5ForConditionalGeneration
 # Set random seed for reproducible experiments
 
 random.seed(SEED)
@@ -51,9 +51,9 @@ def compute_metrics(eval_preds):
 if __name__ == "__main__":
   #infer from t5
   if INFER:
-    saved_directory = "./t5_imdb.pt"
+    saved_directory = "./t5_imdb"
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
-    tokenizer = T5Tokenizer.from_pretrained(saved_directory)
+    tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
     input_text = "summarize: The quick brown fox jumps over the lazy dog."
     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
     # Generate output
