@@ -12,7 +12,7 @@ model = LlamaForCausalLM.from_pretrained("decapoda-research/llama-7b-hf")
 if tokenizer.pad_token is None:
     tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     model.resize_token_embeddings(len(tokenizer))
-    
+
 # Load the IMDB dataset
 data = load_dataset("imdb")
 
@@ -23,8 +23,8 @@ tokenized_datasets = data.map(tokenize_function, batched=True)
 train_dataset = tokenized_datasets["train"]
 test_dataset = tokenized_datasets["test"]
 
-print("length of train_dataset", {}).format(len(train_dataset))
-print("length of test_dataset", {}).format(len(test_dataset))
+print("length of train_dataset {}").format(len(train_dataset))
+print("length of test_dataset {}").format(len(test_dataset))
 
 # Define training arguments and initialize Trainer
 training_args = TrainingArguments(
