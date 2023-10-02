@@ -29,8 +29,8 @@ print(test_dataset)
 
 # Define training arguments and initialize Trainer
 training_args = TrainingArguments(
-    per_device_train_batch_size=32,
-    per_device_eval_batch_size=32,
+    per_device_train_batch_size=16,
+    per_device_eval_batch_size=16,
     num_train_epochs=1,
     evaluation_strategy="epoch",
     save_strategy="epoch",
