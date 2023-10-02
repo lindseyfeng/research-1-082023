@@ -17,7 +17,7 @@ if tokenizer.pad_token is None:
 data = load_dataset("imdb")
 
 def tokenize_function(examples):
-    return tokenizer(examples['text'], padding='max_length', truncation=True, max_length=400)
+    return tokenizer(examples['text'], padding='max_length', truncation=True, max_length=510)
 
 tokenized_datasets = data.map(tokenize_function, batched=True)
 train_dataset = tokenized_datasets["train"]
@@ -31,6 +31,9 @@ training_args = TrainingArguments(
     per_device_train_batch_size=64,
     per_device_eval_batch_size=64,
     num_train_epochs=1,
+    optim="adafactor", 
+    fp16=True, 
+    gradient_accumulation_steps=4, 
     evaluation_strategy="epoch",
     save_strategy="epoch",
     logging_dir='./logs',
