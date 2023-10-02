@@ -29,9 +29,6 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 #load dataset
 dataset = load_dataset("imdb")
 
-#load llama pipeline
-generator = pipeline(model="decapoda-research/llama-7b-hf", device=device)
-
 #load t5 model
 
 saved_directory = "./t5_imdb"
