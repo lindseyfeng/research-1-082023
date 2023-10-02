@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*_
-# #llama
-# from transformers import LLaMATokenizer,LlamaForCausalLM
+#llama
+from transformers import LLaMATokenizer,LlamaForCausalLM
 #train
 from transformers import Trainer, TrainingArguments
 #dataset
 from datasets import load_dataset
 import torch
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model_name = "meta-llama/Llama-2-70b-chat-hf"
-model = AutoModelForCausalLM.from_pretrained(model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
+tokenizer = LLaMATokenizer.from_pretrained("decapoda-research/llama-7b-hf")
+model = LlamaForCausalLM.from_pretrained("decapoda-research/llama-7b-hf")
 if tokenizer.pad_token is None:
     tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     model.resize_token_embeddings(len(tokenizer))
