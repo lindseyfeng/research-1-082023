@@ -57,14 +57,14 @@ training_args = TrainingArguments(
     do_train=True,
     do_eval=True,
     output_dir='./t5_imdb'
-    data_collator=data_collator
 )
 
 trainer = Trainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
-    eval_dataset=test_dataset
+    eval_dataset=test_dataset,
+    data_collator=data_collator
 )
 
 # Start training
