@@ -7,6 +7,7 @@ from transformers import Trainer, TrainingArguments
 from datasets import load_dataset
 import torch
 
+torch.cuda.empty_cache()
 tokenizer = LLaMATokenizer.from_pretrained("decapoda-research/llama-7b-hf")
 model = LlamaForCausalLM.from_pretrained("decapoda-research/llama-7b-hf")
 if tokenizer.pad_token is None:
