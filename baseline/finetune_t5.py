@@ -6,7 +6,7 @@ from datasets import load_dataset
 import torch
 
 # Load model directly
-from transformers import T5TokenizerFast, AutoModelForSeq2SeqLM
+from transformers import T5TokenizerFast, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq
 import numpy as np
 
 class LengthSampler:
@@ -44,6 +44,7 @@ test_dataset = tokenized_datasets["test"].shuffle(seed=42).select(range(5000))
 print(train_dataset)
 print(test_dataset)
 
+data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, label_pad_token_id=-100)
 # Define training arguments and initialize Trainer
 training_args = TrainingArguments(
     per_device_train_batch_size=64,
@@ -56,6 +57,7 @@ training_args = TrainingArguments(
     do_train=True,
     do_eval=True,
     output_dir='./t5_imdb'
+    data_collator=data_collator
 )
 
 trainer = Trainer(
