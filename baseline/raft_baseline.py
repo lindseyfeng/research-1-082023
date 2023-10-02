@@ -16,10 +16,10 @@ import time
 from config import *
 #huggingface dataset
 from datasets import load_dataset, load_metric
-#llama7b
-from transformers import pipeline,LLaMATokenizer,LlamaForCausalLM
 
+from transformers import T5Tokenizer, T5ForConditionalGeneration
 # Set random seed for reproducible experiments
+
 random.seed(SEED)
 np.random.seed(SEED)
 torch.manual_seed(SEED)
@@ -34,11 +34,12 @@ dataset = load_dataset("imdb")
 #load llama pipeline
 generator = pipeline(model="decapoda-research/llama-7b-hf", device=device)
 
-#load llama model
-tokenizer = LLaMATokenizer.from_pretrained("decapoda-research/llama-7b-hf")
-model = LlamaForCausalLM.from_pretrained("decapoda-research/llama-7b-hf")
+#load t5 model
 
+saved_directory = "./t5_imdb"
 
+model = T5ForConditionalGeneration.from_pretrained(saved_directory)
+tokenizer = T5Tokenizer.from_pretrained(saved_directory)
 
 # Tokensize and crop sentence to 510 (for 1st and last token) instead of 512 (i.e. `max_input_len`)
 def tokenize_and_crop(sentence):
@@ -58,33 +59,12 @@ def compute_metrics(eval_preds):
 
 
 if __name__ == "__main__":
-  #finetune llama
-  if FINETUNE:
-    # load data
-    tokenized_imdb = imdb.map(preprocess_function, batched=True)
-
-    data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
-    training_args = TrainingArguments(
-      output_dir="llama_pretrained",
-      learning_rate=2e-6,
-      per_device_train_batch_size=16,
-      per_device_eval_batch_size=16,
-       num_train_epochs=2,
-       weight_decay=0.01,
-       evaluation_strategy="epoch",
-       save_strategy="epoch",
-       load_best_model_at_end=True,
-       push_to_hub=True,
-      )
-    
-    trainer = Trainer(model=model, tokenizer=tokenizer,
-                  data_collator=data_collator,
-                  args=training_args,
-                  train_dataset=tokenized_imdb["train"],
-                  eval_dataset=tokenized_imdb["test"], 
-                  compute_metrics=compute_metrics)
-    trainer.train()
-  
-  # Infer from llama
-  elif INFER:
-    tokenizer = AutoTokenizer.from_pretrained("stevhliu/my_awesome_model")
+  #infer from t5/llama
+  if INFER:
+    input_text = "summarize: The quick brown fox jumps over the lazy dog."
+    input_ids = tokenizer(input_text, return_tensors="pt").input_ids
+    # Generate output
+    output_ids = model.generate(input_ids)
+    # Decode the generated text
+    generated_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+    print(generated_text)
