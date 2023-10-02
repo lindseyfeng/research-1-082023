@@ -5,8 +5,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from transformers import DataCollatorWithPadding, evaluate, AutoModelForSequenceClassification, TrainingArguments, Trainer
-
 # Numerical computation
 import numpy as np
 # standard library
