@@ -23,9 +23,8 @@ tokenized_datasets = data.map(tokenize_function, batched=True)
 train_dataset = tokenized_datasets["train"]
 test_dataset = tokenized_datasets["test"]
 
-print(train_dataset)
-print("length of train_dataset {}").format(len(train_dataset))
-print("length of test_dataset {}").format(len(test_dataset))
+print("train_dataset: {}").format(train_dataset)
+print("test_dataset: {}").format(test_dataset)
 
 # Define training arguments and initialize Trainer
 training_args = TrainingArguments(
