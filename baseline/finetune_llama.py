@@ -7,7 +7,6 @@ from transformers import Trainer, TrainingArguments
 from datasets import load_dataset
 import torch
 
-torch.cuda.empty_cache()
 tokenizer = LLaMATokenizer.from_pretrained("decapoda-research/llama-7b-hf")
 model = LlamaForCausalLM.from_pretrained("decapoda-research/llama-7b-hf")
 if tokenizer.pad_token is None:
@@ -21,7 +20,7 @@ def tokenize_function(examples):
     return tokenizer(examples['text'], padding='max_length', truncation=True, max_length=510)
 
 tokenized_datasets = data.map(tokenize_function, batched=True)
-train_dataset = tokenized_datasets["train"].shuffle(seed=42).select(range(20000))
+train_dataset = tokenized_datasets["train"].shuffle(seed=42).select(range(10000))
 test_dataset = tokenized_datasets["test"].shuffle(seed=42).select(range(5000))
 
 print(train_dataset)
@@ -52,4 +51,4 @@ trainer = Trainer(
 trainer.train()
 
 # Save the model
-trainer.save_model("YOUR_SAVED_MODEL_PATH_HERE")
+trainer.save_model("llama_7b_imdb.pt")
