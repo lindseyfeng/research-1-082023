@@ -31,11 +31,6 @@ dataset = load_dataset("imdb")
 
 #load t5 model
 
-saved_directory = "./t5_imdb"
-
-model = T5ForConditionalGeneration.from_pretrained(saved_directory)
-tokenizer = T5Tokenizer.from_pretrained(saved_directory)
-
 # Tokensize and crop sentence to 510 (for 1st and last token) instead of 512 (i.e. `max_input_len`)
 def tokenize_and_crop(sentence):
   tokens = tokenizer.tokenize(sentence, max_length=64, truncation=True)
@@ -54,8 +49,14 @@ def compute_metrics(eval_preds):
 
 
 if __name__ == "__main__":
-  #infer from t5/llama
+  #infer from t5
   if INFER:
+    saved_directory = "./t5_imdb/checkpoint-391"
+    state_dict = torch.load('t5_imdb.pt')
+    model = T5ForConditionalGeneration.from_pretrained(None, config='./t5_imdb/checkpoint-391/config.json')
+    tokenizer = T5Tokenizer.from_pretrained(saved_directory)
+    model.load_state_dict(state_dict)
+
     input_text = "summarize: The quick brown fox jumps over the lazy dog."
     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
     # Generate output
