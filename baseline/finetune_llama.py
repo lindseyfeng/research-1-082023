@@ -28,13 +28,13 @@ print(test_dataset)
 
 # Define training arguments and initialize Trainer
 training_args = TrainingArguments(
-    per_device_train_batch_size=50,
-    per_device_eval_batch_size=50,
+    per_device_train_batch_size=32,
+    per_device_eval_batch_size=32,
     num_train_epochs=1,
     evaluation_strategy="epoch",
     save_strategy="epoch",
     logging_dir='./logs',
-    logging_steps=100,
+    logging_steps=50,
     do_train=True,
     do_eval=True,
     output_dir='./llama_7b_imdb'
