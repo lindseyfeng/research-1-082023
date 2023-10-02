@@ -8,6 +8,7 @@ from datasets import load_dataset
 import torch
 
 tokenizer = LLaMATokenizer.from_pretrained("decapoda-research/llama-7b-hf")
+tokenizer.pad_token = tokenizer.eos_token
 model = LlamaForCausalLM.from_pretrained("decapoda-research/llama-7b-hf")
 
 # Load the IMDB dataset
