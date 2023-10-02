@@ -70,7 +70,7 @@ if __name__ == "__main__":
     tokenized_inputs = tokenize_for_infer(input_text)
     print(tokenized_inputs)
     # Feed tokenized inputs to the model for generation
-    output_ids = model.generate(tokenized_inputs[0], max_new_tokens=50)  # Adjust max_new_tokens as per your requirements
+    output_ids = model.generate(**tokenized_inputs[0], max_new_tokens=50)  # Adjust max_new_tokens as per your requirements
 
     # Decode the generated output
     generated_texts = [tokenizer.decode(ids, skip_special_tokens=True) for ids in output_ids]
