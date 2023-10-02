@@ -15,7 +15,7 @@ from config import *
 #huggingface dataset
 from datasets import load_dataset, load_metric
 
-from transformers import T5TokenizerFast, T5ForConditionalGeneration
+from transformers import T5TokenizerFast, T5ForConditionalGeneration,AutoModelForSeq2SeqLM
 # Set random seed for reproducible experiments
 
 random.seed(SEED)
@@ -54,6 +54,11 @@ if __name__ == "__main__":
     saved_directory = "./t5_imdb"
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
+    inputs = tokenizer.encode("complete the following: I am a pretty", return_tensors="pt")
+    outputs = model.generate(inputs)
+    print(tokenizer.decode(outputs[0]))
+    tokenizer = T5TokenizerFast.from_pretrained("t5-base", model_max_length=512)
+    model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")  
     inputs = tokenizer.encode("complete the following: I am a pretty", return_tensors="pt")
     outputs = model.generate(inputs)
     print(tokenizer.decode(outputs[0]))
