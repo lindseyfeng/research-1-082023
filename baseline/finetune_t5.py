@@ -72,4 +72,4 @@ trainer = Trainer(
 trainer.train()
 
 # Save the model
-trainer.save_model("t5_imdb.pt")
+trainer.save_model("t5_imdb")
