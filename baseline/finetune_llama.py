@@ -13,26 +13,15 @@ model = LlamaForCausalLM.from_pretrained("decapoda-research/llama-7b-hf")
 # Load the IMDB dataset
 data = load_dataset("imdb")
 
-# Tokenize the data
-train_encodings = tokenizer(data['train']['text'], truncation=True, padding=True)
-val_encodings = tokenizer(data['test']['text'], truncation=True, padding=True)  # IMDB uses 'test' instead of 'validation'
+def tokenize_function(examples):
+    return tokenizer(examples['text'], padding='max_length', truncation=True, max_length=512)
 
-# Prepare data for PyTorch
-class CustomDataset(torch.utils.data.Dataset):
-    def __init__(self, encodings, labels):
-        self.encodings = encodings
-        self.labels = labels
+tokenized_datasets = data.map(tokenize_function, batched=True)
+train_dataset = tokenized_datasets["train"]
+test_dataset = tokenized_datasets["test"]
 
-    def __getitem__(self, idx):
-        item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
-        item['labels'] = torch.tensor(self.labels[idx])
-        return item
-
-    def __len__(self):
-        return len(self.labels)
-
-train_dataset = CustomDataset(train_encodings, data['train']['label'])
-val_dataset = CustomDataset(val_encodings, data['test']['label'])
+print("length of train_dataset", {}).format(len(train_dataset))
+print("length of test_dataset", {}).format(len(test_dataset))
 
 # Define training arguments and initialize Trainer
 training_args = TrainingArguments(
@@ -52,7 +41,7 @@ trainer = Trainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
-    eval_dataset=val_dataset
+    eval_dataset=test_dataset
 )
 
 # Start training
