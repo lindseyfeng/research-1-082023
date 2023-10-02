@@ -54,7 +54,7 @@ if __name__ == "__main__":
     saved_directory = "./t5_imdb"
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
-    input_text = "summarize: The quick brown fox jumps over the lazy dog."
+    input_text = "complete the following: A journey of a thousand miles begins with"
     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
     # Generate output
     output_ids = model.generate(input_ids)
