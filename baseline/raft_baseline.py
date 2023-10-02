@@ -16,7 +16,6 @@ from config import *
 from datasets import load_dataset, load_metric
 
 from transformers import T5TokenizerFast, T5ForConditionalGeneration
-from finetune_t5 import LengthSampler, prepare_dataset
 # Set random seed for reproducible experiments
 
 random.seed(SEED)
@@ -47,6 +46,18 @@ def compute_metrics(eval_preds):
     predictions = np.argmax(logits, axis=-1)
     return metric.compute(predictions=predictions, references=labels)
 
+def tokenize_for_infer(texts):
+    # Tokenize the texts
+    token_ids = tokenizer(texts, truncation=True, max_length=128, return_tensors="pt")
+    input_ids = []
+    for ids in token_ids["input_ids"]:
+        # Find the position of the EOS token
+        eos_position = (ids == tokenizer.eos_token_id).nonzero(as_tuple=True)[0]
+        # If EOS token is found, truncate everything after it. Otherwise, keep the whole sequence.
+        input_ids.append(ids[:eos_position[0] + 1] if eos_position.numel() > 0 else ids)
+    return {"input_ids": input_ids}
+
+
 
 
 if __name__ == "__main__":
@@ -55,11 +66,12 @@ if __name__ == "__main__":
     saved_directory = "./t5_imdb"
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
-    input_text = "complete the following: A dog eats a pretty"
-    length = LengthSampler(4, 2)
-    # Generate output
-    input_ids = prepare_dataset(input_text)["input_ids"]
-    output_ids = model.generate(input_ids)
-    # Decode the generated text
-    generated_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-    print(generated_text)
+    input_text = ["complete the following: A dog eats a pretty", "complete the following: A cat eats a pretty"]
+    tokenized_inputs = tokenize_for_infer(input_text)
+
+    # Feed tokenized inputs to the model for generation
+    output_ids = model.generate(**tokenized_inputs, max_new_tokens=50)  # Adjust max_new_tokens as per your requirements
+
+    # Decode the generated output
+    generated_texts = [tokenizer.decode(ids, skip_special_tokens=True) for ids in output_ids]
+    print(generated_texts)
