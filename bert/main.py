@@ -41,6 +41,16 @@ def tokenize_and_crop(sentence):
   tokens = tokenizer.tokenize(sentence, max_length=510, truncation=True)
   return tokens
 
+#huggingface imdb to torchtext
+def hf_to_torchtext(hf_dataset_split):
+    examples = []
+    for hf_example in hf_dataset_split:
+        text = hf_example['text']
+        label = str(hf_example['label'])
+        examples.append(data.Example.fromlist([text, label], fields=[('text', TEXT), ('label', LABEL)]))
+    return data.Dataset(examples, fields=[('text', TEXT), ('label', LABEL)])
+
+
 # Load the IMDB dataset and
 # return (train_iter, valid_iter, test_iter, valid_dataloader) tuple
 def load_data():
@@ -56,8 +66,11 @@ def load_data():
   ds = load_dataset("imdb")
   label = data.LabelField(dtype=torch.float)
   train_data = ds["train"].filter(lambda example: example["label"] == 1)
+  train_dataset = hf_to_torchtext(train_data)
   test_data  = ds["test"]
+  test_dataset = hf_to_torchtext(test_data)
   valid_data = ds["unsupervised"]
+  valid_dataset = hf_to_torchtext(valid_data)
 
   print(f"training examples count: {len(train_data)}")
   print(f"test examples count: {len(test_data)}")
@@ -66,7 +79,7 @@ def load_data():
   label.build_vocab(train_data)
 
   train_iter, valid_iter, test_iter = data.BucketIterator.splits(
-    (train_data, valid_data, test_data),
+    (train_dataset, valid_dataset, test_dataset),
     batch_size=BATCH_SIZE,
     device=device
   )
