@@ -5,9 +5,10 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 # Bert model and its tokenizer
-from transformers import AutoTokenizer, BertModel
+from transformers import AutoTokenizer, BertModel,dataset
 # Text data
-from torchtext import datasets, data
+from torchtext import data
+from datasets import load_dataset
 #t scaling
 from torch.utils.data import DataLoader
 # Numerical computation
@@ -52,11 +53,11 @@ def load_data():
     pad_token=pad_token_id,
     unk_token=unk_token_id
   )
-
+  ds = load_dataset("imdb")
   label = data.LabelField(dtype=torch.float)
-
-  train_data, test_data  = datasets.IMDB.splits(text, label)
-  train_data, valid_data = train_data.split(random_state=random.seed(SEED))
+  train_data = ds["train"].filter(lambda example: example["label"] == 1)
+  test_data  = ds["test"]
+  valid_data = ds["unsupervised"]
 
   print(f"training examples count: {len(train_data)}")
   print(f"test examples count: {len(test_data)}")
