@@ -36,7 +36,7 @@ unk_token_id  = tokenizer.unk_token_id
 max_input_len = tokenizer.max_model_input_sizes['bert-base-uncased']
 # Tokensize and crop sentence to 510 (for 1st and last token) instead of 512 (i.e. `max_input_len`)
 def tokenize_and_crop(sentence):
-  tokens = tokenizer.tokenize(sentence, max_length=510, truncation=True, return_tokens=True)
+  tokens = tokenizer.tokenize(sentence, max_length=510, truncation=True)
   return tokens
 
 Text = data.Field(
