@@ -43,7 +43,7 @@ def tokenize_and_crop(sentence):
 
 #huggingface imdb to torchtext
 def hf_to_torchtext(hf_dataset_split):
-    text = data.Field(
+    Text = data.Field(
     batch_first=True,
     use_vocab=False,
     tokenize=tokenize_and_crop,
@@ -51,13 +51,13 @@ def hf_to_torchtext(hf_dataset_split):
     init_token=init_token_id,
     pad_token=pad_token_id,
     unk_token=unk_token_id)
-    label = data.LabelField(dtype=torch.float)
+    Label = data.LabelField(dtype=torch.float)
     examples = []
     for hf_example in hf_dataset_split:
         text = hf_example['text']
         label = str(hf_example['label'])
-        examples.append(data.Example.fromlist([text, label], fields=[('text', text), ('label', label)]))
-    return data.Dataset(examples, fields=[('text', text), ('label', label)])
+        examples.append(data.Example.fromlist([text, label], fields=[('text', Text), ('label', Label)]))
+    return data.Dataset(examples, fields=[('text', Text), ('label', Label)])
 
 
 # Load the IMDB dataset and
