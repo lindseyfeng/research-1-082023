@@ -78,6 +78,7 @@ def load_data():
   print(f"validation examples count: {len(valid_data)}")
 
   Label.build_vocab(train_data)
+  Text.build_vocab(train_data)
 
   train_iter, valid_iter, test_iter = data.BucketIterator.splits(
     (train_dataset, valid_dataset, test_dataset),
@@ -235,7 +236,7 @@ if __name__ == "__main__":
   if TRAIN:
     # load data
     train_iter, valid_iter, test_iter = load_data()
-
+    print(train_iter)
     optimizer = optim.Adam(model.parameters())
     criterion = nn.BCEWithLogitsLoss().to(device)
     model = model.to(device)
