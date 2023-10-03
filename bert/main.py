@@ -56,7 +56,7 @@ def hf_to_torchtext(hf_dataset_split):
     for hf_example in hf_dataset_split:
         text = hf_example['text']
         label = str(hf_example['label'])
-        examples.append(data.Example.fromlist([text, label], fields=[('text', TEXT), ('label', LABEL)]))
+        examples.append(data.Example.fromlist([text, label], fields=[('text', text), ('label', label)]))
     return data.Dataset(examples, fields=[('text', text), ('label', label)])
 
 
