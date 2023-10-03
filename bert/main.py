@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 # Bert model and its tokenizer
-from transformers import AutoTokenizer, BertModel,dataset
+from transformers import AutoTokenizer, BertModel
 # Text data
 from torchtext import data
 from datasets import load_dataset
