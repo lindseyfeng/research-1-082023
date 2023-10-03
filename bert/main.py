@@ -7,8 +7,7 @@ import torch.optim as optim
 # Bert model and its tokenizer
 from transformers import AutoTokenizer, BertModel
 # Text data
-from torchtext import data
-from datasets import load_dataset
+from torchtext import datasets, data
 #t scaling
 from torch.utils.data import DataLoader
 # Numerical computation
@@ -34,52 +33,39 @@ pad_token_id  = tokenizer.pad_token_id
 unk_token_id  = tokenizer.unk_token_id
 
 max_input_len = tokenizer.max_model_input_sizes['bert-base-uncased']
+
+
 # Tokensize and crop sentence to 510 (for 1st and last token) instead of 512 (i.e. `max_input_len`)
 def tokenize_and_crop(sentence):
   tokens = tokenizer.tokenize(sentence, max_length=510, truncation=True)
   return tokens
 
-Text = data.Field(
+# Load the IMDB dataset and
+# return (train_iter, valid_iter, test_iter, valid_dataloader) tuple
+def load_data():
+  text = data.Field(
     batch_first=True,
     use_vocab=False,
     tokenize=tokenize_and_crop,
     preprocessing=tokenizer.convert_tokens_to_ids,
     init_token=init_token_id,
     pad_token=pad_token_id,
-    unk_token=unk_token_id)
+    unk_token=unk_token_id
+  )
 
-Label = data.LabelField(dtype=torch.float)
+  label = data.LabelField(dtype=torch.float)
 
+  train_data, test_data  = datasets.IMDB.splits(text, label)
+  train_data, valid_data = train_data.split(random_state=random.seed(SEED))
+  positive_train_data = [example for example in train_data if example.label == 'pos']
+  print(f"training examples count: {len(positive_train_data)}")
+  print(f"test examples count: {len(test_data)}")
+  print(f"validation examples count: {len(valid_data)}")
 
-
-#huggingface imdb to torchtext
-def hf_to_torchtext(hf_dataset_split):
-    examples = []
-    for hf_example in hf_dataset_split:
-        text = hf_example['text']
-        label = str(hf_example['label'])
-        examples.append(data.Example.fromlist([text, label], fields=[('text', Text), ('label', Label)]))
-    return data.Dataset(examples, fields=[('text', Text), ('label', Label)])
-
-
-# Load the IMDB dataset and
-# return (train_iter, valid_iter, test_iter, valid_dataloader) tuple
-def load_data():
-  ds = load_dataset("imdb")
-  train_data = ds["train"].filter(lambda example: example["label"] == 1)
-  train_dataset = hf_to_torchtext(train_data)
-  test_data  = ds["test"]
-  test_dataset = hf_to_torchtext(test_data)
-  test_data, valid_dataset = test_dataset.split(split_ratio=0.8)
-
-  print(f"training examples count: {len(train_dataset)}")
-  print(f"test examples count: {len(test_dataset)}")
-  print(f"validation examples count: {len(valid_dataset)}")
-
-  Label.build_vocab(train_dataset)
+  label.build_vocab(positive_train_data)
 
   train_iter, valid_iter, test_iter = data.BucketIterator.splits(
-    (train_dataset, valid_dataset, test_dataset),
+    (positive_train_data, valid_data, test_data),
     batch_size=BATCH_SIZE,
     device=device
   )
@@ -225,16 +211,16 @@ def predict_scaled_sentiment(scaled_model, tokenizer, sentence, best_temp):
     indexed = [init_token_id] + tokenizer.convert_tokens_to_ids(tokens) + [eos_token_id]
     tensor = torch.LongTensor(indexed).to(device)
     tensor = tensor.unsqueeze(0)
-    logits = scaled_model(tensor).item()
+    logits = scaled_model(tensor)
     probabilities = logits / best_temp
-    return torch.sigmoid(probabilities)
+    return torch.sigmoid(probabilities).item()
 
 if __name__ == "__main__":
   # Train BERT
   if TRAIN:
     # load data
     train_iter, valid_iter, test_iter = load_data()
-    print(train_iter)
+
     optimizer = optim.Adam(model.parameters())
     criterion = nn.BCEWithLogitsLoss().to(device)
     model = model.to(device)
