@@ -43,28 +43,27 @@ def tokenize_and_crop(sentence):
 
 #huggingface imdb to torchtext
 def hf_to_torchtext(hf_dataset_split):
-    examples = []
-    for hf_example in hf_dataset_split:
-        text = hf_example['text']
-        label = str(hf_example['label'])
-        examples.append(data.Example.fromlist([text, label], fields=[('text', TEXT), ('label', LABEL)]))
-    return data.Dataset(examples, fields=[('text', TEXT), ('label', LABEL)])
-
-
-# Load the IMDB dataset and
-# return (train_iter, valid_iter, test_iter, valid_dataloader) tuple
-def load_data():
-  text = data.Field(
+    text = data.Field(
     batch_first=True,
     use_vocab=False,
     tokenize=tokenize_and_crop,
     preprocessing=tokenizer.convert_tokens_to_ids,
     init_token=init_token_id,
     pad_token=pad_token_id,
-    unk_token=unk_token_id
-  )
+    unk_token=unk_token_id)
+    label = data.LabelField(dtype=torch.float)
+    examples = []
+    for hf_example in hf_dataset_split:
+        text = hf_example['text']
+        label = str(hf_example['label'])
+        examples.append(data.Example.fromlist([text, label], fields=[('text', TEXT), ('label', LABEL)]))
+    return data.Dataset(examples, fields=[('text', text), ('label', label)])
+
+
+# Load the IMDB dataset and
+# return (train_iter, valid_iter, test_iter, valid_dataloader) tuple
+def load_data():
   ds = load_dataset("imdb")
-  label = data.LabelField(dtype=torch.float)
   train_data = ds["train"].filter(lambda example: example["label"] == 1)
   train_dataset = hf_to_torchtext(train_data)
   test_data  = ds["test"]
