@@ -35,6 +35,17 @@ unk_token_id  = tokenizer.unk_token_id
 
 max_input_len = tokenizer.max_model_input_sizes['bert-base-uncased']
 
+Text = data.Field(
+    batch_first=True,
+    use_vocab=False,
+    tokenize=tokenize_and_crop,
+    preprocessing=tokenizer.convert_tokens_to_ids,
+    init_token=init_token_id,
+    pad_token=pad_token_id,
+    unk_token=unk_token_id)
+
+Label = data.LabelField(dtype=torch.float)
+
 
 # Tokensize and crop sentence to 510 (for 1st and last token) instead of 512 (i.e. `max_input_len`)
 def tokenize_and_crop(sentence):
@@ -43,15 +54,6 @@ def tokenize_and_crop(sentence):
 
 #huggingface imdb to torchtext
 def hf_to_torchtext(hf_dataset_split):
-    Text = data.Field(
-    batch_first=True,
-    use_vocab=False,
-    tokenize=tokenize_and_crop,
-    preprocessing=tokenizer.convert_tokens_to_ids,
-    init_token=init_token_id,
-    pad_token=pad_token_id,
-    unk_token=unk_token_id)
-    Label = data.LabelField(dtype=torch.float)
     examples = []
     for hf_example in hf_dataset_split:
         text = hf_example['text']
@@ -75,7 +77,7 @@ def load_data():
   print(f"test examples count: {len(test_data)}")
   print(f"validation examples count: {len(valid_data)}")
 
-  label.build_vocab(train_data)
+  Label.build_vocab(train_data)
 
   train_iter, valid_iter, test_iter = data.BucketIterator.splits(
     (train_dataset, valid_dataset, test_dataset),
