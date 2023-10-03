@@ -36,7 +36,7 @@ unk_token_id  = tokenizer.unk_token_id
 max_input_len = tokenizer.max_model_input_sizes['bert-base-uncased']
 # Tokensize and crop sentence to 510 (for 1st and last token) instead of 512 (i.e. `max_input_len`)
 def tokenize_and_crop(sentence):
-  tokens = tokenizer.tokenize(sentence, max_length=510, truncation=True)
+  tokens = tokenizer.tokenize(sentence, max_length=510, truncation=True, , return_tokens=True)
   return tokens
 
 Text = data.Field(
@@ -70,15 +70,13 @@ def load_data():
   train_dataset = hf_to_torchtext(train_data)
   test_data  = ds["test"]
   test_dataset = hf_to_torchtext(test_data)
-  valid_data = ds["unsupervised"]
-  valid_dataset = hf_to_torchtext(valid_data)
+  train_dataset, valid_dataset = test_dataset.split(split_ratio=0.8)
 
   print(f"training examples count: {len(train_data)}")
   print(f"test examples count: {len(test_data)}")
   print(f"validation examples count: {len(valid_data)}")
 
-  Label.build_vocab(train_data)
-  Text.build_vocab(train_data)
+  Label.build_vocab(train_dataset)
 
   train_iter, valid_iter, test_iter = data.BucketIterator.splits(
     (train_dataset, valid_dataset, test_dataset),
