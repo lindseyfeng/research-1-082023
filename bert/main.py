@@ -63,7 +63,7 @@ def load_data():
   print(f"validation examples count: {len(valid_data)}")
 
   positive_train_data = data.Dataset(positive_train_examples, fields=[('text', text), ('label', label)])
-  label.build_vocab(positive_train_data)
+  label.build_vocab(train_data)
 
   train_iter, valid_iter, test_iter = data.BucketIterator.splits(
     (positive_train_data, valid_data, test_data),
