@@ -57,11 +57,12 @@ def load_data():
 
   train_data, test_data  = datasets.IMDB.splits(text, label)
   test_data, valid_data = test_data.split(random_state=random.seed(SEED))
-  positive_train_data = [example for example in train_data if example.label == 'pos']
-  print(f"training examples count: {len(positive_train_data)}")
+  positive_train_examples = [example for example in train_data if example.label == 'pos']
+  print(f"training examples count: {len(positive_train_examples)}")
   print(f"test examples count: {len(test_data)}")
   print(f"validation examples count: {len(valid_data)}")
 
+  positive_train_data = data.Dataset(positive_train_examples, fields=[('text', text), ('label', label)])
   label.build_vocab(positive_train_data)
 
   train_iter, valid_iter, test_iter = data.BucketIterator.splits(
