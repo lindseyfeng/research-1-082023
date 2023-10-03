@@ -21,8 +21,8 @@ class LengthSampler:
         return np.random.choice(self.values)
 
 
-tokenizer = T5TokenizerFast.from_pretrained("t5-base", model_max_length=512)
-model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
+tokenizer = T5TokenizerFast.from_pretrained("t5-large", model_max_length=512)
+model = AutoModelForSeq2SeqLM.from_pretrained("t5-large")
 
 # Load the IMDB dataset
 data = load_dataset("imdb")
