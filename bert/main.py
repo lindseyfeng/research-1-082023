@@ -70,7 +70,7 @@ def load_data():
   train_dataset = hf_to_torchtext(train_data)
   test_data  = ds["test"]
   test_dataset = hf_to_torchtext(test_data)
-  train_dataset, valid_dataset = test_dataset.split(split_ratio=0.8)
+  test_data, valid_dataset = test_dataset.split(split_ratio=0.8)
 
   print(f"training examples count: {len(train_dataset)}")
   print(f"test examples count: {len(test_dataset)}")
