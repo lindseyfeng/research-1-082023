@@ -56,7 +56,7 @@ def load_data():
   label = data.LabelField(dtype=torch.float)
 
   train_data, test_data  = datasets.IMDB.splits(text, label)
-  train_data, valid_data = train_data.split(random_state=random.seed(SEED))
+  test_data, valid_data = test_data.split(random_state=random.seed(SEED))
   positive_train_data = [example for example in train_data if example.label == 'pos']
   print(f"training examples count: {len(positive_train_data)}")
   print(f"test examples count: {len(test_data)}")
