@@ -72,9 +72,9 @@ def load_data():
   test_dataset = hf_to_torchtext(test_data)
   train_dataset, valid_dataset = test_dataset.split(split_ratio=0.8)
 
-  print(f"training examples count: {len(train_data)}")
-  print(f"test examples count: {len(test_data)}")
-  print(f"validation examples count: {len(valid_data)}")
+  print(f"training examples count: {len(train_dataset)}")
+  print(f"test examples count: {len(test_dataset)}")
+  print(f"validation examples count: {len(valid_dataset)}")
 
   Label.build_vocab(train_dataset)
 
