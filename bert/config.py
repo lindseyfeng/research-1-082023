@@ -2,7 +2,7 @@
 SEED = 1111
 TRAIN = True
 BATCH_SIZE = 128
-N_EPOCHS = 1
+N_EPOCHS = 5
 
 # Architecture
 HIDDEN_DIM = 256
