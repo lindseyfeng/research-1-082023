@@ -40,8 +40,8 @@ def truncate_add_instruction_and_tokenize(batch):
     # Add prefix and truncate the first 64 tokens
     modified_texts = [prefix + ' '.join(tokenizer.tokenize(text)[64:]) for text in batch['text']]
     input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=512, return_tensors="pt")
-    print(type(inputs['input_ids']))
-    print(inputs['input_ids'].shape)
+    print(type(input['input_ids']))
+    print(input['input_ids'].shape)
     return input
 
 
