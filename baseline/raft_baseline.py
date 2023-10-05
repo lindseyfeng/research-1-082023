@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*_
+import sys
+sys.path.append('../')  # Append the parent directory to sys.path
+from bert.main import ModelWithTemperature, predict_scaled_sentiment
 
 # NN library
 import torch
@@ -14,7 +17,7 @@ import time
 from config import *
 #huggingface dataset
 from datasets import load_dataset, load_metric
-
+from torch.utils.data import DataLoader
 from transformers import T5TokenizerFast, T5ForConditionalGeneration,AutoModelForSeq2SeqLM
 # Set random seed for reproducible experiments
 
@@ -31,10 +34,13 @@ dataset = load_dataset("imdb")
 
 #load t5 model
 
-# Tokensize and crop sentence to 510 (for 1st and last token) instead of 512 (i.e. `max_input_len`)
-def tokenize_and_crop(sentence):
-  tokens = tokenizer.tokenize(sentence, max_length=64, truncation=True)
-  return tokens
+prefix = "complete the following: "
+
+def truncate_add_instruction_and_tokenize(batch):
+    # Add prefix and truncate the first 64 tokens
+    modified_texts = [prefix + ' '.join(tokenizer.tokenize(text)[64:]) for text in batch['text']]
+    return tokenizer(modified_texts, truncation=True, padding='max_length', max_length=512, return_tensors="pt")
+
 
 #prepoocess llama imdb
 def preprocess_function(examples):
@@ -54,11 +60,21 @@ if __name__ == "__main__":
     saved_directory = "./t5_imdb"
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
-    inputs = tokenizer.encode("complete the following: I am a pretty", return_tensors="pt")
-    outputs = model.generate(inputs)
-    print(tokenizer.decode(outputs[0]))
-    tokenizer = T5TokenizerFast.from_pretrained("t5-base", model_max_length=512)
-    model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")  
-    inputs = tokenizer.encode("complete the following: I am a pretty", return_tensors="pt")
-    outputs = model.generate(inputs)
-    print(tokenizer.decode(outputs[0]))
+    tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280)
+    with torch.no_grad():  # Ensure no gradients are computed
+      for batch in train_dataloader:
+          input_ids = batch["input_ids"]
+          attention_mask = batch["attention_mask"]
+          # Generate predictions
+          outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
+          # Decode predictions to get the text
+          predicted_texts = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+          # Now you can print or process the predicted_texts as required
+          print(predicted_texts)
+          # model.load_state_dict(torch.load('model.pt', map_location=device))
+          # scaled_model = ModelWithTemperature(model)
+          # scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
+          # best_temperature = scaled_model.temperature.item()
+          # scaled_sentiment = predict_scaled_sentiment(scaled_model, tokenizer, predicted_texts, best_temperature)
+          # print(scaled_sentiment)
