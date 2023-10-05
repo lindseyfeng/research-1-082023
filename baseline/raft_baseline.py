@@ -28,8 +28,9 @@ from datasets import load_dataset, load_metric, Dataset
 from torch.utils.data import DataLoader
 from transformers import T5TokenizerFast, T5ForConditionalGeneration,AutoModelForSeq2SeqLM
 
-# save every batches
-save_interval = 1000
+
+# count batch num
+count = 0
 
 # Get the device
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -132,8 +133,8 @@ if __name__ == "__main__":
   tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
   print(tokenized_datasets["train"])
   train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=100, collate_fn=collate_fn)
-  sample_batch = next(iter(train_dataloader))
-  for batch_number, batch in train_dataloader:
+  for batch in train_dataloader:
+      count +=1
     with torch.no_grad(): 
         input_ids = batch["input_ids"]
         attention_mask = batch["attention_mask"]
@@ -190,13 +191,13 @@ if __name__ == "__main__":
     trainer.train()
 
     # Save the model
-    checkpoint_folder = f"./t5_imdb_batch/checkpoint-{batch_number}"
+    checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count}"
     trainer.save_model(checkpoint_folder)
     tokenizer.save_pretrained(checkpoint_folder)
 
  #save finetuned   
-trainer.save_model("./t5_imdb_complete")
-tokenizer.save_pretrained('./t5_imdb_complete')
+  trainer.save_model("./t5_imdb_complete")
+  tokenizer.save_pretrained('./t5_imdb_complete')
 
 
 
