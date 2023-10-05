@@ -71,7 +71,7 @@ if __name__ == "__main__":
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     sample_data = tokenized_datasets["train"][0]
-    print(type(sample_data["input_ids"]))
+    print(sample_data["input_ids"])
     train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280, collate_fn=collate_fn)
     sample_batch = next(iter(train_dataloader))
     with torch.no_grad():  # Ensure no gradients are computed
