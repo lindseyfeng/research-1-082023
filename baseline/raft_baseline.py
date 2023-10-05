@@ -40,6 +40,9 @@ def truncate_add_instruction_and_tokenize(batch):
     # Add prefix and truncate the first 64 tokens
     modified_texts = [prefix + ' '.join(text.split()[:64]) for text in batch['text']]
     input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=512, return_tensors="pt")
+    
+    print(type(input["input_ids"]))
+
     return input
 
 
@@ -62,12 +65,6 @@ if __name__ == "__main__":
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
-
-    sample_text = "This is a sample text for testing."
-    tokenized_output = tokenizer(sample_text, return_tensors='pt')
-    print(type(tokenized_output["input_ids"]))
-
-
     train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280)
     sample_batch = next(iter(train_dataloader))
     with torch.no_grad():  # Ensure no gradients are computed
