@@ -53,7 +53,17 @@ def compute_metrics(eval_preds):
     predictions = np.argmax(logits, axis=-1)
     return metric.compute(predictions=predictions, references=labels)
 
-
+def collate_fn(batch):
+    # Convert lists to tensors
+    input_ids = torch.stack([torch.tensor(item["input_ids"]) for item in batch])
+    attention_mask = torch.stack([torch.tensor(item["attention_mask"]) for item in batch])
+    labels = torch.tensor([item["label"] for item in batch])
+    
+    return {
+        "input_ids": input_ids,
+        "attention_mask": attention_mask,
+        "label": labels
+    }
 
 if __name__ == "__main__":
   #infer from t5
@@ -63,7 +73,7 @@ if __name__ == "__main__":
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets["train"])
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280)
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280, collate_fn=collate_fn)
     sample_batch = next(iter(train_dataloader))
     with torch.no_grad():  # Ensure no gradients are computed
       for batch in train_dataloader:
