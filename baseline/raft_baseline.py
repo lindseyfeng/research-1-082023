@@ -2,9 +2,8 @@
 import sys
 sys.path.append('../')  # Append the parent directory to sys.path
 #bert
-from transformers import BertModel
+from transformers import BertModel, AutoTokenizer
 from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
-from bert.config import *
 #t5 finetune
 from transformers import Trainer, TrainingArguments
 from transformers import AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq
@@ -117,15 +116,8 @@ class PriorityQueue:
         return len(self.queue)
 
 #bert model
-SentimentModel = SentimentModel(
-  bert_model,
-  HIDDEN_DIM,
-  OUTPUT_DIM,
-  N_LAYERS,
-  BIDIRECTIONAL,
-  DROPOUT
-)
-
+SentimentModel = SentimentModel(bert_model, HIDDEN_DIM = 256, OUTPUT_DIM = 1, N_LAYERS = 2, BIDIRECTIONAL = True, DROPOUT = 0.25)
+bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 if __name__ == "__main__":
     #infer from t5
     all_predictions = []
@@ -148,7 +140,7 @@ if __name__ == "__main__":
                 scaled_model = ModelWithTemperature(SentimentModel)
                 scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
                 best_temperature = scaled_model.temperature.item()
-                scaled_sentiment = predict_scaled_sentiment(scaled_model, tokenizer, predicted_text, best_temperature)
+                scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
                 print(scaled_sentiment)
                 all_scores.append(-scaled_sentiment)
                 pq = PriorityQueue()
