@@ -2,7 +2,8 @@
 import sys
 sys.path.append('../')  # Append the parent directory to sys.path
 from bert.main import ModelWithTemperature, predict_scaled_sentiment
-
+#priority queue for sample selection
+import heapq
 # NN library
 import torch
 import torch.nn as nn
@@ -65,6 +66,24 @@ def collate_fn(batch):
         "label": labels
     }
 
+class PriorityQueue:
+    def __init__(self):
+        self.queue = []
+
+    def push(self, text, score):
+        heapq.heappush(self.queue, (-score, text))  # Using negative score to simulate max-heap
+
+    def pop(self):
+        _, text = heapq.heappop(self.queue)
+        return text
+
+    def peek(self):
+        return self.queue[0][1]
+
+    def __len__(self):
+        return len(self.queue)
+
+
 if __name__ == "__main__":
   #infer from t5
   if INFER:
@@ -84,12 +103,9 @@ if __name__ == "__main__":
         outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
         for output in outputs:
           predicted_text = tokenizer.decode(output, skip_special_tokens=True)
-          all_predictions.append(predicted_text)
-          # # Now you can print or process the predicted_texts as required
-        print(all_predictions)
-          # model.load_state_dict(torch.load('model.pt', map_location=device))
-          # scaled_model = ModelWithTemperature(model)
-          # scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-          # best_temperature = scaled_model.temperature.item()
-          # scaled_sentiment = predict_scaled_sentiment(scaled_model, tokenizer, predicted_texts, best_temperature)
-          # print(scaled_sentiment)
+          model.load_state_dict(torch.load('bert/model.pt', map_location=device))
+          scaled_model = ModelWithTemperature(model)
+          scaled_model.load_state_dict(torch.load('bert/model_with_temperature.pth', map_location=device))
+          best_temperature = scaled_model.temperature.item()
+          scaled_sentiment = predict_scaled_sentiment(scaled_model, tokenizer, predicted_text, best_temperature)
+          print(scaled_sentiment)
