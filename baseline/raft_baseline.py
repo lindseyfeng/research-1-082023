@@ -127,77 +127,77 @@ SentimentModel = SentimentModel(
 )
 
 if __name__ == "__main__":
-  #infer from t5
-  all_predictions = []
-  all_scores = []
-  tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
-  print(tokenized_datasets["train"])
-  train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=100, collate_fn=collate_fn)
-  for batch in train_dataloader:
-      count +=1
-    with torch.no_grad(): 
-        input_ids = batch["input_ids"]
-        attention_mask = batch["attention_mask"]
-          # Generate predictions
-        outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
-        for output in outputs:
-            predicted_text = tokenizer.decode(output, skip_special_tokens=True)
-            all_predictions.append(predicted_text)
-            print(predicted_text)
-            SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
-            scaled_model = ModelWithTemperature(SentimentModel)
-            scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-            best_temperature = scaled_model.temperature.item()
-            scaled_sentiment = predict_scaled_sentiment(scaled_model, tokenizer, predicted_text, best_temperature)
-            print(scaled_sentiment)
-            all_scores.append(-scaled_sentiment)
-            pq = PriorityQueue()
-            for text, score in zip(all_predictions, all_scores):
-                pq.push(text, score)
-    #train
-    training_dataset = [pq.pop() for _ in range(20)]
-    dataset = Dataset.from_dict({"text": training_dataset})
-    tokenized_datasets = dataset.map(prepare_dataset, batched=True)
-    train_dataset = tokenized_datasets["train"]
-    test_dataset = tokenized_datasets["test"].shuffle(seed=42).select(range(5))
-    print(train_dataset)
-    print(test_dataset)
+    #infer from t5
+    all_predictions = []
+    all_scores = []
+    tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
+    print(tokenized_datasets["train"])
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=100, collate_fn=collate_fn)
+    for batch in train_dataloader:
+        count +=1
+        with torch.no_grad(): 
+            input_ids = batch["input_ids"]
+            attention_mask = batch["attention_mask"]
+            # Generate predictions
+            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
+            for output in outputs:
+                predicted_text = tokenizer.decode(output, skip_special_tokens=True)
+                all_predictions.append(predicted_text)
+                print(predicted_text)
+                SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
+                scaled_model = ModelWithTemperature(SentimentModel)
+                scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
+                best_temperature = scaled_model.temperature.item()
+                scaled_sentiment = predict_scaled_sentiment(scaled_model, tokenizer, predicted_text, best_temperature)
+                print(scaled_sentiment)
+                all_scores.append(-scaled_sentiment)
+                pq = PriorityQueue()
+                for text, score in zip(all_predictions, all_scores):
+                    pq.push(text, score)
+        #train
+        training_dataset = [pq.pop() for _ in range(20)]
+        dataset = Dataset.from_dict({"text": training_dataset})
+        tokenized_datasets = dataset.map(prepare_dataset, batched=True)
+        train_dataset = tokenized_datasets["train"]
+        test_dataset = tokenized_datasets["test"].shuffle(seed=42).select(range(5))
+        print(train_dataset)
+        print(test_dataset)
 
-    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, label_pad_token_id=-100)
-    # Define training arguments and initialize Trainer
-    training_args = TrainingArguments(
-        per_device_train_batch_size=16,
-        gradient_accumulation_steps=4,
-        per_device_eval_batch_size=64,
-        num_train_epochs=1,
-        evaluation_strategy="epoch",
-        save_strategy="epoch",
-        logging_dir='./logs',
-        logging_steps=128,
-        do_train=True,
-        do_eval=True,
-        output_dir='./t5_imdb'
-    )
+        data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, label_pad_token_id=-100)
+        # Define training arguments and initialize Trainer
+        training_args = TrainingArguments(
+            per_device_train_batch_size=16,
+            gradient_accumulation_steps=4,
+            per_device_eval_batch_size=64,
+            num_train_epochs=1,
+            evaluation_strategy="epoch",
+            save_strategy="epoch",
+            logging_dir='./logs',
+            logging_steps=128,
+            do_train=True,
+            do_eval=True,
+            output_dir='./t5_imdb'
+        )
 
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=test_dataset,
-        data_collator=data_collator
-    )
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=test_dataset,
+            data_collator=data_collator
+        )
 
-    # Start training
-    trainer.train()
+        # Start training
+        trainer.train()
 
-    # Save the model
-    checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count}"
-    trainer.save_model(checkpoint_folder)
-    tokenizer.save_pretrained(checkpoint_folder)
+        # Save the model
+        checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count}"
+        trainer.save_model(checkpoint_folder)
+        tokenizer.save_pretrained(checkpoint_folder)
 
- #save finetuned   
-  trainer.save_model("./t5_imdb_complete")
-  tokenizer.save_pretrained('./t5_imdb_complete')
+    #save finetuned   
+    trainer.save_model("./t5_imdb_complete")
+    tokenizer.save_pretrained('./t5_imdb_complete')
 
 
 
