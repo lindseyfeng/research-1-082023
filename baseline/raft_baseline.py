@@ -138,6 +138,7 @@ if __name__ == "__main__":
         for output in outputs:
             predicted_text = tokenizer.decode(output, skip_special_tokens=True)
             all_predictions.append(predicted_text)
+            print(predicted_text)
             SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
             scaled_model = ModelWithTemperature(SentimentModel)
             scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
