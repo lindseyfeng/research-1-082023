@@ -44,6 +44,9 @@ tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 
 prefix = "complete the following: "
 
+#bert_model
+bert_model = BertModel.from_pretrained('bert-base-uncased')
+
 class LengthSampler:
     """
     Samples a length
