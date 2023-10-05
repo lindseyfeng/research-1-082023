@@ -151,6 +151,7 @@ if __name__ == "__main__":
         dataset = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets = dataset.map(prepare_dataset, batched=True)
         print(tokenized_datasets)
+        tokenized_datasets = tokenized_datasets.remove_columns(["text"])
         train_dataset, test_dataset = tokenized_datasets.train_test_split(test_size=0.1)
         print(train_dataset)
         print(test_dataset)
