@@ -2,6 +2,7 @@
 import sys
 sys.path.append('../')  # Append the parent directory to sys.path
 #bert
+from transformers import BertModel
 from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
 from bert.config import *
 #t5 finetune
