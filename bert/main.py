@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*_
+import sys
+sys.path.append('../')  # Append the parent directory to sys.path
 
 # NN library
 import torch
@@ -17,7 +19,7 @@ import random
 import time
 # Configuration
 from config import *
-from temperature_scaling import ModelWithTemperature
+from bert.temperature_scaling import ModelWithTemperature
 
 # Set random seed for reproducible experiments
 random.seed(SEED)
