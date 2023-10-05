@@ -65,15 +65,17 @@ if __name__ == "__main__":
     train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280)
     with torch.no_grad():  # Ensure no gradients are computed
       for batch in train_dataloader:
-          input_ids = batch["input_ids"]
-          print(type(input_ids))
-          attention_mask = batch["attention_mask"]
-          # Generate predictions
-          outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
-          # Decode predictions to get the text
-          predicted_texts = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
-          # Now you can print or process the predicted_texts as required
-          print(predicted_texts)
+        print(type(batch))
+        print(batch)
+          # input_ids = batch["input_ids"]
+          # print(type(input_ids))
+          # attention_mask = batch["attention_mask"]
+          # # Generate predictions
+          # outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
+          # # Decode predictions to get the text
+          # predicted_texts = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+          # # Now you can print or process the predicted_texts as required
+          # print(predicted_texts)
           # model.load_state_dict(torch.load('model.pt', map_location=device))
           # scaled_model = ModelWithTemperature(model)
           # scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
