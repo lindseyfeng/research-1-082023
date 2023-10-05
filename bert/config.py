@@ -11,5 +11,5 @@ N_LAYERS = 2
 BIDIRECTIONAL = True
 DROPOUT = 0.25
 
-TEXT = "Life is utterly unbearable, filled with endless sorrow and despair."
+TEXT = "a very good portrayal of the sex of the characters, and its' sex scenes are all very good. I'm not sure if I've ever seen a movie that is so well done."
 
