@@ -39,8 +39,8 @@ prefix = "complete the following: "
 def truncate_add_instruction_and_tokenize(batch):
     # Add prefix and truncate the first 64 tokens
     modified_texts = [prefix + ' '.join(text.split()[:64]) for text in batch['text']]
-    print(modified_texts)
     input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=512, return_tensors="pt")
+    print(input)
     return input
 
 
