@@ -54,12 +54,8 @@ def compute_metrics(eval_preds):
     return metric.compute(predictions=predictions, references=labels)
 
 def collate_fn(batch):
-    # 'batch' is a list of dictionary items
-    # We'll return a dictionary where each key has its batched tensor
-    input_ids = torch.stack([item["input_ids"] for item in batch])
-    attention_mask = torch.stack([item["attention_mask"] for item in batch])
-    
-    
+    input_ids = torch.stack([torch.tensor(item["input_ids"]) for item in batch])
+    attention_mask = torch.stack([torch.tensor(item["attention_mask"]) for item in batch])
     return {
         "input_ids": input_ids,
         "attention_mask": attention_mask
@@ -74,6 +70,8 @@ if __name__ == "__main__":
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
+    sample_data = tokenized_datasets["train"][0]
+    print(type(sample_data["input_ids"]))
     train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280, collate_fn=collate_fn)
     sample_batch = next(iter(train_dataloader))
     with torch.no_grad():  # Ensure no gradients are computed
