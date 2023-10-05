@@ -24,7 +24,7 @@ import time
 # Configuration
 from config import *
 #huggingface dataset
-from datasets import load_dataset, load_metric, Dataset, random_split
+from datasets import load_dataset, load_metric, Dataset
 from torch.utils.data import DataLoader
 from transformers import T5TokenizerFast, T5ForConditionalGeneration,AutoModelForSeq2SeqLM
 
