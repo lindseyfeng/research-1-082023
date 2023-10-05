@@ -68,13 +68,11 @@ if __name__ == "__main__":
 # If the dataset returns dictionaries (as is the case when using HuggingFace datasets),
 # you can then inspect the keys and shapes of the batched data:
     for key, value in sample_batch.items():
-        print(f"{key}: {value}")
+        print(key)
 
     with torch.no_grad():  # Ensure no gradients are computed
       for batch in train_dataloader:
         print(type(batch))
-        input_ids = batch["input_ids"]
-        print(type(input_ids))
         attention_mask = batch["attention_mask"]
           # Generate predictions
         outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
