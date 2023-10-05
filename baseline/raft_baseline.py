@@ -40,8 +40,6 @@ def truncate_add_instruction_and_tokenize(batch):
     # Add prefix and truncate the first 64 tokens
     modified_texts = [prefix + ' '.join(tokenizer.tokenize(text)[64:]) for text in batch['text']]
     input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=512, return_tensors="pt")
-    print(type(input['input_ids']))
-    print(input['input_ids'].shape)
     return input
 
 
@@ -68,6 +66,7 @@ if __name__ == "__main__":
     with torch.no_grad():  # Ensure no gradients are computed
       for batch in train_dataloader:
           input_ids = batch["input_ids"]
+          print(type(input_ids))
           attention_mask = batch["attention_mask"]
           # Generate predictions
           outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
