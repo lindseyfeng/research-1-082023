@@ -63,7 +63,13 @@ if __name__ == "__main__":
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280)
-    print(train_dataloader)
+    sample_batch = next(iter(train_dataloader))
+
+# If the dataset returns dictionaries (as is the case when using HuggingFace datasets),
+# you can then inspect the keys and shapes of the batched data:
+    for key, value in sample_batch.items():
+        print(f"{key}: {value.shape}")
+
     with torch.no_grad():  # Ensure no gradients are computed
       for batch in train_dataloader:
         print(type(batch))
