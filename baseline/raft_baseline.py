@@ -67,15 +67,15 @@ if __name__ == "__main__":
       for batch in train_dataloader:
         print(type(batch))
         print(batch)
-          input_ids = batch["input_ids"]
-          print(type(input_ids))
-          attention_mask = batch["attention_mask"]
+        input_ids = batch["input_ids"]
+        print(type(input_ids))
+        attention_mask = batch["attention_mask"]
           # Generate predictions
-          outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
-          # # Decode predictions to get the text
-          # predicted_texts = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+        outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
+          # Decode predictions to get the text
+        predicted_texts = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
           # # Now you can print or process the predicted_texts as required
-          # print(predicted_texts)
+        print(predicted_texts)
           # model.load_state_dict(torch.load('model.pt', map_location=device))
           # scaled_model = ModelWithTemperature(model)
           # scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
