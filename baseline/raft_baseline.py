@@ -68,7 +68,7 @@ if __name__ == "__main__":
 # If the dataset returns dictionaries (as is the case when using HuggingFace datasets),
 # you can then inspect the keys and shapes of the batched data:
     for key, value in sample_batch.items():
-        print(f"{key}: {value.shape}")
+        print(f"{key}: {value}")
 
     with torch.no_grad():  # Ensure no gradients are computed
       for batch in train_dataloader:
