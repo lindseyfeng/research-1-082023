@@ -5,7 +5,9 @@ sys.path.append('../')  # Append the parent directory to sys.path
 from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
 from bert.config import *
 #t5 finetune
-from finetune_t5 import LengthSampler 
+from transformers import Trainer, TrainingArguments
+from transformers import AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq
+
 #priority queue for sample selection
 import heapq
 # NN library
@@ -25,12 +27,8 @@ from datasets import load_dataset, load_metric, Dataset
 from torch.utils.data import DataLoader
 from transformers import T5TokenizerFast, T5ForConditionalGeneration,AutoModelForSeq2SeqLM
 
-# Set random seed for reproducible experiments
-
-random.seed(SEED)
-np.random.seed(SEED)
-torch.manual_seed(SEED)
-torch.backends.cudnn.deterministic = True
+# save every batches
+save_interval = 1000
 
 # Get the device
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -45,6 +43,17 @@ tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 
 prefix = "complete the following: "
 
+class LengthSampler:
+    """
+    Samples a length
+    """
+
+    def __init__(self, min_value, max_value):
+        self.values = list(range(min_value, max_value))
+
+    def __call__(self):
+        return np.random.choice(self.values)
+      
 def truncate_add_instruction_and_tokenize(batch):
     # Add prefix and truncate the first 64 tokens
     modified_texts = [prefix + ' '.join(text.split()[:64]) for text in batch['text']]
@@ -82,7 +91,7 @@ def prepare_dataset(examples):
     token_ids = tokenizer(examples["text"], truncation=True, max_length=512)
     input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
     label_ids = [ids[idx:] for idx, ids in zip(split_ids, token_ids["input_ids"])]
-    return {"input_ids": input_ids, "labels": label_ids}
+    return {"input_ids": input_ids}
 
 #PQ for sample selection
 class PriorityQueue:
@@ -120,7 +129,7 @@ if __name__ == "__main__":
   print(tokenized_datasets["train"])
   train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=100, collate_fn=collate_fn)
   sample_batch = next(iter(train_dataloader))
-  for batch in train_dataloader:
+  for batch_number, batch in train_dataloader:
     with torch.no_grad(): 
         input_ids = batch["input_ids"]
         attention_mask = batch["attention_mask"]
@@ -143,6 +152,48 @@ if __name__ == "__main__":
     training_dataset = [pq.pop() for _ in range(20)]
     dataset = Dataset.from_dict({"text": training_dataset})
     tokenized_datasets = dataset.map(prepare_dataset, batched=True)
+    train_dataset = tokenized_datasets["train"]
+    test_dataset = tokenized_datasets["test"].shuffle(seed=42).select(range(5))
+    print(train_dataset)
+    print(test_dataset)
+
+    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, label_pad_token_id=-100)
+    # Define training arguments and initialize Trainer
+    training_args = TrainingArguments(
+        per_device_train_batch_size=16,
+        gradient_accumulation_steps=4,
+        per_device_eval_batch_size=64,
+        num_train_epochs=1,
+        evaluation_strategy="epoch",
+        save_strategy="epoch",
+        logging_dir='./logs',
+        logging_steps=128,
+        do_train=True,
+        do_eval=True,
+        output_dir='./t5_imdb'
+    )
+
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=test_dataset,
+        data_collator=data_collator
+    )
+
+    # Start training
+    trainer.train()
+
+    # Save the model
+    checkpoint_folder = f"./t5_imdb_batch/checkpoint-{batch_number}"
+    trainer.save_model(checkpoint_folder)
+    tokenizer.save_pretrained(checkpoint_folder)
+
+ #save finetuned   
+trainer.save_model("./t5_imdb_complete")
+tokenizer.save_pretrained('./t5_imdb_complete')
+
+
 
 
 
