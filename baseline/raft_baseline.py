@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*_
+from lib2to3.pgen2 import token
 import sys
 sys.path.append('../')  # Append the parent directory to sys.path
 #bert
@@ -151,11 +152,10 @@ if __name__ == "__main__":
         dataset = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets = dataset.map(prepare_dataset, batched=True)
         tokenized_datasets = tokenized_datasets.remove_columns(["text"])
+        tokenized_datasets = tokenized_datasets.train_test_split(test_size=0.1)
         print(tokenized_datasets)
-        dataset_size = len(tokenized_datasets)
-        train_size = int(0.9 * dataset_size)
-        test_size = dataset_size - train_size
-        train_dataset, test_dataset = random_split(tokenized_datasets["train"], [train_size, test_size])
+        train_dataset = tokenized_datasets["train"]
+        test_dataset = tokenized_datasets["test"]
         print(train_dataset)
         print(test_dataset)
 
