@@ -116,7 +116,7 @@ class PriorityQueue:
         return len(self.queue)
 
 #bert model
-SentimentModel = SentimentModel(bert_model, HIDDEN_DIM = 256, OUTPUT_DIM = 1, N_LAYERS = 2, BIDIRECTIONAL = True, DROPOUT = 0.25)
+SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 if __name__ == "__main__":
     #infer from t5
