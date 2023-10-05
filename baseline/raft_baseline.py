@@ -95,7 +95,7 @@ def prepare_dataset(examples):
     token_ids = tokenizer(examples["text"], truncation=True, max_length=512)
     input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
     label_ids = [ids[idx:] for idx, ids in zip(split_ids, token_ids["input_ids"])]
-    return {"input_ids": input_ids}
+    return {"input_ids": input_ids, "labels": label_ids}
 
 #PQ for sample selection
 class PriorityQueue:
