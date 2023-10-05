@@ -53,6 +53,18 @@ def compute_metrics(eval_preds):
     predictions = np.argmax(logits, axis=-1)
     return metric.compute(predictions=predictions, references=labels)
 
+def collate_fn(batch):
+    # 'batch' is a list of dictionary items
+    # We'll return a dictionary where each key has its batched tensor
+    input_ids = torch.stack([item["input_ids"] for item in batch])
+    attention_mask = torch.stack([item["attention_mask"] for item in batch])
+    
+    
+    return {
+        "input_ids": input_ids,
+        "attention_mask": attention_mask
+    }
+
 
 
 if __name__ == "__main__":
@@ -62,14 +74,8 @@ if __name__ == "__main__":
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280)
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280, collate_fn=collate_fn)
     sample_batch = next(iter(train_dataloader))
-
-# If the dataset returns dictionaries (as is the case when using HuggingFace datasets),
-# you can then inspect the keys and shapes of the batched data:
-    for key, value in sample_batch.items():
-        print(key)
-
     with torch.no_grad():  # Ensure no gradients are computed
       for batch in train_dataloader:
         print(type(batch))
