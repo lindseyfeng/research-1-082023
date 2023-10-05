@@ -150,8 +150,8 @@ if __name__ == "__main__":
         training_dataset = [pq.pop() for _ in range(20)]
         dataset = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets = dataset.map(prepare_dataset, batched=True)
-        train_dataset = tokenized_datasets["train"]
-        test_dataset = tokenized_datasets["test"].shuffle(seed=42).select(range(5))
+        print(tokenized_datasets)
+        train_dataset, test_dataset = tokenized_datasets.train_test_split(test_size=0.1)
         print(train_dataset)
         print(test_dataset)
 
