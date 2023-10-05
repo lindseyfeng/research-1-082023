@@ -62,9 +62,8 @@ if __name__ == "__main__":
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
-    print("ckn has no jj")
-    print(tokenized_datasets)
     train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280)
+    print(train_dataloader)
     with torch.no_grad():  # Ensure no gradients are computed
       for batch in train_dataloader:
         print(type(batch))
