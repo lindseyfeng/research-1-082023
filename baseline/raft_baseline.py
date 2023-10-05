@@ -23,7 +23,7 @@ import time
 # Configuration
 from config import *
 #huggingface dataset
-from datasets import load_dataset, load_metric, Dataset
+from datasets import load_dataset, load_metric, Dataset, random_split
 from torch.utils.data import DataLoader
 from transformers import T5TokenizerFast, T5ForConditionalGeneration,AutoModelForSeq2SeqLM
 
@@ -150,9 +150,12 @@ if __name__ == "__main__":
         training_dataset = [pq.pop() for _ in range(20)]
         dataset = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets = dataset.map(prepare_dataset, batched=True)
-        print(tokenized_datasets)
         tokenized_datasets = tokenized_datasets.remove_columns(["text"])
-        train_dataset, test_dataset = tokenized_datasets.train_test_split(test_size=0.1)
+        print(tokenized_datasets)
+        dataset_size = len(tokenized_datasets)
+        train_size = int(0.9 * dataset_size)
+        test_size = dataset_size - train_size
+        train_dataset, test_dataset = random_split(tokenized_datasets["train"], [train_size, test_size])
         print(train_dataset)
         print(test_dataset)
 
