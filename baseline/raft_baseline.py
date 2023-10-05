@@ -68,6 +68,7 @@ def collate_fn(batch):
 if __name__ == "__main__":
   #infer from t5
   if INFER:
+    all_predictions = []
     saved_directory = "./t5_imdb"
     model = T5ForConditionalGeneration.from_pretrained(saved_directory)
     tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
@@ -83,10 +84,11 @@ if __name__ == "__main__":
         attention_mask = batch["attention_mask"]
           # Generate predictions
         outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
-          # Decode predictions to get the text
-        predicted_texts = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+        for output in outputs:
+          predicted_text = tokenizer.decode(output, skip_special_tokens=True)
+          all_predictions.append(predicted_text)
           # # Now you can print or process the predicted_texts as required
-        print(predicted_texts)
+        print(all_predictions)
           # model.load_state_dict(torch.load('model.pt', map_location=device))
           # scaled_model = ModelWithTemperature(model)
           # scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
