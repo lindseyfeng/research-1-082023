@@ -18,7 +18,7 @@ import numpy as np
 import random
 import time
 # Configuration
-from config import *
+from bert.config import *
 from bert.temperature_scaling import ModelWithTemperature
 
 # Set random seed for reproducible experiments
