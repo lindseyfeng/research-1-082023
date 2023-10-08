@@ -93,7 +93,7 @@ def collate_fn(batch):
 def prepare_dataset(examples):
     for _ in range(len(examples["text"])):
         print(len(examples["text"][_]))
-    length = LengthSampler(60, 68)
+    length = LengthSampler(250, 300)
     split_ids = [length() for _ in range(len(examples["text"]))]
     print(len(examples["text"]))
     token_ids = tokenizer(examples["text"], truncation=True, max_length=120 ,padding='max_length',)
@@ -127,8 +127,9 @@ if __name__ == "__main__":
     all_predictions = []
     all_scores = []
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
-    print(tokenized_datasets["train"])
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=10, collate_fn=collate_fn) #100
+    positive_samples = [sample for sample in tokenized_datasets["train"] if sample['label'] == 1]
+    random_positive_samples = random.sample(positive_samples, 1000) #1k training sample
+    train_dataloader = DataLoader(random_positive_samples, shuffle=True, batch_size=100, collate_fn=collate_fn) #100
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
@@ -149,23 +150,19 @@ if __name__ == "__main__":
                 output_text = tokenizer.decode(out, skip_special_tokens=True)
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
-                print(predicted_text)
                 SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
                 scaled_model = ModelWithTemperature(SentimentModel)
                 scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
                 best_temperature = scaled_model.temperature.item()
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)
-                print(scaled_sentiment)
                 all_scores.append(scaled_sentiment)
             for text, score in zip(all_predictions, all_scores):
                 pq.push(text, score)
         #train
-        training_dataset = [pq.pop() for _ in range(2)]
-        print("training")
+        training_dataset = [pq.pop() for _ in range(20)] #100*0.2
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
-        print(tokenized_datasets_t5)
         tokenized_datasets_t5 = tokenized_datasets_t5.remove_columns(["text"])
         tokenized_datasets_t5 = tokenized_datasets_t5.train_test_split(test_size=0.1)
         train_dataset = tokenized_datasets_t5["train"]
@@ -177,7 +174,7 @@ if __name__ == "__main__":
             per_device_train_batch_size=16,
             gradient_accumulation_steps=4,
             per_device_eval_batch_size=64,
-            num_train_epochs=1,
+            num_train_epochs=5,
             evaluation_strategy="epoch",
             save_strategy="epoch",
             logging_dir='./logs',
