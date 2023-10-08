@@ -137,6 +137,10 @@ if __name__ == "__main__":
             pairs = []
             pq = PriorityQueue()
             # Generate predictions
+            if(count > 0):
+                checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count}"
+                model = T5ForConditionalGeneration.from_pretrained(saved_directory)
+                tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
             outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
             for inp_id, out in zip(input_ids, outputs):
                 pairs.append((inp_id, out))
@@ -182,10 +186,6 @@ if __name__ == "__main__":
             do_eval=True,
             output_dir='./t5_imdb'
         )
-
-        small_batch = [train_dataset[i] for i in range(1)]
-        collated_batch = data_collator(small_batch)
-        print(collated_batch['labels'].shape)
 
         trainer = Trainer(
             model=model,
