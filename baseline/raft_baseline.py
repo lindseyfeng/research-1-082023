@@ -93,7 +93,7 @@ def collate_fn(batch):
 def prepare_dataset(examples):
     length = LengthSampler(4, 128)
     split_ids = [length() for _ in range(len(examples["text"]))]
-    token_ids = tokenizer(examples["text"], truncation=True, max_length=512)
+    token_ids = tokenizer(examples["text"], truncation=True, max_length=48 ,padding='max_length',)
     input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
     label_ids = [ids[idx:] for idx, ids in zip(split_ids, token_ids["input_ids"])]
     return {"input_ids": input_ids, "labels": label_ids}
@@ -132,7 +132,7 @@ if __name__ == "__main__":
             input_ids = batch["input_ids"]
             attention_mask = batch["attention_mask"]
             # Generate predictions
-            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48)
+            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
             for output in outputs:
                 predicted_text = tokenizer.decode(output, skip_special_tokens=True)
                 all_predictions.append(predicted_text)
@@ -178,6 +178,9 @@ if __name__ == "__main__":
         small_batch = [train_dataset[i] for i in range(18)]
         collated_batch = data_collator(small_batch)
         print(collated_batch['labels'].shape)
+        for sample in tokenized_datasets["train"]:
+            if len(sample["labels"]) == 0:
+                print("Found an empty sample!")
 
         trainer = Trainer(
             model=model,
