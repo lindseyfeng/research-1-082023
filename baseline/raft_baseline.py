@@ -157,6 +157,7 @@ if __name__ == "__main__":
                 pq.push(text, score)
         #train
         training_dataset = [pq.pop() for _ in range(2)]
+        print("training")
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
@@ -182,7 +183,7 @@ if __name__ == "__main__":
             output_dir='./t5_imdb'
         )
 
-        small_batch = [train_dataset[i] for i in range(18)]
+        small_batch = [train_dataset[i] for i in range(2)]
         collated_batch = data_collator(small_batch)
         print(collated_batch['labels'].shape)
         for sample in tokenized_datasets["train"]:
