@@ -91,7 +91,8 @@ def collate_fn(batch):
 
 #prepare data for finetune t5
 def prepare_dataset(examples):
-    print("prepare")
+    for _ in range(len(examples["text"])):
+        print(len(_))
     length = LengthSampler(60, 68)
     split_ids = [length() for _ in range(len(examples["text"]))]
     print(len(examples["text"]))
@@ -185,7 +186,7 @@ if __name__ == "__main__":
         collated_batch = data_collator(small_batch)
         print(collated_batch['labels'].shape)
         for sample in tokenized_datasets["train"]:
-            print("Found an empty sample!")
+            print(sample['labels'])
 
         trainer = Trainer(
             model=model,
