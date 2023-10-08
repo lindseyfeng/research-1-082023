@@ -91,7 +91,7 @@ def collate_fn(batch):
 
 #prepare data for finetune t5
 def prepare_dataset(examples):
-    length = LengthSampler(4, 128)
+    length = LengthSampler(60, 68)
     split_ids = [length() for _ in range(len(examples["text"]))]
     token_ids = tokenizer(examples["text"], truncation=True, max_length=48 ,padding='max_length',)
     input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
@@ -131,31 +131,36 @@ if __name__ == "__main__":
         with torch.no_grad(): 
             input_ids = batch["input_ids"]
             attention_mask = batch["attention_mask"]
+            pairs = []
+            pq = PriorityQueue()
             # Generate predictions
             outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
-            for output in outputs:
-                predicted_text = tokenizer.decode(output, skip_special_tokens=True)
+            for inp_id, out in zip(input_ids, outputs):
+                pairs.append((inp_id, out))
+            for inp_id, out in pairs:
+                input_text = tokenizer.decode(inp_id, skip_special_tokens=True)
+                output_text = tokenizer.decode(out, skip_special_tokens=True)
+                predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
                 print(predicted_text)
                 SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
                 scaled_model = ModelWithTemperature(SentimentModel)
                 scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
                 best_temperature = scaled_model.temperature.item()
-                scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
+                scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)
                 print(scaled_sentiment)
                 all_scores.append(scaled_sentiment)
-                pq = PriorityQueue()
                 for text, score in zip(all_predictions, all_scores):
                     pq.push(text, score)
         #train
         training_dataset = [pq.pop() for _ in range(20)]
         dataset_dict = Dataset.from_dict({"text": training_dataset})
-        tokenized_dataset = dataset_dict.map(lambda examples: tokenizer(examples['text'], truncation=True, padding='max_length', max_length=48), batched=True)
-        print(tokenized_dataset)
-        tokenized_datasets = tokenized_datasets.remove_columns(["text"])
-        tokenized_datasets = tokenized_datasets.train_test_split(test_size=0.1)
-        train_dataset = tokenized_datasets["train"]
-        test_dataset = tokenized_datasets["test"]
+        tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
+        print(tokenized_datasets_t5)
+        tokenized_datasets_t5 = tokenized_datasets_t5.remove_columns(["text"])
+        tokenized_datasets_t5 = tokenized_datasets_t5.train_test_split(test_size=0.1)
+        train_dataset = tokenized_datasets_t5["train"]
+        test_dataset = tokenized_datasets_t5["test"]
         print(train_dataset)
         print(test_dataset)
 
