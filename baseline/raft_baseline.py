@@ -149,9 +149,9 @@ if __name__ == "__main__":
                     pq.push(text, score)
         #train
         training_dataset = [pq.pop() for _ in range(20)]
-        print(train_dataset)
-        dataset = Dataset.from_dict({"text": training_dataset})
-        tokenized_datasets = training_dataset.map(prepare_dataset, batched=True)
+        print(training_dataset)
+        dataset_dict = Dataset.from_dict({"text": training_dataset})
+        tokenized_datasets = dataset_dict.map(prepare_dataset, batched=True)
 
         tokenized_datasets = tokenized_datasets.remove_columns(["text"])
         tokenized_datasets = tokenized_datasets.train_test_split(test_size=0.1)
