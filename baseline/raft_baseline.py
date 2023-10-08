@@ -174,6 +174,17 @@ if __name__ == "__main__":
             do_eval=True,
             output_dir='./t5_imdb'
         )
+        
+        sample = train_dataset[10]
+        print(sample['input_ids'])
+        print(sample['labels'])
+        small_batch = [train_dataset[i] for i in range(5)]
+        collated_batch = data_collator(small_batch)
+        print(collated_batch['input_ids'])
+        print(collated_batch['labels'])
+
+
+
 
         trainer = Trainer(
             model=model,
