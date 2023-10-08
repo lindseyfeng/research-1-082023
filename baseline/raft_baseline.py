@@ -150,8 +150,8 @@ if __name__ == "__main__":
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)
                 print(scaled_sentiment)
                 all_scores.append(scaled_sentiment)
-                for text, score in zip(all_predictions, all_scores):
-                    pq.push(text, score)
+            for text, score in zip(all_predictions, all_scores):
+                pq.push(text, score)
         #train
         training_dataset = [pq.pop() for _ in range(20)]
         print(training_dataset)
@@ -162,8 +162,6 @@ if __name__ == "__main__":
         tokenized_datasets_t5 = tokenized_datasets_t5.train_test_split(test_size=0.1)
         train_dataset = tokenized_datasets_t5["train"]
         test_dataset = tokenized_datasets_t5["test"]
-        print(train_dataset)
-        print(test_dataset)
 
         data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, label_pad_token_id=-100)
         # Define training arguments and initialize Trainer
