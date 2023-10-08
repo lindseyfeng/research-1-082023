@@ -93,7 +93,7 @@ def collate_fn(batch):
 def prepare_dataset(examples):
     length = LengthSampler(50, 60)
     split_ids = [length() for _ in range(len(examples["text"]))]
-    token_ids = tokenizer(examples["text"], truncation=True, max_length=150 ,padding='max_length',)
+    token_ids = tokenizer(examples["text"], truncation=True, max_length=120 ,padding='max_length',)
     input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
     label_ids = [ids[idx:] for idx, ids in zip(split_ids, token_ids["input_ids"])]
     print(label_ids)
@@ -185,10 +185,6 @@ if __name__ == "__main__":
             do_eval=True,
             output_dir='./t5_imdb'
         )
-        for sample in tokenized_datasets["train"]:
-            if len(sample["labels"]) == 0:
-                print("Found an empty sample!")
-
 
         trainer = Trainer(
             model=model,
