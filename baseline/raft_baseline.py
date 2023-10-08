@@ -92,7 +92,7 @@ def collate_fn(batch):
 #prepare data for finetune t5
 def prepare_dataset(examples):
     for _ in range(len(examples["text"])):
-        print(len(_))
+        print(len(examples["text"][_]))
     length = LengthSampler(60, 68)
     split_ids = [length() for _ in range(len(examples["text"]))]
     print(len(examples["text"]))
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     all_scores = []
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets["train"])
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=100, collate_fn=collate_fn)
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=10, collate_fn=collate_fn) #100
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
