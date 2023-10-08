@@ -150,7 +150,7 @@ if __name__ == "__main__":
         #train
         training_dataset = [pq.pop() for _ in range(20)]
         dataset_dict = Dataset.from_dict({"text": training_dataset})
-        tokenized_dataset = dataset.map(lambda examples: tokenizer(examples['text'], truncation=True, padding='max_length', max_length=48), batched=True)
+        tokenized_dataset = dataset_dict.map(lambda examples: tokenizer(examples['text'], truncation=True, padding='max_length', max_length=48), batched=True)
         print(tokenized_dataset)
         tokenized_datasets = tokenized_datasets.remove_columns(["text"])
         tokenized_datasets = tokenized_datasets.train_test_split(test_size=0.1)
