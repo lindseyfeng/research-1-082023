@@ -91,8 +91,10 @@ def collate_fn(batch):
 
 #prepare data for finetune t5
 def prepare_dataset(examples):
+    print("prepare")
     length = LengthSampler(60, 68)
     split_ids = [length() for _ in range(len(examples["text"]))]
+    print(len(examples["text"]))
     token_ids = tokenizer(examples["text"], truncation=True, max_length=48 ,padding='max_length',)
     input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
     label_ids = [ids[idx:] for idx, ids in zip(split_ids, token_ids["input_ids"])]
