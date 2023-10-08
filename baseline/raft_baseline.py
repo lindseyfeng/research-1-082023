@@ -132,7 +132,7 @@ if __name__ == "__main__":
             input_ids = batch["input_ids"]
             attention_mask = batch["attention_mask"]
             # Generate predictions
-            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48)
+            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48)
             for output in outputs:
                 predicted_text = tokenizer.decode(output, skip_special_tokens=True)
                 all_predictions.append(predicted_text)
