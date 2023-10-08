@@ -154,6 +154,7 @@ if __name__ == "__main__":
                     pq.push(text, score)
         #train
         training_dataset = [pq.pop() for _ in range(20)]
+        print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
         print(tokenized_datasets_t5)
@@ -184,8 +185,7 @@ if __name__ == "__main__":
         collated_batch = data_collator(small_batch)
         print(collated_batch['labels'].shape)
         for sample in tokenized_datasets["train"]:
-            if len(sample["labels"]) == 0:
-                print("Found an empty sample!")
+            print("Found an empty sample!")
 
         trainer = Trainer(
             model=model,
