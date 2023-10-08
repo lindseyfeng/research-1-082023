@@ -175,17 +175,9 @@ if __name__ == "__main__":
             output_dir='./t5_imdb'
         )
 
-        sample = train_dataset[10]
-        print(sample['input_ids'])
-        print(sample['labels'])
-        small_batch = [train_dataset[i] for i in range(5)]
+        small_batch = [train_dataset[i] for i in range(18)]
         collated_batch = data_collator(small_batch)
-        print(collated_batch['input_ids'])
-        print(collated_batch['labels'])
-        assert tokenizer.pad_token_id is not None, "Tokenizer pad_token_id is None."
-        model.config.decoder_start_token_id = tokenizer.pad_token_id
-
-
+        print(collated_batch['labels'].shape)
 
         trainer = Trainer(
             model=model,
