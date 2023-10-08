@@ -99,8 +99,6 @@ def prepare_dataset(examples):
     token_ids = tokenizer(examples["text"], truncation=True, max_length=120 ,padding='max_length',)
     input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
     label_ids = [ids[idx:] for idx, ids in zip(split_ids, token_ids["input_ids"])]
-    print("label id")
-    print(label_ids)
     return {"input_ids": input_ids, "labels": label_ids}
 
 #PQ for sample selection
@@ -188,8 +186,6 @@ if __name__ == "__main__":
         small_batch = [train_dataset[i] for i in range(1)]
         collated_batch = data_collator(small_batch)
         print(collated_batch['labels'].shape)
-        for sample in tokenized_datasets["train"]:
-            print(sample['labels'])
 
         trainer = Trainer(
             model=model,
