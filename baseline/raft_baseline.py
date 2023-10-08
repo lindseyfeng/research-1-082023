@@ -141,7 +141,6 @@ if __name__ == "__main__":
                 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
                 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 
-            print(model)
             print(tokenizer)
         
             outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
