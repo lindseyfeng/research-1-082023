@@ -96,7 +96,7 @@ def prepare_dataset(examples):
     token_ids = tokenizer(examples["text"], truncation=True, max_length=512 ,padding='max_length',)
     input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
     label_ids = [ids[idx:] for idx, ids in zip(split_ids, token_ids["input_ids"])]
-    print(label_ids)
+    print(token_ids)
     return {"input_ids": input_ids, "labels": label_ids}
 
 #PQ for sample selection
@@ -140,6 +140,10 @@ if __name__ == "__main__":
                 checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count}"
                 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
                 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
+
+            print(model)
+            print(tokenizer)
+        
             outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
             for inp_id, out in zip(input_ids, outputs):
                 pairs.append((inp_id, out))
