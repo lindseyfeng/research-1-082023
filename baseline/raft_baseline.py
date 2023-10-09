@@ -137,11 +137,13 @@ if __name__ == "__main__":
             pq = PriorityQueue()
             # Generate predictions
             if(count > 0):
+                print(f"count: {count}")
                 checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count-1}"
                 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
                 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 
             print(tokenizer)
+            print(f"count: {count}")
         
             outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
             for inp_id, out in zip(input_ids, outputs):
