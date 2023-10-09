@@ -15,13 +15,22 @@ from datasets import load_dataset, load_metric, Dataset
 from torch.utils.data import DataLoader
 from statistics import mean 
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 dataset = load_dataset("imdb")
+
 saved_directory = "./t5_imdb_complete"
 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
+
 bert_model = BertModel.from_pretrained('bert-base-uncased')
 SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
+SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
+scaled_model = ModelWithTemperature(SentimentModel)
+scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
+best_temperature = scaled_model.temperature.item()
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+
 prefix = "complete the following: "
 
 def truncate_add_instruction_and_tokenize(batch):
@@ -47,10 +56,9 @@ if __name__ == "__main__":
     all_scores = []
     pairs = []
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
-    random_test_samples = random.sample(tokenized_datasets["unsupervised"], 1000) 
-    tokenized_datasets = random_test_samples.map(truncate_add_instruction_and_tokenize, batched=True)
-    sample_dataset = random.sample(tokenized_datasets, 100) #1k training sample
-    train_dataloader = DataLoader(sample_dataset, shuffle=True, batch_size=100, collate_fn=collate_fn) #100
+    test_samples = list(sample for sample in tokenized_datasets["unsupervised"])
+    random_test_samples = random.sample(test_samples, 100) #100 testing sample
+    train_dataloader = DataLoader(random_test_samples, shuffle=True, batch_size=100, collate_fn=collate_fn) #100
     for batch in train_dataloader:
         with torch.no_grad(): 
             input_ids = batch["input_ids"]
@@ -63,10 +71,6 @@ if __name__ == "__main__":
                 output_text = tokenizer.decode(out, skip_special_tokens=True)
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
-                SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
-                scaled_model = ModelWithTemperature(SentimentModel)
-                scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-                best_temperature = scaled_model.temperature.item()
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)
                 all_scores.append(scaled_sentiment)
 
