@@ -43,11 +43,13 @@ def collate_fn(batch):
     }
 
 if __name__ == "__main__":
-    test_dataset = dataset["unsupervised"]
     all_predictions = []
     all_scores = []
     pairs = []
-    tokenized_datasets = test_dataset.map(truncate_add_instruction_and_tokenize, batched=True)
+    tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
+    test_samples = [sample for sample in tokenized_datasets["unsupervised"]]
+    random_test_samples = random.sample(test_samples, 1000) 
+    tokenized_datasets = random_test_samples.map(truncate_add_instruction_and_tokenize, batched=True)
     sample_dataset = random.sample(tokenized_datasets, 100) #1k training sample
     train_dataloader = DataLoader(sample_dataset, shuffle=True, batch_size=100, collate_fn=collate_fn) #100
     for batch in train_dataloader:
