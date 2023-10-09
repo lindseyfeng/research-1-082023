@@ -3,11 +3,11 @@ from lib2to3.pgen2 import token
 import sys
 sys.path.append('../')  # Append the parent directory to sys.path
 #bert
-from transformers import BertModel, AutoTokenizer
+from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
 from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
+
 #t5 finetune
 from transformers import Trainer, TrainingArguments
-from transformers import AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq
 
 #priority queue for sample selection
 import heapq
@@ -26,7 +26,8 @@ from config import *
 #huggingface dataset
 from datasets import load_dataset, load_metric, Dataset
 from torch.utils.data import DataLoader
-from transformers import T5TokenizerFast, T5ForConditionalGeneration,AutoModelForSeq2SeqLM
+#t5 inference
+from transformers import T5TokenizerFast, T5ForConditionalGeneration
 
 
 # count batch num

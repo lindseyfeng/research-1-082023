@@ -37,6 +37,7 @@ def prepare_dataset(examples):
 
   return {"input_ids": input_ids, "labels": label_ids}
 
+
 tokenized_datasets = data.map(prepare_dataset, batched=True)
 tokenized_datasets = tokenized_datasets.remove_columns(["text", "label"])
 train_dataset = tokenized_datasets["train"]
