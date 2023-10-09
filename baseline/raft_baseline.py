@@ -121,6 +121,8 @@ class PriorityQueue:
 #bert model
 SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
+scaled_model = ModelWithTemperature(SentimentModel)
 if __name__ == "__main__":
     #infer from t5
     all_predictions = []
@@ -135,6 +137,8 @@ if __name__ == "__main__":
             input_ids = batch["input_ids"]
             attention_mask = batch["attention_mask"]
             pairs = []
+            all_predictions = []
+            all_scores = []
             pq = PriorityQueue()
             # Generate predictions
             if(count > 1):
@@ -153,8 +157,6 @@ if __name__ == "__main__":
                 output_text = tokenizer.decode(out, skip_special_tokens=True)
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
-                SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
-                scaled_model = ModelWithTemperature(SentimentModel)
                 scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
                 best_temperature = scaled_model.temperature.item()
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)

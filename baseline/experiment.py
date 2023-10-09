@@ -75,7 +75,7 @@ if __name__ == "__main__":
                 all_scores.append(scaled_sentiment)
 
     #DIVERSE 1,2
-
+    print(all_predictions)
     SAMPLE_TIMES = 100  # Number of samples
     line_list = all_predictions
 

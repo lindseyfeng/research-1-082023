@@ -1,32 +1,14 @@
 
-## Parameters to change
+# Experiments
 
-- positive_samples, random_positive_samples 
-```python
-positive_samples = [sample for sample in tokenized_datasets["train"] if sample['label'] == 1]
-random_positive_samples = random.sample(positive_samples, 1000) #1k training sample
-```
-- train_dataloader
-```python
-train_dataloader = DataLoader(random_positive_samples, shuffle=True, batch_size=100, collate_fn=collate_fn) #100
-```
+we sample 100 prompts and, just like the training process, we truncate the first 64 tokens and feed it to our tuned T5 model in `./t5_imdb_complete` for inference. Then, we calculate scores of different metrics to assess the quality of our generated text.
 
+# Metrics 
+- mean sentiment score 
+- [Distinct 1, 2](https://github.com/neural-dialogue-metrics/Distinct-N/tree/main)
+- [Diverse 1, 2](https://github.com/XinnuoXu/mmi_anti_pytorch)
+- [Unique 1, 2]()
+- [MSTTR](https://github.com/LCR-ADS-Lab/TAALED)
 
 
-
-## Experiments
-
-[Google sheets](https://docs.google.com/spreadsheets/d/1YaA09TsEn-8NqBN8cu-utN-ViQBG7j2K4njdjFfppD4/edit?usp=sharing)
-
-
-## Setup
-
-We follow the training procedure addressed in the [RAFT paper](https://docs.google.com/spreadsheets/d/1YaA09TsEn-8NqBN8cu-utN-ViQBG7j2K4njdjFfppD4/edit?usp=sharing). 
-
-Specifically, we first finetune a T5-large model (for computational consideration) for 1 epoch with 25k training samples from the IMDB dataset (see `baseline/finetune_t5.py`) 
-
-Then, we train a reward model, specifically a bert (bert-base-uncased) classifier, also with 25k training samples from the IMDB dataset. (see `bert/main.py`)
-
-We then combine these two models in `baseline/raft_baseline.py`. We first truncate the first 64 tokens of the reviews and pass these samples to the finetuned T5 for inference. We then collect the generated samples from T5 and pass them through BERT to get reward scores. We ranked these scores and pass in 20% of the samples with top score to our T5 model for further tuning. 
-
-Note: The original paper use batch_size = 1048 and for computation consideration we are using batch_size = 100 in the code. these parameters can be changed for future experiments. 
+For more metrics, see [this paper](https://aclanthology.org/2021.gem-1.10.pdf)
