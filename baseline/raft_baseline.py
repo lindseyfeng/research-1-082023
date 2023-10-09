@@ -136,7 +136,7 @@ if __name__ == "__main__":
             pairs = []
             pq = PriorityQueue()
             # Generate predictions
-            if(count > 0):
+            if(count > 1):
                 print(f"count: {count}")
                 checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count-1}"
                 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
