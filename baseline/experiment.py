@@ -19,6 +19,7 @@ dataset = load_dataset("imdb")
 saved_directory = "./t5_imdb_complete"
 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
+bert_model = BertModel.from_pretrained('bert-base-uncased')
 SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 prefix = "complete the following: "
