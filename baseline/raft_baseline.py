@@ -139,8 +139,8 @@ if __name__ == "__main__":
             if(count > 1):
                 print(f"count: {count}")
                 checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count-1}"
-                model = T5ForConditionalGeneration.from_pretrained(saved_directory)
-                tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
+                model = T5ForConditionalGeneration.from_pretrained(checkpoint_folder)
+                tokenizer = T5TokenizerFast.from_pretrained(checkpoint_folder)
 
             print(tokenizer)
         
