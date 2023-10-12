@@ -63,7 +63,7 @@ class LengthSampler:
 def truncate_add_instruction_and_tokenize(batch):
     # Add prefix and truncate the first 64 tokens
     modified_texts = [prefix + ' '.join(text.split()[:64]) for text in batch['text']]
-    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=512, return_tensors="pt")
+    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=200, return_tensors="pt")
     return input
 
 
@@ -123,14 +123,14 @@ SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
 scaled_model = ModelWithTemperature(SentimentModel)
+scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
+best_temperature = scaled_model.temperature.item()
+
 if __name__ == "__main__":
     #infer from t5
-    all_predictions = []
-    all_scores = []
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
-    positive_samples = [sample for sample in tokenized_datasets["train"] if sample['label'] == 1]
-    random_positive_samples = random.sample(positive_samples, 1000) #1k training sample
-    train_dataloader = DataLoader(random_positive_samples, shuffle=True, batch_size=100, collate_fn=collate_fn) #100
+    print(tokenized_datasets)
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
@@ -146,9 +146,7 @@ if __name__ == "__main__":
                 checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count-1}"
                 model = T5ForConditionalGeneration.from_pretrained(checkpoint_folder)
                 tokenizer = T5TokenizerFast.from_pretrained(checkpoint_folder)
-
             print(tokenizer)
-        
             outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
             for inp_id, out in zip(input_ids, outputs):
                 pairs.append((inp_id, out))
@@ -157,14 +155,12 @@ if __name__ == "__main__":
                 output_text = tokenizer.decode(out, skip_special_tokens=True)
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
-                scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-                best_temperature = scaled_model.temperature.item()
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)
                 all_scores.append(scaled_sentiment)
             for text, score in zip(all_predictions, all_scores):
                 pq.push(text, score)
         #train
-        training_dataset = [pq.pop() for _ in range(20)] #100*0.2
+        training_dataset = [pq.pop() for _ in range(256)] #100*0.2
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
