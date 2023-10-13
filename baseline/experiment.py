@@ -56,8 +56,8 @@ if __name__ == "__main__":
     all_scores = []
     pairs = []
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
-    test_samples = list(sample for sample in tokenized_datasets["unsupervised"])
-    random_test_samples = random.sample(test_samples, 30000) #100 testing sample
+    test_samples = list(sample for sample in tokenized_datasets["test"])
+    random_test_samples = random.sample(test_samples, 3200) #100 testing sample
     train_dataloader = DataLoader(random_test_samples, shuffle=True, batch_size=1000, collate_fn=collate_fn) #100
     for batch in train_dataloader:
         with torch.no_grad(): 
