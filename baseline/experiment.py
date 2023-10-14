@@ -19,7 +19,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 dataset = load_dataset("imdb")
 
-saved_directory = "./t5_imdb_complete"
+saved_directory = "./t5_imdb"
 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 
@@ -55,12 +55,14 @@ if __name__ == "__main__":
     all_predictions = []
     all_scores = []
     pairs = []
+    count = 0
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     test_samples = list(sample for sample in tokenized_datasets["test"])
     random_test_samples = random.sample(test_samples, 3200) #100 testing sample
-    train_dataloader = DataLoader(random_test_samples, shuffle=True, batch_size=1000, collate_fn=collate_fn) #100
+    train_dataloader = DataLoader(random_test_samples, shuffle=True, batch_size=300, collate_fn=collate_fn) #100
     for batch in train_dataloader:
         with torch.no_grad(): 
+            print(count)
             input_ids = batch["input_ids"]
             attention_mask = batch["attention_mask"]
             outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
@@ -73,10 +75,11 @@ if __name__ == "__main__":
                 all_predictions.append(predicted_text)
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)
                 all_scores.append(scaled_sentiment)
+            count += 1
 
     #DIVERSE 1,2
     print(all_predictions)
-    SAMPLE_TIMES = 100  # Number of samples
+    SAMPLE_TIMES = 3200  # Number of samples
     line_list = all_predictions
 
     d1, d2 = 0.0, 0.0
