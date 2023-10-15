@@ -26,6 +26,8 @@ model = AutoModelForSeq2SeqLM.from_pretrained("t5-large")
 
 # Load the IMDB dataset
 data = load_dataset("imdb")
+train_dataset = data["train"].filter(lambda example: example['label'] == 1)
+test_dataset = data["test"].select(range(5000))
 
 length = LengthSampler(4, 128)
 
@@ -38,10 +40,8 @@ def prepare_dataset(examples):
   return {"input_ids": input_ids, "labels": label_ids}
 
 
-tokenized_datasets = data.map(prepare_dataset, batched=True)
-tokenized_datasets = tokenized_datasets.remove_columns(["text", "label"])
-train_dataset = tokenized_datasets["train"].filter(lambda example: example['label'] == 1)
-test_dataset = tokenized_datasets["test"].shuffle(seed=42).select(range(5000))
+tokenized_train_datasets = train_dataset.map(prepare_dataset, batched=True)
+tokenized_test_datasets = test_dataset.map(prepare_dataset, batched=True)
 
 print(train_dataset)
 print(test_dataset)
