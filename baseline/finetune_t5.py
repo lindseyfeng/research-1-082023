@@ -76,5 +76,5 @@ trainer = Trainer(
 trainer.train()
 
 # Save the model
-trainer.save_model("./t5_imdb")
-tokenizer.save_pretrained('./t5_imdb')
+trainer.save_model("./t5_imdb_baseline")
+tokenizer.save_pretrained('./t5_imdb_baseline')
