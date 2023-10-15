@@ -50,8 +50,8 @@ data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, label_pad_token_id=-
 # Define training arguments and initialize Trainer
 training_args = TrainingArguments(
     per_device_train_batch_size=16,
-    gradient_accumulation_steps=4,
-    per_device_eval_batch_size=64,
+    gradient_accumulation_steps=2,
+    per_device_eval_batch_size=32,
     num_train_epochs=1,
     evaluation_strategy="epoch",
     save_strategy="epoch",
