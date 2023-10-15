@@ -42,12 +42,12 @@ def prepare_dataset(examples):
 
 tokenized_train_datasets = train_dataset.map(prepare_dataset, batched=True)
 tokenized_test_datasets = test_dataset.map(prepare_dataset, batched=True)
+tokenized_train_datasets = tokenized_train_datasets.remove_columns(["text", "label"])
+tokenized_test_datasets = tokenized_test_datasets.remove_columns(["text", "label"])
 
 print(tokenized_train_datasets)
 print(tokenized_test_datasets)
 
-tokenized_train_datasets = tokenized_train_datasets.remove_columns(["text", "label"])
-tokenized_test_datasets = tokenized_test_datasets.remove_columns(["text", "label"])
 data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, label_pad_token_id=-100)
 # Define training arguments and initialize Trainer
 training_args = TrainingArguments(
