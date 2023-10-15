@@ -40,7 +40,7 @@ def prepare_dataset(examples):
 
 tokenized_datasets = data.map(prepare_dataset, batched=True)
 tokenized_datasets = tokenized_datasets.remove_columns(["text", "label"])
-train_dataset = tokenized_datasets["train"].filter(lambda example: example["label"] == 1)
+train_dataset = tokenized_datasets["train"].filter(lambda example: example['label'] == 1)
 test_dataset = tokenized_datasets["test"].shuffle(seed=42).select(range(5000))
 
 print(train_dataset)
