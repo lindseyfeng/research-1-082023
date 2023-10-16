@@ -22,6 +22,8 @@ from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentM
 
 tqdm.pandas()
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 save_freq = 1000
 output_dir = "./t5_imdb_ppo"
 # @dataclass
