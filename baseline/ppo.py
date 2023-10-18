@@ -102,11 +102,12 @@ def build_dataset(
 
 
     def prepare_dataset(examples):
-        length = LengthSampler1(60, 70)
+        length = LengthSampler1(80, 90)
         split_ids = [length() for _ in range(len(examples["text"]))]
+        query = examples["text"]
         token_ids = tokenizer(examples["text"], truncation=True, max_length=120 ,padding='max_length',)
         input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
-        return {"input_ids": input_ids}
+        return {"query": query, "input_ids": input_ids}
 
     ds = processed_dataset.map(
         prepare_dataset,
@@ -172,7 +173,7 @@ generation_kwargs = {
     "eos_token_id": 100_000,
 }
 output_min_length = 48
-output_max_length = 48
+output_max_length = 50
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
