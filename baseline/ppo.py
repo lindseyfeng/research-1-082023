@@ -12,7 +12,6 @@ from transformers import Adafactor, AutoTokenizer, HfArgumentParser, pipeline
 
 from trl import AutoModelForSeq2SeqLMWithValueHead, PPOConfig, PPOTrainer, set_seed
 from trl.core import LengthSampler
-
 #t5
 from transformers import T5TokenizerFast
 
@@ -26,45 +25,19 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 save_freq = 1000
 output_dir = "./t5_imdb_ppo"
-# @dataclass
-# class ScriptArguments:
-#     """
-#     The name of the Casual LM model we wish to fine with PPO
-#     """
 
-#     # NOTE: gpt2 models use Conv1D instead of Linear layers which are not yet supported in 8 bit mode
-#     # models like gpt-neo* models are more suitable.
-#     model_name: Optional[str] = field(default="", metadata={"help": "the model name"})
-#     tokenizer_name: Optional[str] = field(default="", metadata={"help": "the tokenizer name"})
-#     reward_model_name: Optional[str] = field(default="", metadata={"help": "the reward model name"})
-#     log_with: Optional[str] = field(default=None, metadata={"help": "use 'wandb' to log with wandb"})
-#     learning_rate: Optional[float] = field(default=1.41e-5, metadata={"help": "the learning rate"})
-#     output_max_length: Optional[int] = field(default=128, metadata={"help": "maximum length for generation"})
-#     mini_batch_size: Optional[int] = field(default=1, metadata={"help": "the PPO minibatch size"})
-#     batch_size: Optional[int] = field(default=32, metadata={"help": "the batch size"})
-#     ppo_epochs: Optional[int] = field(default=4, metadata={"help": "the number of ppo epochs"})
-#     gradient_accumulation_steps: Optional[int] = field(
-#         default=4, metadata={"help": "the number of gradient accumulation steps"}
-#     )
-#     adafactor: Optional[bool] = field(default=False, metadata={"help": "whether to use the adafactor optimizer"})
-#     early_stopping: Optional[bool] = field(default=False, metadata={"help": "whether to early stop"})
-#     target_kl: Optional[float] = field(default=0.1, metadata={"help": "kl target for early stopping"})
-#     reward_baseline: Optional[float] = field(
-#         default=0.0,
-#         metadata={"help": "a baseline value that is subtracted from the reward"},
-#     )
-#     batched_gen: Optional[bool] = field(default=False, metadata={"help": "whether to use the batched text gen"})
-#     save_freq: Optional[int] = field(default=None, metadata={"help": "n steps to save the model"})
-#     output_dir: Optional[str] = field(default="runs/", metadata={"help": "n steps to save the model"})
-#     seed: Optional[int] = field(default=0, metadata={"help": "the seed"})
-#     steps: Optional[int] = field(default=20000, metadata={"help": "number of epochs"})
-#     init_kl_coef: Optional[float] = field(
-#         default=0.2,
-#         metadata={"help": "Initial KL penalty coefficient (used for adaptive and linear control)"},
-#     )
+prefix = "please complete the following: "
 
-#     adap_kl_ctrl: Optional[bool] = field(default=True, metadata={"help": "Use adaptive KL control, otherwise linear"})
+class LengthSampler1:
+    """
+    Samples a length
+    """
 
+    def __init__(self, min_value, max_value):
+        self.values = list(range(min_value, max_value))
+
+    def __call__(self):
+        return np.random.choice(self.values)
 
 #model_name, tokenizer_name
 saved_directory = "./t5_imdb"
@@ -126,17 +99,16 @@ def build_dataset(
     num_proc = 24
 
     def prepare_dataset(examples):
-        length = LengthSampler(50, 60)
+        length = LengthSampler1(60, 70)
         split_ids = [length() for _ in range(len(examples["text"]))]
-        token_ids = tokenizer(examples["text"], truncation=True, max_length=120 ,padding='max_length',)
+        token_ids = tokenizer(prefix+examples["text"], truncation=True, max_length=120 ,padding='max_length',)
         input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
-        label_ids = [ids[idx:] for idx, ids in zip(split_ids, token_ids["input_ids"])]
-        return {"input_ids": input_ids, "labels": label_ids}
+        return {"input_ids": input_ids}
 
     ds = train_dataset.map(
         prepare_dataset,
         batched=True,
-        remove_columns="text"
+        remove_columns=["text", "label"]
     )
     return ds
 
@@ -163,7 +135,7 @@ ppo_trainer = PPOTrainer(
     model,
     ref_model=None,
     tokenizer=tokenizer,
-    dataset=dataset,
+    dataset=dataset["train"],
     data_collator=collator,
 )
 print(ppo_trainer)
