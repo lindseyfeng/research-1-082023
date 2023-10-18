@@ -10,11 +10,11 @@ from datasets import load_dataset
 from tqdm import tqdm
 from transformers import Adafactor, AutoTokenizer, HfArgumentParser, pipeline
 
-from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed
+from trl import AutoModelForSeq2SeqLMWithValueHead, PPOConfig, PPOTrainer, set_seed
 from trl.core import LengthSampler
 
 #t5
-from transformers import T5TokenizerFast, T5ForConditionalGeneration
+from transformers import T5TokenizerFast
 
 #bert
 from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
@@ -68,7 +68,7 @@ output_dir = "./t5_imdb_ppo"
 
 #model_name, tokenizer_name
 saved_directory = "./t5_imdb"
-model = T5ForConditionalGeneration.from_pretrained(saved_directory)
+model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(saved_directory)
 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 
 #reward_model_name
