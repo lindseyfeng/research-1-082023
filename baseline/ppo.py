@@ -180,10 +180,9 @@ output_length_sampler = LengthSampler(output_min_length, output_max_length)
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     if epoch >= config.total_ppo_epochs:
         break
+    print("epoch: {}").format(epoch)
 
     question_tensors = batch["input_ids"]
-
-    print(question_tensors)
 
     response_tensors = ppo_trainer.generate(
         question_tensors,
@@ -191,12 +190,14 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
         length_sampler=output_length_sampler,
         **generation_kwargs,
     )
+    print(response_tensors)
     batch["response"] = tokenizer.batch_decode(response_tensors, skip_special_tokens=True)
 
     # Compute reward score (using the sentiment analysis pipeline)
     texts = [q + r for q, r in zip(batch["query"], batch["response"])]
     rewards = [predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)for output_text in texts]
-
+    print(texts)
+    print(rewards)
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
     ppo_trainer.log_stats(stats, batch, rewards)
