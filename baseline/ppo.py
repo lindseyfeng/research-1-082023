@@ -195,7 +195,9 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
 
     # Compute reward score (using the sentiment analysis pipeline)
     texts = [q + r for q, r in zip(batch["query"], batch["response"])]
-    rewards = [predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)for output_text in texts]
+    rewards_list = [predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)for output_text in texts]
+    rewards = [torch.tensor(reward) for reward in rewards_list]
+
     print(texts)
     print(rewards)
     # Run PPO step
