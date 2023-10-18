@@ -4,6 +4,7 @@ from typing import Optional
 import sys
 sys.path.append('../')  # Append the parent directory to sys.path
 import torch
+import numpy as np
 
 from accelerate import Accelerator
 from datasets import load_dataset
