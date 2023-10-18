@@ -160,7 +160,7 @@ if __name__ == "__main__":
             for text, score in zip(all_predictions, all_scores):
                 pq.push(text, score)
         #train
-        training_dataset = [pq.pop() for _ in range(256)] #100*0.2
+        training_dataset = [pq.pop() for _ in range(400)] #100*0.2
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
