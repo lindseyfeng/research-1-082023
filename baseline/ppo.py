@@ -62,8 +62,6 @@ config = PPOConfig(
     init_kl_coef=0.05,
 )
 
-train_dataset = load_dataset(dataset_name)
-
 # We then define the arguments to pass to the sentiment analysis pipeline.
 # We set `return_all_scores` to True to get the sentiment score for each token.
 sent_kwargs = {
@@ -95,18 +93,22 @@ def build_dataset(
     """
 
     # load imdb with datasets
-    ds = load_dataset(dataset_name, data_dir="data/rl", split="train")
+    ds = load_dataset(dataset_name, split="train")
     original_columns = ds.column_names
     num_proc = 24
+
+    processed_dataset = ds.map(
+    lambda examples: {"text": prefix + examples["text"]})
+
 
     def prepare_dataset(examples):
         length = LengthSampler1(60, 70)
         split_ids = [length() for _ in range(len(examples["text"]))]
-        token_ids = tokenizer(prefix+examples["text"], truncation=True, max_length=120 ,padding='max_length',)
+        token_ids = tokenizer(examples["text"], truncation=True, max_length=120 ,padding='max_length',)
         input_ids = [ids[:idx]+[tokenizer.eos_token_id] for idx, ids in zip(split_ids, token_ids["input_ids"])]
         return {"input_ids": input_ids}
 
-    ds = train_dataset.map(
+    ds = processed_dataset.map(
         prepare_dataset,
         batched=True,
         remove_columns=["text", "label"]
@@ -136,7 +138,7 @@ ppo_trainer = PPOTrainer(
     model,
     ref_model=None,
     tokenizer=tokenizer,
-    dataset=dataset["train"],
+    dataset=dataset,
     data_collator=collator,
 )
 print(ppo_trainer)
