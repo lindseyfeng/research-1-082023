@@ -138,13 +138,12 @@ def build_dataset(
         batched=True,
         remove_columns="text"
     )
-
-    ds.set_format(type="torch")
     return ds
 
 
 # We retrieve the dataloader by calling the `build_dataset` function.
 dataset = build_dataset(tokenizer)
+print(dataset)
 
 
 def collator(data):
@@ -167,6 +166,7 @@ ppo_trainer = PPOTrainer(
     dataset=dataset,
     data_collator=collator,
 )
+print(ppo_trainer)
 
 # We then build the sentiment analysis pipeline using our reward model, passing the
 # model name and the sentiment analysis pipeline arguments. Let's also make sure to
