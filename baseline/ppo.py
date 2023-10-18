@@ -180,7 +180,7 @@ output_length_sampler = LengthSampler(output_min_length, output_max_length)
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     if epoch >= config.total_ppo_epochs:
         break
-    print("epoch: {}").format(epoch)
+    print("epoch: {}".format(epoch))
 
     question_tensors = batch["input_ids"]
 
