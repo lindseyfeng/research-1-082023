@@ -114,6 +114,7 @@ def build_dataset(
         batched=True,
         remove_columns=["text", "label"]
     )
+    ds.set_format(type="torch")
     return ds
 
 
@@ -181,7 +182,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
         break
 
     question_tensors = batch["input_ids"]
-    
+
     print(question_tensors)
 
     response_tensors = ppo_trainer.generate(
