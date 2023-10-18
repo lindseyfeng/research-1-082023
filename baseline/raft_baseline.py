@@ -37,7 +37,7 @@ count = 0
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 #load dataset
-dataset = load_dataset(" ")
+dataset = load_dataset("imdb")
 
 #load t5 model
 saved_directory = "./t5_imdb"
