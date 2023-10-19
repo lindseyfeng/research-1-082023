@@ -7,7 +7,7 @@ import torch
 import numpy as np
 
 from accelerate import Accelerator
-from datasets import load_dataset, concatenate_datasets(
+from datasets import load_dataset, concatenate_datasets
 from tqdm import tqdm
 from transformers import Adafactor, AutoTokenizer, HfArgumentParser, pipeline
 
