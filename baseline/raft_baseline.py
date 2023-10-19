@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*_
 from lib2to3.pgen2 import token
 import sys
+import math
 sys.path.append('../')  # Append the parent directory to sys.path
 #bert
 from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
@@ -180,7 +181,7 @@ if __name__ == "__main__":
                 diverse_score = distinct_n_sentence_level(text,5)
                 pq.push(text, score, diverse_score)
         #train
-        training_dataset = [pq.pop() for _ in range(len(pq)*0.2)] 
+        training_dataset = [pq.pop() for _ in range(math.floor((len(pq)*0.2))] 
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
