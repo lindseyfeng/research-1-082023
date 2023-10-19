@@ -58,8 +58,8 @@ best_temperature = scaled_model.temperature.item()
 dataset_name = "imdb"
 
 config = PPOConfig(
-    steps=10000,
-    ratio_threshold = 30
+    steps=5000,
+    init_kl_coef=0.05,
 )
 
 # We then define the arguments to pass to the sentiment analysis pipeline.
