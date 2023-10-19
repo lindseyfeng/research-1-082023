@@ -119,11 +119,11 @@ class PriorityQueue:
         else:
             diff = -self.min_score - score
             diff2 = -self.min_diversity_score - diversity_score
-            if diff <= -0.1:
+            if diff >=0.05 or diff <= -0.05
                 heapq.heappush(self.queue, (-score, text, -diversity_score))
                 self.min_score = min(self.min_score, -score)
                 self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
-            elif diff2 <= -0.1:
+            elif diff2 <= 0:
                 heapq.heappush(self.queue, (-score, text, -diversity_score))
                 self.min_score = min(self.min_score, -score)
                 self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
