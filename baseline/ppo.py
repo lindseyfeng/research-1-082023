@@ -58,7 +58,6 @@ best_temperature = scaled_model.temperature.item()
 dataset_name = "imdb"
 
 config = PPOConfig(
-    steps=5000,
     init_kl_coef=0.05,
 )
 
@@ -93,12 +92,13 @@ def build_dataset(
     """
 
     # load imdb with datasets
-    ds = load_dataset(dataset_name, split="train")
-    original_columns = ds.column_names
+    ds = load_dataset(dataset_name)
+    combined_dataset = ds['train'].concatenate(ds['test'])
     num_proc = 24
 
-    processed_dataset = ds.map(
+    processed_dataset = combined_dataset.map(
     lambda examples: {"text": prefix + examples["text"]})
+    processed_dataset =  processed_dataset.shuffle(seed=42).select(range(25000))
 
 
     def prepare_dataset(examples):
