@@ -24,7 +24,7 @@ tqdm.pandas()
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-save_freq = 1000
+save_freq = 10
 output_dir = "./t5_imdb_ppo"
 
 prefix = "please complete the following: "
@@ -93,12 +93,12 @@ def build_dataset(
 
     # load imdb with datasets
     ds = load_dataset(dataset_name)
-    combined_dataset = concatenate_datasets([ds['train'], ds['test']])
+    combined_dataset = concatenate_datasets([ds['train'].shuffle(seed=42).select(range(10000)), ds['test']])
     num_proc = 24
 
     processed_dataset = combined_dataset.map(
     lambda examples: {"text": prefix + examples["text"]})
-    processed_dataset =  processed_dataset.shuffle(seed=42).select(range(25000))
+    processed_dataset =  processed_dataset.shuffle(seed=1111).select(range(25000))
 
 
     def prepare_dataset(examples):
