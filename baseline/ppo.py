@@ -58,7 +58,7 @@ best_temperature = scaled_model.temperature.item()
 dataset_name = "imdb"
 
 config = PPOConfig(
-    steps=1024,
+    steps=10000,
     ratio_threshold = 30
 )
 
