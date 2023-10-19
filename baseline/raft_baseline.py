@@ -29,6 +29,9 @@ from torch.utils.data import DataLoader
 #t5 inference
 from transformers import T5TokenizerFast, T5ForConditionalGeneration
 
+#diverse
+from distinct_n.metrics import distinct_n_sentence_level
+
 
 # count batch num
 count = 0
@@ -104,9 +107,25 @@ def prepare_dataset(examples):
 class PriorityQueue:
     def __init__(self):
         self.queue = []
+        self.min_score = float('inf')
+        self.min_diversity_score = float('inf')
 
-    def push(self, text, score):
-        heapq.heappush(self.queue, (-score, text))  # Using negative score to simulate max-heap
+    def push(self, text, score, diversity_score):
+        if len(self.queue) < 10:
+            heapq.heappush(self.queue, (-score, text, -diversity_score))  # Using negative score to simulate max-heap
+            self.min_score = min(self.min_score, -score)
+            self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
+        else:
+            diff = -self.min_score - score
+            diff2 = -self.min_diversity_score - diversity_score
+            if diff <= -0.1:
+                heapq.heappush(self.queue, (-score, text, -diversity_score))
+                self.min_score = min(self.min_score, -score)
+                self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
+            elif diff2 <= -0.1:
+                heapq.heappush(self.queue, (-score, text, -diversity_score))
+                self.min_score = min(self.min_score, -score)
+                self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
 
     def pop(self):
         _, text = heapq.heappop(self.queue)
@@ -158,9 +177,10 @@ if __name__ == "__main__":
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)
                 all_scores.append(scaled_sentiment)
             for text, score in zip(all_predictions, all_scores):
-                pq.push(text, score)
+                diverse_score = distinct_n_sentence_level(text)
+                pq.push(text, score, diverse_score)
         #train
-        training_dataset = [pq.pop() for _ in range(400)] #100*0.2
+        training_dataset = [pq.pop() for _ in range(len(pq)*0.2] 
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
