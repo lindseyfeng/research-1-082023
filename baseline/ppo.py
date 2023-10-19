@@ -7,7 +7,7 @@ import torch
 import numpy as np
 
 from accelerate import Accelerator
-from datasets import load_dataset
+from datasets import load_dataset, concatenate_datasets(
 from tqdm import tqdm
 from transformers import Adafactor, AutoTokenizer, HfArgumentParser, pipeline
 
@@ -93,7 +93,7 @@ def build_dataset(
 
     # load imdb with datasets
     ds = load_dataset(dataset_name)
-    combined_dataset = ds['train'].concatenate(ds['test'])
+    combined_dataset = concatenate_datasets(ds['train'], ds['test'])
     num_proc = 24
 
     processed_dataset = combined_dataset.map(
