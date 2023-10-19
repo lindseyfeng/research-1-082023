@@ -129,7 +129,7 @@ class PriorityQueue:
                 self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
 
     def pop(self):
-        _, text = heapq.heappop(self.queue)
+        _, text, _ = heapq.heappop(self.queue)
         return text
 
     def peek(self):
