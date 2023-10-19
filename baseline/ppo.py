@@ -93,7 +93,7 @@ def build_dataset(
 
     # load imdb with datasets
     ds = load_dataset(dataset_name)
-    combined_dataset = concatenate_datasets(ds['train'], ds['test'])
+    combined_dataset = concatenate_datasets([ds['train'], ds['test']])
     num_proc = 24
 
     processed_dataset = combined_dataset.map(
