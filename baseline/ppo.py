@@ -133,13 +133,13 @@ set_seed(config.seed)
 
 # Now let's build the model, the reference model, and the tokenizer.
 current_device = Accelerator().local_process_index
-
+ref_model = model
 
 
 ppo_trainer = PPOTrainer(
     config,
     model,
-    ref_model=None,
+    ref_model=ref_model,
     tokenizer=tokenizer,
     dataset=dataset,
     data_collator=collator,
@@ -184,15 +184,13 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     print("epoch: {}".format(epoch))
 
     question_tensors = batch["input_ids"]
-
-    response_tensors = ppo_trainer.generate(
-        question_tensors,
-        return_prompt=False,
-        length_sampler=output_length_sampler,
-        **generation_kwargs,
-    )
-    print(response_tensors)
-    batch["response"] = tokenizer.batch_decode(response_tensors, skip_special_tokens=True)
+    response_tensors = []
+    for query in question_tensors:
+        gen_len = output_length_sampler
+        generation_kwargs["max_new_tokens"] = gen_len
+        response = ppo_trainer.generate(query, **generation_kwargs)
+        response_tensors.append(response.squeeze()[-gen_len:])
+    batch["response"] = [tokenizer.decode(r.squeeze()) for r in response_tensors]
 
     # Compute reward score (using the sentiment analysis pipeline)
     texts = [q + r for q, r in zip(batch["query"], batch["response"])]
