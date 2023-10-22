@@ -179,7 +179,7 @@ if __name__ == "__main__":
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)
                 all_scores.append(scaled_sentiment)
             for text, score in zip(all_predictions, all_scores):
-                diverse_score = distinct_n_sentence_level(text,5)
+                diverse_score = distinct_n_sentence_level(text,4)
                 pq.push(text, score, diverse_score)
         #train
         training_dataset = [pq.pop() for _ in range(math.floor((len(pq)*0.2)))] 

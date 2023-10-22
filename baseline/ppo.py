@@ -45,15 +45,6 @@ saved_directory = "./t5_imdb"
 model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(saved_directory)
 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 
-#reward_model_name
-bert_model = BertModel.from_pretrained('bert-base-uncased')
-SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
-bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
-scaled_model = ModelWithTemperature(SentimentModel)
-scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-best_temperature = scaled_model.temperature.item()
-
 
 dataset_name = "imdb"
 
@@ -147,6 +138,11 @@ ppo_trainer = PPOTrainer(
 )
 print(ppo_trainer)
 
+device = ppo_trainer.accelerator.device
+if ppo_trainer.accelerator.num_processes == 1:
+    device = 0 if torch.cuda.is_available() else "cpu"  # to avoid a `pipeline` bug
+sentiment_pipe = pipeline("sentiment-analysis", model="lvwerra/distilbert-imdb", device=device)
+
 # We then build the sentiment analysis pipeline using our reward model, passing the
 # model name and the sentiment analysis pipeline arguments. Let's also make sure to
 # set the device to the same device as the PPOTrainer.
@@ -194,10 +190,11 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
 
     # Compute reward score (using the sentiment analysis pipeline)
     texts = [q + r for q, r in zip(batch["query"], batch["response"])]
-    rewards_list = [predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)for output_text in texts]
-    rewards = [torch.tensor(reward) for reward in rewards_list]
+    pipe_outputs = sentiment_pipe(texts, **sent_kwargs)
+    rewards = [torch.tensor(output[1]["score"]) for output in pipe_outputs]
 
     print(texts)
+    print(rewards)
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
     ppo_trainer.log_stats(stats, batch, rewards)
