@@ -59,6 +59,7 @@ dataset_name = "imdb"
 
 config = PPOConfig(
     init_kl_coef=0.05,
+    steps = 5000
 )
 
 # We then define the arguments to pass to the sentiment analysis pipeline.
