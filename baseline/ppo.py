@@ -167,15 +167,14 @@ print(ppo_trainer)
 # the `generate` function of the trained model.
 
 generation_kwargs = {
-    # "min_length": -1,
+    "min_length": -1,
     "top_k": 0.0,
     "top_p": 1.0,
     "do_sample": True,
-    "pad_token_id": tokenizer.pad_token_id,
-    "eos_token_id": 100_000,
+    "pad_token_id": tokenizer.eos_token_id,
 }
 output_min_length = 48
-output_max_length = 50
+output_max_length = 100
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
