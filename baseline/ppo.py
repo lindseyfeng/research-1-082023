@@ -93,7 +93,7 @@ def build_dataset(
 
     # load imdb with datasets
     ds = load_dataset(dataset_name)
-    combined_dataset = concatenate_datasets([ds['train'].shuffle(seed=42).select(range(10000)), ds['test']])
+    combined_dataset = ds['test'] #concatenate_datasets([ds['train'].shuffle(seed=42).select(range(10000)), ds['test']])
     num_proc = 24
 
     processed_dataset = combined_dataset.map(
@@ -199,7 +199,6 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     rewards = [torch.tensor(reward) for reward in rewards_list]
 
     print(texts)
-    print(rewards)
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
     ppo_trainer.log_stats(stats, batch, rewards)
