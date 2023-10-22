@@ -185,7 +185,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
     response_tensors = []
     for query in question_tensors:
-        gen_len = output_length_sampler
+        gen_len = output_length_sampler()
         generation_kwargs["max_new_tokens"] = gen_len
         response = ppo_trainer.generate(query, **generation_kwargs)
         response_tensors.append(response.squeeze()[-gen_len:])
