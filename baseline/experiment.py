@@ -19,7 +19,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 dataset = load_dataset("imdb")
 
-saved_directory = "./t5_imdb_complete"
+saved_directory = "./t5_imdb_ppostep_20"
 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 print(tokenizer)
@@ -83,33 +83,19 @@ if __name__ == "__main__":
     print(all_predictions)
     SAMPLE_TIMES = 3200  # Number of samples
     line_list = all_predictions
-
-    d1, d2 = 0.0, 0.0
-
-    for _ in range(SAMPLE_TIMES):
-        uni_set, bi_set = set(), set()
-        uni_num, bi_num = 0, 0
-
-        for line in random.sample(line_list, min(2000, len(line_list))):
-            flist = line.split(" ")
-            for x in flist:
-                uni_set.add(x)
-                uni_num += 1
-            for i in range(len(flist)-1):
-                bi_set.add(flist[i] + "<XXN>" + flist[i + 1])
-                bi_num += 1
-
-        d1 += len(uni_set) / uni_num
-        d2 += len(bi_set) / bi_num
-
-    print("DIVERSE-1", d1 / SAMPLE_TIMES)
-    print("DIVERSE-2", d2 / SAMPLE_TIMES)
-
     #DISTINCT 1, 2
-    distinct_1 = distinct_n_corpus_level(all_predictions,1)
     distinct_2 = distinct_n_corpus_level(all_predictions,2)
-    print("DISTINCT-1", distinct_1)
+    distinct_3 = distinct_n_corpus_level(all_predictions,3)
+    distinct_4 = distinct_n_corpus_level(all_predictions,4)
+    distinct_5 = distinct_n_corpus_level(all_predictions,5)
+    distinct_6 = distinct_n_corpus_level(all_predictions,6)
+    distinct_7 = distinct_n_corpus_level(all_predictions,7)
     print("DISTINCT-2", distinct_2)
+    print("DISTINCT-3", distinct_3)
+    print("DISTINCT-4", distinct_4)
+    print("DISTINCT-5", distinct_5)
+    print("DISTINCT-6", distinct_6)
+    print("DISTINCT-7", distinct_7)
 
 
     #average sentiment score
