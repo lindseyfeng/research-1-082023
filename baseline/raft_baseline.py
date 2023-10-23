@@ -110,22 +110,26 @@ class PriorityQueue:
         self.queue = []
         self.min_score = float('inf')
         self.min_diversity_score = float('inf')
+        diversity_score = []
 
     def push(self, text, score, diversity_score):
         if len(self.queue) < 20:
             if -score <= -0.6:
                 heapq.heappush(self.queue, (-score, text, -diversity_score))  # Using negative score to simulate max-heap
                 self.min_score = min(self.min_score, -score)
+                diverse_score.append(score)
                 self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
         else:
             diff = -self.min_score - score
             diff2 = -self.min_diversity_score - diversity_score
             if diff <= -0.1 or diff >= 0.1:
                 heapq.heappush(self.queue, (-score, text, -diversity_score))
+                diverse_score.append(score)
                 self.min_score = min(self.min_score, -score)
                 self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
             elif diff2 <= 0:
                 heapq.heappush(self.queue, (-score, text, -diversity_score))
+                diverse_score.append(score)
                 self.min_score = min(self.min_score, -score)
                 self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
 
@@ -168,7 +172,7 @@ if __name__ == "__main__":
                 model = T5ForConditionalGeneration.from_pretrained(checkpoint_folder)
                 tokenizer = T5TokenizerFast.from_pretrained(checkpoint_folder)
             print(tokenizer)
-            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=100, eos_token_id=None)
+            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 100, min_length=100, eos_token_id=None)
             for inp_id, out in zip(input_ids, outputs):
                 pairs.append((inp_id, out))
             for inp_id, out in pairs:
