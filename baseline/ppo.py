@@ -16,10 +16,6 @@ from trl.core import LengthSampler
 #t5
 from transformers import T5TokenizerFast
 
-#bert
-from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
-from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
-
 tqdm.pandas()
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -50,7 +46,7 @@ dataset_name = "imdb"
 
 config = PPOConfig(
     init_kl_coef=0.05,
-    steps = 4000,
+    steps = 5000,
     ratio_threshold = 20
 )
 
@@ -86,7 +82,7 @@ def build_dataset(
 
     # load imdb with datasets
     ds = load_dataset(dataset_name)
-    combined_dataset = ds['test'] #concatenate_datasets([ds['train'].shuffle(seed=42).select(range(10000)), ds['test']])
+    combined_dataset = concatenate_datasets([ds['train'].shuffle(seed=101).select(range(10000)), ds['test']])
     num_proc = 24
 
     processed_dataset = combined_dataset.map(
