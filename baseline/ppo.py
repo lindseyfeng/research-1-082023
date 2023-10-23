@@ -49,9 +49,10 @@ dataset_name = "imdb"
 
 config = PPOConfig(
     learning_rate=1.41e-5,
-    init_kl_coef=0.05,
-    steps = 20000,
-    log_with="wandb"
+    log_with="wandb",
+    ppo_epochs= 1,
+    mini_batch_size =4,
+    batch_size = 16
     )
 
 # We then define the arguments to pass to the sentiment analysis pipeline.
@@ -83,7 +84,7 @@ def build_dataset(
         dataloader (`torch.utils.data.DataLoader`):
             The dataloader for the dataset.
     """
-
+    
     # load imdb with datasets
     ds = load_dataset(dataset_name)
     combined_dataset = concatenate_datasets([ds['train'].shuffle(seed=101).select(range(10000)), ds['test']])
@@ -127,6 +128,7 @@ set_seed(config.seed)
 current_device = Accelerator().local_process_index
 ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(saved_directory)
 
+tokenizer.pad_token = tokenizer.eos_token
 
 ppo_trainer = PPOTrainer(
     config,
