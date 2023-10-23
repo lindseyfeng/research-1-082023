@@ -139,21 +139,6 @@ if ppo_trainer.accelerator.num_processes == 1:
     device = 0 if torch.cuda.is_available() else "cpu"  # to avoid a `pipeline` bug
 sentiment_pipe = pipeline("sentiment-analysis", model="lvwerra/distilbert-imdb", device=device)
 
-# We then build the sentiment analysis pipeline using our reward model, passing the
-# model name and the sentiment analysis pipeline arguments. Let's also make sure to
-# set the device to the same device as the PPOTrainer.
-# device = ppo_trainer.accelerator.device
-# if ppo_trainer.accelerator.num_processes == 1:
-#     device = 0 if torch.cuda.is_available() else "cpu"  # to avoid a ` pipeline` bug
-# sentiment_pipe = pipeline(
-#     "sentiment-analysis",
-#     model=reward_model_name,
-#     device_map={"": current_device},
-#     model_kwargs={"load_in_8bit": True},
-#     tokenizer=tokenizer,
-#     return_token_type_ids=False,
-# )
-
 
 # We then define the arguments to pass to the `generate` function. These arguments
 # are passed to the `generate` function of the PPOTrainer, which is a wrapper around
@@ -187,6 +172,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     # Compute reward score (using the sentiment analysis pipeline)
     texts = [q + r for q, r in zip(batch["query"], batch["response"])]
     pipe_outputs = sentiment_pipe(texts, **sent_kwargs)
+    print(pipe_outputs)
     rewards = [torch.tensor(output[1]["score"]) for output in pipe_outputs]
 
     print(texts)
