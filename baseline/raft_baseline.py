@@ -110,26 +110,26 @@ class PriorityQueue:
         self.queue = []
         self.min_score = float('inf')
         self.min_diversity_score = float('inf')
-        diversity_score = []
+        diversity_score_list = []
 
     def push(self, text, score, diversity_score):
         if len(self.queue) < 20:
             if -score <= -0.6:
                 heapq.heappush(self.queue, (-score, text, -diversity_score))  # Using negative score to simulate max-heap
                 self.min_score = min(self.min_score, -score)
-                diverse_score.append(score)
+                self.diversity_score_list.append(score)
                 self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
         else:
             diff = -self.min_score - score
             diff2 = -self.min_diversity_score - diversity_score
             if diff <= -0.1 or diff >= 0.1:
                 heapq.heappush(self.queue, (-score, text, -diversity_score))
-                diverse_score.append(score)
+                self.diversity_score_list.append(score)
                 self.min_score = min(self.min_score, -score)
                 self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
             elif diff2 <= 0:
                 heapq.heappush(self.queue, (-score, text, -diversity_score))
-                diverse_score.append(score)
+                self.diversity_score_list.append(score)
                 self.min_score = min(self.min_score, -score)
                 self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
 
