@@ -45,10 +45,12 @@ tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 dataset_name = "imdb"
 
 config = PPOConfig(
+    learning_rate=1.41e-5,
     init_kl_coef=0.05,
     steps = 20000,
+    ppo_epochs=1,
     ratio_threshold = 20
-)
+    )
 
 # We then define the arguments to pass to the sentiment analysis pipeline.
 # We set `return_all_scores` to True to get the sentiment score for each token.
@@ -172,11 +174,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     # Compute reward score (using the sentiment analysis pipeline)
     texts = [q + r for q, r in zip(batch["query"], batch["response"])]
     pipe_outputs = sentiment_pipe(texts, **sent_kwargs)
-    print(pipe_outputs)
     rewards = [torch.tensor(output[1]["score"]) for output in pipe_outputs]
-
-    print(texts)
-    print(rewards)
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
     ppo_trainer.log_stats(stats, batch, rewards)
