@@ -15,7 +15,10 @@ from trl import AutoModelForSeq2SeqLMWithValueHead, PPOConfig, PPOTrainer, set_s
 from trl.core import LengthSampler
 #t5
 from transformers import T5TokenizerFast
+#log
+import wandb
 
+wandb.init()
 tqdm.pandas()
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -48,8 +51,7 @@ config = PPOConfig(
     learning_rate=1.41e-5,
     init_kl_coef=0.05,
     steps = 20000,
-    ppo_epochs=1,
-    ratio_threshold = 20
+    log_with="wandb"
     )
 
 # We then define the arguments to pass to the sentiment analysis pipeline.
@@ -123,7 +125,7 @@ set_seed(config.seed)
 
 # Now let's build the model, the reference model, and the tokenizer.
 current_device = Accelerator().local_process_index
-ref_model = model
+ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(saved_directory)
 
 
 ppo_trainer = PPOTrainer(
