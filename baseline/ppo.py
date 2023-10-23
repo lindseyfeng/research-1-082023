@@ -46,7 +46,7 @@ dataset_name = "imdb"
 
 config = PPOConfig(
     init_kl_coef=0.05,
-    steps = 5000,
+    steps = 2000,
     ratio_threshold = 20
 )
 
