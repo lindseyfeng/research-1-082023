@@ -92,7 +92,7 @@ def build_dataset(
 
     processed_dataset = combined_dataset.map(
     lambda examples: {"text": prefix + examples["text"]})
-    processed_dataset =  processed_dataset.shuffle(seed=42).select(range(5000))
+    processed_dataset =  processed_dataset.shuffle(seed=1111).select(range(5000))
 
 
     def prepare_dataset(examples):
