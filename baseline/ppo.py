@@ -48,7 +48,7 @@ tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 dataset_name = "imdb"
 
 config = PPOConfig(
-    learning_rate=2e-6,
+    learning_rate=1.44e-5,
     log_with="wandb",
     ppo_epochs= 1,
     mini_batch_size = 32,
@@ -180,7 +180,12 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     pipe_outputs = sentiment_pipe(texts, **sent_kwargs)
     rewards = [torch.tensor(output[1]["score"]) for output in pipe_outputs]
     # Run PPO step
-    stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
+    try:
+        stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
+    except IndexError as e:
+        print(f"Error occurred in ppo.py: {e}")
+        # Handle the error here, for example:
+        continue
     ppo_trainer.log_stats(stats, batch, rewards)
 
     if save_freq and epoch and epoch % save_freq == 0:
