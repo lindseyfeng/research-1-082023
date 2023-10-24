@@ -53,7 +53,6 @@ config = PPOConfig(
     ppo_epochs= 1,
     mini_batch_size =16,
     batch_size = 64,
-    kl_coef = 0.05
     )
 
 # We then define the arguments to pass to the sentiment analysis pipeline.
