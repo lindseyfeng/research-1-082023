@@ -48,11 +48,11 @@ tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 dataset_name = "imdb"
 
 config = PPOConfig(
-    learning_rate=2e-6,
+    learning_rate=2e-5,
     log_with="wandb",
     ppo_epochs= 1,
-    mini_batch_size =16,
-    batch_size = 64,
+    mini_batch_size = 16,
+    batch_size = 32,
     )
 
 # We then define the arguments to pass to the sentiment analysis pipeline.
