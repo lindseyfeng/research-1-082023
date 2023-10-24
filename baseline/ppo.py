@@ -51,8 +51,8 @@ config = PPOConfig(
     learning_rate=2e-6,
     log_with="wandb",
     ppo_epochs= 1,
-    mini_batch_size =4,
-    batch_size = 16
+    mini_batch_size =16,
+    batch_size = 64,
     kl_coef = 0.05
     )
 
