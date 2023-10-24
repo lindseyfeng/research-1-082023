@@ -48,7 +48,7 @@ tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 dataset_name = "imdb"
 
 config = PPOConfig(
-    learning_rate=2e-5,
+    learning_rate=1.44e-5,
     log_with="wandb",
     ppo_epochs= 1,
     mini_batch_size = 16,

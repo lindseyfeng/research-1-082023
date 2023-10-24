@@ -110,7 +110,7 @@ class PriorityQueue:
         self.queue = []
         self.min_score = float('inf')
         self.min_diversity_score = float('inf')
-        diversity_score_list = []
+        self.diversity_score_list = []
 
     def push(self, text, score, diversity_score):
         if len(self.queue) < 20:
