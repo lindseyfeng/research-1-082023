@@ -91,7 +91,7 @@ def build_dataset(
     num_proc = 24
 
     processed_dataset = original_DS.map(
-    lambda examples: {"text": prefix + examples["text"]})
+    lambda examples: {"text": prefix + examples["text"]})["train"]
 
     def prepare_dataset(examples):
         length = LengthSampler1(80, 90)
@@ -107,7 +107,7 @@ def build_dataset(
         remove_columns=["text", "label"]
     )
     ds.set_format(type="torch")
-    return ds['train']
+    return ds
 
 
 # We retrieve the dataloader by calling the `build_dataset` function.
