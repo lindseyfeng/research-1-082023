@@ -49,6 +49,7 @@ dataset_name = "imdb"
 
 config = PPOConfig(
     learning_rate=1.44e-5,
+    kl_coef = 0.05,
     log_with="wandb",
     ppo_epochs= 1,
     mini_batch_size = 32,
@@ -87,12 +88,11 @@ def build_dataset(
     
     # load imdb with datasets
     ds = load_dataset(dataset_name)
-    combined_dataset = concatenate_datasets([ds['train'].filter(lambda example: example['label'] ==1).select(range(10000)), ds['test']])
     num_proc = 24
 
-    processed_dataset = combined_dataset.map(
+    processed_dataset = ds.map(
     lambda examples: {"text": prefix + examples["text"]})
-    processed_dataset =  processed_dataset.shuffle(seed=1111).select(range(5000))
+    processed_dataset =  processed_dataset.shuffle(seed=1111).select(range(25000))
 
 
     def prepare_dataset(examples):
