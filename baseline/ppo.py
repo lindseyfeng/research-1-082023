@@ -87,13 +87,11 @@ def build_dataset(
     """
     
     # load imdb with datasets
-    ds = load_dataset(dataset_name)
+    original_DS = load_dataset(dataset_name)
     num_proc = 24
 
-    processed_dataset = ds.map(
+    processed_dataset = original_DS.map(
     lambda examples: {"text": prefix + examples["text"]})
-    processed_dataset =  processed_dataset.shuffle(seed=1111).select(range(25000))
-
 
     def prepare_dataset(examples):
         length = LengthSampler1(80, 90)
@@ -109,7 +107,7 @@ def build_dataset(
         remove_columns=["text", "label"]
     )
     ds.set_format(type="torch")
-    return ds
+    return ds['train']
 
 
 # We retrieve the dataloader by calling the `build_dataset` function.
