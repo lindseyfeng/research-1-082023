@@ -49,7 +49,7 @@ dataset_name = "imdb"
 
 config = PPOConfig(
     learning_rate=1.44e-5,
-    kl_coef = 0.05,
+    init_kl_coef = 0.05,
     log_with="wandb",
     ppo_epochs= 1,
     mini_batch_size = 32,
