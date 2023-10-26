@@ -42,6 +42,7 @@ dataset = load_dataset("imdb")
 
 tokenizer = AutoTokenizer.from_pretrained("lvwerra/gpt2-imdb")
 model = AutoModelForCausalLM.from_pretrained("lvwerra/gpt2-imdb")
+tokenizer.pad_token = tokenizer.eos_token
 
 prefix = "complete the following: "
 
