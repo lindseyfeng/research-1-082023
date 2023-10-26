@@ -1,5 +1,6 @@
 import sys
 import random
+from typing import OrderedDict
 sys.path.append('../')
 #distinct 1,2
 from distinct_n.metrics import distinct_n_corpus_level
@@ -75,8 +76,11 @@ if __name__ == "__main__":
                 output_text = tokenizer.decode(out, skip_special_tokens=True)
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
+                print("input: {}".format(input_text))
+                print("output: {}".format(output_text))
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)
                 all_scores.append(scaled_sentiment)
+                print(scaled_sentiment)
             count += 1
 
     #DIVERSE 1,2
