@@ -173,7 +173,7 @@ if __name__ == "__main__":
                 model = T5ForConditionalGeneration.from_pretrained(checkpoint_folder)
                 tokenizer = T5TokenizerFast.from_pretrained(checkpoint_folder)
             print(tokenizer)
-            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 110, min_length=100, eos_token_id=None)
+            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 110, min_length=100, eos_token_id=None, temperature = 1.5)
             for inp_id, out in zip(input_ids, outputs):
                 pairs.append((inp_id, out))
             for inp_id, out in pairs:
@@ -230,7 +230,7 @@ if __name__ == "__main__":
 
     #save finetuned   
     trainer.save_model("./t5_imdb_complete")
-    tokenizer.save_pretrained('./t5_imdb_complete')
+    tokenizer.save_pretrained('./t5_imdb_complete_temperature')
 
 
 

@@ -2,8 +2,11 @@
 from lib2to3.pgen2 import token
 import sys
 sys.path.append('../')  # Append the parent directory to sys.path
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 #bert
-from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
+from transformers import BertModel, AutoTokenizer, DataCollatorForLanguageModeling
 from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
 
 #t5 finetune
@@ -159,7 +162,7 @@ if __name__ == "__main__":
             for text, score in zip(all_predictions, all_scores):
                 pq.push(text, score)
         #train
-        training_dataset = [pq.pop() for _ in range(256)] #100*0.2
+        training_dataset = [pq.pop() for _ in range(280)] #100*0.2
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
@@ -168,7 +171,7 @@ if __name__ == "__main__":
         train_dataset = tokenized_datasets_t5["train"]
         test_dataset = tokenized_datasets_t5["test"]
 
-        data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, label_pad_token_id=-100)
+        data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
         # Define training arguments and initialize Trainer
         training_args = TrainingArguments(
             per_device_train_batch_size=16,
