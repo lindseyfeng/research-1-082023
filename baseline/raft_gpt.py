@@ -63,7 +63,7 @@ class LengthSampler:
 def truncate_add_instruction_and_tokenize(batch):
     # Add prefix and truncate the first 64 tokens
     modified_texts = [" ".join(text.split()[:64]) for text in batch['text']]
-    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=150, return_tensors="pt")
+    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=100, return_tensors="pt")
     return input
 
 
@@ -146,7 +146,7 @@ if __name__ == "__main__":
                 model = AutoModelForCausalLM.from_pretrained(checkpoint_folder)
                 tokenizer = AutoTokenizer.from_pretrained(checkpoint_folder)
                 print(tokenizer)
-            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
+            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 100, min_length=48)
             for inp_id, out in zip(input_ids, outputs):
                 pairs.append((inp_id, out))
             for inp_id, out in pairs:
