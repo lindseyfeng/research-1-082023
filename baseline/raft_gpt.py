@@ -36,7 +36,7 @@ count = 0
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 #load dataset
-dataset = load_dataset(" ")
+dataset = load_dataset("imdb")
 
 # Load model directly
 
