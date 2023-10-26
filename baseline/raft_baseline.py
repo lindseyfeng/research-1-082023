@@ -122,12 +122,13 @@ class PriorityQueue:
         else:
             diff = -self.min_score - score
             diff2 = -self.min_diversity_score - diversity_score
+            sd = np.std(self.diversity_score_list)
             if diff <= -0.1 or diff >= 0.1:
                 heapq.heappush(self.queue, (-score, text, -diversity_score))
                 self.diversity_score_list.append(score)
                 self.min_score = min(self.min_score, -score)
                 self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
-            elif diff2 <= 0:
+            elif diff2 <= sd:
                 heapq.heappush(self.queue, (-score, text, -diversity_score))
                 self.diversity_score_list.append(score)
                 self.min_score = min(self.min_score, -score)
