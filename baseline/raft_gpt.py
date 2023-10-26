@@ -143,9 +143,9 @@ if __name__ == "__main__":
             if(count > 1):
                 print(f"count: {count}")
                 checkpoint_folder = f"./gpt_imdb_batch/checkpoint-{count-1}"
-            model = AutoModelForCausalLM.from_pretrained(checkpoint_folder)
-            tokenizer = AutoTokenizer.from_pretrained(checkpoint_folder)
-            print(tokenizer)
+                model = AutoModelForCausalLM.from_pretrained(checkpoint_folder)
+                tokenizer = AutoTokenizer.from_pretrained(checkpoint_folder)
+                print(tokenizer)
             outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
             for inp_id, out in zip(input_ids, outputs):
                 pairs.append((inp_id, out))
