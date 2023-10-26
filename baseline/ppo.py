@@ -54,6 +54,7 @@ config = PPOConfig(
     ppo_epochs= 1,
     mini_batch_size = 32,
     batch_size = 64,
+    total_ppo_epochs = 10
     )
 
 # We then define the arguments to pass to the sentiment analysis pipeline.
@@ -176,7 +177,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     # Compute reward score (using the sentiment analysis pipeline)
     texts = [q + r for q, r in zip(batch["query"], batch["response"])]
     pipe_outputs = sentiment_pipe(texts, **sent_kwargs)
-    rewards = [torch.tensor(output[1]["score"]) for output in pipe_outputs]
+    rewards = [torch.tensor(-output[1]["score"]) for output in pipe_outputs]
     # Run PPO step
     try:
         stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
