@@ -146,7 +146,7 @@ if __name__ == "__main__":
                 model = AutoModelForCausalLM.from_pretrained(checkpoint_folder)
                 tokenizer = AutoTokenizer.from_pretrained(checkpoint_folder)
                 print(tokenizer)
-            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 100, min_length=48)
+            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 150, min_length=48, eos_token_id=None)
             for inp_id, out in zip(input_ids, outputs):
                 pairs.append((inp_id, out))
             for inp_id, out in pairs:
