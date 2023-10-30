@@ -3,17 +3,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-def train_rm(rm, state_buffer, reward_buffer, bsz = 16, n_batch=16, sigma_mult=1):
-    state_buffer = torch.Tensor(np.stack(state_buffer))
-    reward_buffer = torch.Tensor(np.stack(reward_buffer))
-    sigmas = torch.Tensor(reward_buffer.std(0)) * sigma_mult
+def train_rm(rm, x, reward, bsz = 16, n_batch=16, sigma_mult=1):
+    sigmas = torch.Tensor(reward.std(0)) * sigma_mult
     total_loss = 0
     total_acc = 0
     total = 0
     reward_scale = []
     for i in range(n_batch):
-        idx = np.random.choice(state_buffer.shape[0], bsz)
-        loss, acc, outs = rm.get_loss(state_buffer[idx], reward_buffer[idx], sigmas)
+        idx = np.random.choice(x.shape[0], bsz)
+        loss, acc, outs = rm.get_loss(x[idx], reward[idx], sigmas)
         if loss <= 0:
             continue
         reward_scale += outs
@@ -33,7 +31,7 @@ class RewardModel(nn.Module):
     def __init__(self, lr, normalize=False):
         super().__init__()
         
-        self.fc1 = nn.Linear(6, 256)
+        self.fc1 = nn.Linear(200, 256)
         self.fc2 = nn.Linear(256, 256)
         self.fc3 = nn.Linear(256, 1)
 
@@ -55,7 +53,7 @@ class RewardModel(nn.Module):
         return x
 
     def get_loss(self, x, reward_signal, sigmas):
-        sign = [-1, -1] # One sign for each metric: sentiment and diversity
+        sign = [1, 1] # One sign for each metric: sentiment and diversity
         total_loss = 0
         total = 0
         correct = 0

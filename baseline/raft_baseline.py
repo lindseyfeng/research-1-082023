@@ -70,7 +70,7 @@ class LengthSampler:
 def truncate_add_instruction_and_tokenize(batch):
     # Add prefix and truncate the first 64 tokens
     modified_texts = [prefix + ' '.join(text.split()[:64]) for text in batch['text']]
-    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=150, return_tensors="pt")
+    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=160, return_tensors="pt")
     return input
 
 
@@ -166,7 +166,10 @@ if __name__ == "__main__":
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
                 all_pred_tokenized = torch.cat((inp_id, out), dim=-1)
+                print("input_id{}, output{}".format(inp_id, out))
                 print("all_pred_{}".format(all_pred_tokenized))
+                print(predicted_text)
+                print(all_pred_tokenized.size(0))
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
                 diverse_score = distinct_n_sentence_level(predicted_text,4)
                 all_scores.append([scaled_sentiment, diverse_score])
