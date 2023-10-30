@@ -34,7 +34,7 @@ from transformers import T5TokenizerFast, T5ForConditionalGeneration
 from distinct_n.metrics import distinct_n_sentence_level
 
 #reward
-from reward_model import RewardModel
+from reward_model import RewardModel, train_rm
 
 
 # count batch num
