@@ -33,6 +33,9 @@ from transformers import T5TokenizerFast, T5ForConditionalGeneration
 #diverse
 from distinct_n.metrics import distinct_n_sentence_level
 
+#reward
+from reward_model import RewardModel
+
 
 # count batch num
 count = 0
@@ -108,34 +111,12 @@ def prepare_dataset(examples):
 class PriorityQueue:
     def __init__(self):
         self.queue = []
-        self.min_score = float('inf')
-        self.min_diversity_score = float('inf')
-        self.diversity_score_list = []
 
-    def push(self, text, score, diversity_score):
-        if len(self.queue) < 20:
-            if -score <= -0.6:
-                heapq.heappush(self.queue, (-score, text, -diversity_score))  # Using negative score to simulate max-heap
-                self.min_score = min(self.min_score, -score)
-                self.diversity_score_list.append(score)
-                self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
-        else:
-            diff = -self.min_score - score
-            diff2 = -self.min_diversity_score - diversity_score
-            sd = np.std(self.diversity_score_list)
-            if diff <= -0.1 or diff >= 0.1:
-                heapq.heappush(self.queue, (-score, text, -diversity_score))
-                self.diversity_score_list.append(score)
-                self.min_score = min(self.min_score, -score)
-                self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
-            elif diff2 <= sd:
-                heapq.heappush(self.queue, (-score, text, -diversity_score))
-                self.diversity_score_list.append(score)
-                self.min_score = min(self.min_score, -score)
-                self.min_diversity_score = min(self.min_diversity_score, -diversity_score)
+    def push(self, text, score):
+        heapq.heappush(self.queue, (-score, text))  # Using negative score to simulate max-heap
 
     def pop(self):
-        _, text, _ = heapq.heappop(self.queue)
+        _, text = heapq.heappop(self.queue)
         return text
 
     def peek(self):
@@ -144,6 +125,7 @@ class PriorityQueue:
     def __len__(self):
         return len(self.queue)
 
+
 #bert model
 SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
@@ -151,7 +133,8 @@ SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
 scaled_model = ModelWithTemperature(SentimentModel)
 scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
 best_temperature = scaled_model.temperature.item()
-
+#RM
+RewardModel = RewardModel(lr = 0.005)
 if __name__ == "__main__":
     #infer from t5
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
@@ -164,6 +147,7 @@ if __name__ == "__main__":
             attention_mask = batch["attention_mask"]
             pairs = []
             all_predictions = []
+            all_pred_tokenized = []
             all_scores = []
             pq = PriorityQueue()
             # Generate predictions
@@ -181,11 +165,16 @@ if __name__ == "__main__":
                 output_text = tokenizer.decode(out, skip_special_tokens=True)
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
-                scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, output_text, best_temperature)
-                all_scores.append(scaled_sentiment)
+                all_pred_tokenized = torch.cat((inp_id, out), dim=-1)
+                print("all_pred_{}".format(all_pred_tokenized))
+                scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
+                diverse_score = distinct_n_sentence_level(predicted_text,4)
+                all_scores.append([scaled_sentiment, diverse_score])
+            loss, acc = train_rm(RewardModel, )
+            print(loss, acc)
             for text, score in zip(all_predictions, all_scores):
-                diverse_score = distinct_n_sentence_level(text,4)
-                pq.push(text, score, diverse_score)
+                # pq.push(text, 0.8*score+0.2*diverse_score)
+
         #train
         training_dataset = [pq.pop() for _ in range(math.floor((len(pq)*0.2)))] 
         print(training_dataset)
