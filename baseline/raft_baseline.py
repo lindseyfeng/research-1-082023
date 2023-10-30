@@ -173,7 +173,7 @@ if __name__ == "__main__":
             loss, acc = train_rm(RewardModel, )
             print(loss, acc)
             for text, score in zip(all_predictions, all_scores):
-                # pq.push(text, 0.8*score+0.2*diverse_score)
+                pq.push(text, 0.8*score+0.2*diverse_score)
 
         #train
         training_dataset = [pq.pop() for _ in range(math.floor((len(pq)*0.2)))] 
