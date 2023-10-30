@@ -70,7 +70,7 @@ class LengthSampler:
 def truncate_add_instruction_and_tokenize(batch):
     # Add prefix and truncate the first 64 tokens
     modified_texts = [prefix + ' '.join(text.split()[:64]) for text in batch['text']]
-    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=160, return_tensors="pt")
+    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=100, return_tensors="pt")
     return input
 
 
