@@ -6,6 +6,8 @@ import numpy as np
 
 def train_rm(rm, x, reward, bsz = 16, n_batch=16, sigma_mult=1):
     reward = torch.tensor(reward)
+    print(reward)
+    print(x)
     x = torch.tensor(x)
     sigmas = torch.Tensor(reward.std(0)) * sigma_mult
     total_loss = 0
