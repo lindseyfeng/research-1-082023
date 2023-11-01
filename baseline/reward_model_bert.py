@@ -37,7 +37,7 @@ def train_rm(rm, train_dataloader,  bsz=16, n_batch=4, sigma_mult=1):
         reward = []
         for text in sentences:
             scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, text, best_temperature)
-            diverse_score = distinct_n_sentence_level(predicted_text,4)
+            diverse_score = distinct_n_sentence_level(text,4)
             reward.append([scaled_sentiment, diverse_score])
         reward = torch.tensor(reward, dtype=torch.float32)
         
