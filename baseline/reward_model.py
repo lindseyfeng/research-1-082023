@@ -102,5 +102,6 @@ class RewardModel(nn.Module):
 
                 total += 1
                 total_loss += loss
+                print("total_loss: {}".format(total_loss))
 
         return total_loss / (total + 1e-5), correct / (total + 1e-5), outs
