@@ -23,8 +23,8 @@ def train_rm(rm, x, reward, bsz = 2, n_batch=16, sigma_mult=1):
         reward_scale += outs
         rm.optimizer.zero_grad()
         print(loss)
-        print(loss.requires_grad)
-        loss.requires_grad_(True)
+        for name, param in rm.named_parameters():
+            assert param.requires_grad, f"{name} does not require grad!"
         loss.backward()
         rm.optimizer.step()
 
@@ -120,7 +120,6 @@ class RewardModel(nn.Module):
                 total += 1
                 total_loss += loss
                 total_loss.requires_grad_(True)
-                total.requires_grad_(True)
                 print(total_loss.requires_grad)
 
         return total_loss / (total + 1e-5), correct / (total + 1e-5), outs
