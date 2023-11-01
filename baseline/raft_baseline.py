@@ -35,7 +35,7 @@ from distinct_n.metrics import distinct_n_sentence_level
 
 #reward
 # from reward_model import RewardModel, train_rm
-from reward_model import BERTRewardModel, train_rm
+from reward_model_bert import BERTRewardModel, train_rm
 
 
 # count batch num
