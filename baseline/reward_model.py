@@ -69,6 +69,7 @@ class RewardModel(nn.Module):
 
         for i in range(x.shape[0]):
             for j in range(i):
+                print(x)
                 x_i = x[i]
                 x_j = x[j]
 
