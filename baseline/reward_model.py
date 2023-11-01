@@ -6,10 +6,10 @@ import numpy as np
 
 def train_rm(rm, x, reward, bsz = 16, n_batch=16, sigma_mult=1):
     reward = torch.tensor(reward, dtype=torch.torch.float32)
-    print(reward)
-    print(x)
+    # print(reward)
+    # print(x)
     x = torch.stack(x, dim=0).float()
-    print(x)
+    # print(x)
     sigmas = torch.Tensor(reward.std(0)) * sigma_mult
     total_loss = 0
     total_acc = 0
@@ -51,6 +51,7 @@ class RewardModel(nn.Module):
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
 
     def forward(self, x):
+        x = x.float()
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
@@ -65,7 +66,7 @@ class RewardModel(nn.Module):
         total = 0
         correct = 0
         outs = []
-        print(x.shape[0])
+        # print(x.shape[0])
         epsilon = 1e-10
         
 
