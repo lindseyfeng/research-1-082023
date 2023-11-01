@@ -149,6 +149,8 @@ class BERTRewardModel(nn.Module):
                 else:
                     continue
 
+                print(loss)
+
                 total += 1
                 total_loss += loss
                 # total_loss.requires_grad_(True)
