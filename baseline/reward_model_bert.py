@@ -62,6 +62,7 @@ def train_rm(rm, train_dataloader,  bsz=16, n_batch=4, sigma_mult=1):
         total_loss += loss.item()
         total_acc += acc
         total += 1
+    print(total_loss / (total + 1e-5), total_acc / (total + 1e-5))
 
     rm.mu, rm.sigma = np.array(reward_scale).mean(), np.array(reward_scale).std()
 
