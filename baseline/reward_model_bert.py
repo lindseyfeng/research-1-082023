@@ -75,7 +75,6 @@ class BERTRewardModel(nn.Module):
         total = 0
         correct = 0
         outs = []
-        print(x.shape[0])
         epsilon = 1e-10
         
 
