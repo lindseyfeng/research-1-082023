@@ -5,27 +5,25 @@ import torch.optim as optim
 import numpy as np
 from transformers import BertModel, BertTokenizer
 
-def train_rm(rm, x, reward, bsz = 2, n_batch=16, sigma_mult=1):
-    reward = torch.tensor(reward, dtype=torch.torch.float32)
-    print(reward)
-    print(x)
-    x = torch.stack(x, dim=0).float()
-    print(x)
+def train_rm(rm, sentences, reward, bsz=2, n_batch=16, sigma_mult=1):
+    reward = torch.tensor(reward, dtype=torch.float32)
+    
+    print(sentences)  
     sigmas = torch.Tensor(reward.std(0)) * sigma_mult
     total_loss = 0
     total_acc = 0
     total = 0
     reward_scale = []
+    
     for i in range(n_batch):
-        idx = np.random.choice(x.shape[0], bsz)
-        loss, acc, outs = rm.get_loss(x[idx], reward[idx], sigmas)
+        idx = np.random.choice(len(sentences), bsz)
+        batch_sentences = [sentences[i] for i in idx]
+        loss, acc, outs = rm.get_loss(batch_sentences, reward[idx], sigmas)
+        
         if loss <= 0:
             continue
         reward_scale += outs
         rm.optimizer.zero_grad()
-        # print(loss)
-        for name, param in rm.named_parameters():
-            assert param.requires_grad, f"{name} does not require grad!"
         loss.backward()
         rm.optimizer.step()
 
@@ -35,7 +33,7 @@ def train_rm(rm, x, reward, bsz = 2, n_batch=16, sigma_mult=1):
 
     rm.mu, rm.sigma = np.array(reward_scale).mean(), np.array(reward_scale).std()
 
-    return total_loss / (total+1e-5), total_acc / (total+1e-5)
+    return total_loss / (total + 1e-5), total_acc / (total + 1e-5)
 
 
 class BERTRewardModel(nn.Module):
