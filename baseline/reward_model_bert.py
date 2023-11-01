@@ -10,6 +10,7 @@ from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentM
 from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
 from datasets import load_dataset, load_metric, Dataset
 from torch.utils.data import DataLoader
+from distinct_n.metrics import distinct_n_sentence_level
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 bert_model = BertModel.from_pretrained('bert-base-uncased')
