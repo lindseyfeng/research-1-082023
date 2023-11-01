@@ -31,8 +31,10 @@ def truncate_add_instruction_and_tokenize(batch, size = 64):
     return input
 
 
-def train_rm(rm, sentences,  bsz=16, n_batch=4, sigma_mult=1):
+def train_rm(rm, train_dataloader,  bsz=16, n_batch=4, sigma_mult=1):
     for batch in train_dataloader:
+        print(batch)
+        sentences = batch["text"]
         reward = []
         for text in sentences:
             scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
