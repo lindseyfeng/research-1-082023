@@ -176,7 +176,8 @@ if __name__ == "__main__":
                 score = RewardModel(text)
                 print(score)
                 #pq.push(text, 0.8*score+0.2*diverse_score)
-                print(tokenizer.decode(text) == decode_text)
+                print(tokenizer.decode(text))
+                print(decode_text)
                 pq.push(decode_text, score)
 
         #train
