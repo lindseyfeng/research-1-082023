@@ -32,9 +32,8 @@ def truncate_add_instruction_and_tokenize(batch, size = 64):
 
 
 def train_rm(rm, train_dataloader,  bsz=16, n_batch=4, sigma_mult=1):
-    for batch in train_dataloader:
-        print(batch)
-        sentences = batch["text"]
+    for sentences in train_dataloader:
+        print(sentences)
         reward = []
         for text in sentences:
             scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
@@ -42,7 +41,6 @@ def train_rm(rm, train_dataloader,  bsz=16, n_batch=4, sigma_mult=1):
             reward.append([scaled_sentiment, diverse_score])
         reward = torch.tensor(reward, dtype=torch.float32)
         
-        print(sentences)  
         sigmas = torch.Tensor(reward.std(0)) * sigma_mult
         total_loss = 0
         total_acc = 0
