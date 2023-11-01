@@ -54,6 +54,7 @@ def train_rm(rm, train_dataloader,  bsz=16, n_batch=4, sigma_mult=1):
         
         if loss <= 0:
             continue
+        print("loss: {}, acc: {}". format(loss, acc))
         reward_scale += outs
         rm.optimizer.zero_grad()
         loss.backward()
@@ -160,7 +161,6 @@ class BERTRewardModel(nn.Module):
                 total += 1
                 total_loss += loss
                 # total_loss.requires_grad_(True)
-                print(total_loss.requires_grad)
 
         return total_loss / (total + 1e-5), correct / (total + 1e-5), outs
 
@@ -169,7 +169,7 @@ if __name__ == "__main__":
     #train a reward mdoel
     dataset = load_dataset("imdb")
     RewardModel = BERTRewardModel(lr = 0.001)
-    text_dataloader = DataLoader(dataset["train"]['text'], batch_size=1280, shuffle=True)
+    text_dataloader = DataLoader(dataset["train"]['text'], batch_size=16, shuffle=True)
     for i in range(5):
         loss, acc = train_rm(RewardModel, text_dataloader)
         print("loss: {}, acc: {}".format(loss, acc))
