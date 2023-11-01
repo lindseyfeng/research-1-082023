@@ -165,18 +165,19 @@ if __name__ == "__main__":
                 output_text = tokenizer.decode(out, skip_special_tokens=True)
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
-                pred_tokenized = torch.cat((inp_id, out), dim=-1)
-                all_pred_tokenized.append(pred_tokenized)
+                text_tokenized = torch.cat((inp_id, out), dim=-1)
+                all_text_tokenized.append(text_tokenized)
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
                 diverse_score = distinct_n_sentence_level(predicted_text,4)
                 all_scores.append([scaled_sentiment, diverse_score])
-            loss, acc = train_rm(RewardModel, all_pred_tokenized, all_scores)
+            loss, acc = train_rm(RewardModel, all_text_tokenized, all_scores)
             print(loss, acc)
-            for text in all_predictions:
+            for text, decode_text in zip(all_text_tokenized, all_predictions) :
                 score = RewardModel(text)
                 print(score)
                 #pq.push(text, 0.8*score+0.2*diverse_score)
-                pq.push(text, score)
+                print(tokenizer.decode(text) == decode_text)
+                pq.push(decode_text, score)
 
         #train
         training_dataset = [pq.pop() for _ in range(math.floor((len(pq)*0.2)))] 
