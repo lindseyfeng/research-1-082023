@@ -69,6 +69,7 @@ class RewardModel(nn.Module):
         outs = []
         print(x.shape[0])
         epsilon = 1e-10
+        
 
         for i in range(x.shape[0]):
             for j in range(i):
@@ -86,6 +87,7 @@ class RewardModel(nn.Module):
                 reward_info_j = reward_signal[j]
                 print(reward_info_i)
                 print(reward_info_j)
+                print(reward_i.requires_grad, reward_j.requires_grad)
 
 
                 # Level 1: sentiment_Score
@@ -115,5 +117,6 @@ class RewardModel(nn.Module):
 
                 total += 1
                 total_loss += loss
+                print(total_lossrequires_grad)
 
         return total_loss / (total + 1e-5), correct / (total + 1e-5), outs
