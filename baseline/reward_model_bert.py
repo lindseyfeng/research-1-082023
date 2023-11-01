@@ -17,6 +17,8 @@ scaled_model = ModelWithTemperature(SentimentModel)
 scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
 best_temperature = scaled_model.temperature.item()
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 def truncate_add_instruction_and_tokenize(batch, size = 64):
     # Add prefix and truncate the first 64 tokens
     if size == -1:
