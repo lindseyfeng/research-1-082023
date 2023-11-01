@@ -66,10 +66,10 @@ class RewardModel(nn.Module):
         correct = 0
         outs = []
         print(x.shape[0])
+        epsilon = 1e-10
 
         for i in range(x.shape[0]):
             for j in range(i):
-                print(x)
                 x_i = x[i]
                 x_j = x[j]
 
@@ -88,23 +88,23 @@ class RewardModel(nn.Module):
 
                 # Level 1: sentiment_Score
                 if reward_info_i[self.heirarchy[0]] * sign[0] > reward_info_j[self.heirarchy[0]] * sign[0] + sigmas[self.heirarchy[0]]:
-                    loss = -1 * torch.log(torch.sigmoid(reward_i - reward_j))
+                    loss = -1 * torch.log(torch.sigmoid(reward_i - reward_j)+epsilon)
                     print("loss1: {}, {}".format(loss, reward_i - reward_j))
                     if reward_i > reward_j:
                         correct += 1
                 elif reward_info_j[self.heirarchy[0]] * sign[0] > reward_info_i[self.heirarchy[0]] * sign[0] + sigmas[self.heirarchy[0]]:
-                    loss = -1 * torch.log(torch.sigmoid(reward_j - reward_i))
+                    loss = -1 * torch.log(torch.sigmoid(reward_j - reward_i)+epsilon)
                     print("loss2: {}, {}".format(loss, reward_i - reward_j))
                     if reward_j > reward_i:
                         correct += 1
                 # Level 2: diversity_Score
                 elif reward_info_i[self.heirarchy[1]] * sign[1] > reward_info_j[self.heirarchy[1]] * sign[1] + sigmas[self.heirarchy[1]]:
-                    loss = -1 * torch.log(torch.sigmoid(reward_i - reward_j))
+                    loss = -1 * torch.log(torch.sigmoid(reward_i - reward_j)+epsilon)
                     print("loss3: {}, {}".format(loss, reward_i - reward_j))
                     if reward_i > reward_j:
                         correct += 1
                 elif reward_info_j[self.heirarchy[1]] * sign[1] > reward_info_i[self.heirarchy[1]] * sign[1] + sigmas[self.heirarchy[1]]:
-                    loss = -1 * torch.log(torch.sigmoid(reward_j - reward_i))
+                    loss = -1 * torch.log(torch.sigmoid(reward_j - reward_i)+epsilon)
                     print("loss4: {}, {}".format(loss, reward_i - reward_j))
                     if reward_j > reward_i:
                         correct += 1
