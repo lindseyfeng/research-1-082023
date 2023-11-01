@@ -147,7 +147,7 @@ if __name__ == "__main__":
             attention_mask = batch["attention_mask"]
             pairs = []
             all_predictions = []
-            all_pred_tokenized = []
+            all_text_tokenized = []
             all_scores = []
             pq = PriorityQueue()
             # Generate predictions
