@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
 from transformers import BertModel, BertTokenizer
+from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
 
 SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
@@ -161,5 +162,5 @@ if __name__ == "__main__":
     for i in range(5):
         loss, acc = train_rm(RewardModel, text_dataloader)
         print("loss: {}, acc: {}".format(loss, acc))
-
+    torch.save(model.state_dict(), 'reward_model.pt')
        
