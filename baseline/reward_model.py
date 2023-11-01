@@ -5,7 +5,7 @@ import torch.optim as optim
 import numpy as np
 
 def train_rm(rm, x, reward, bsz = 16, n_batch=16, sigma_mult=1):
-    reward = torch.tensor(reward, dtype=torch.float32)
+    reward = torch.tensor(reward, dtype=torch.long)
     print(reward)
     x = torch.stack(x, dim=0)
     print(x)
