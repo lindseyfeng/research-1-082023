@@ -7,6 +7,7 @@ import torch.optim as optim
 import numpy as np
 from transformers import BertModel, BertTokenizer
 from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
+from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
 
 bert_model = BertModel.from_pretrained('bert-base-uncased')
 SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
