@@ -65,6 +65,7 @@ class RewardModel(nn.Module):
         total = 0
         correct = 0
         outs = []
+        print(x.shape[0])
 
         for i in range(x.shape[0]):
             for j in range(i):
