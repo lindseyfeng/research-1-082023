@@ -139,7 +139,7 @@ if __name__ == "__main__":
     #infer from t5
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets)
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=5, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=32, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
@@ -172,10 +172,11 @@ if __name__ == "__main__":
                 all_scores.append([scaled_sentiment, diverse_score])
             loss, acc = train_rm(RewardModel, all_pred_tokenized, all_scores)
             print(loss, acc)
-            for text, score in all_predictions:
+            for text in all_predictions:
                 score = RewardModel(text)
                 print(score)
                 #pq.push(text, 0.8*score+0.2*diverse_score)
+                pq.push(text, score)
 
         #train
         training_dataset = [pq.pop() for _ in range(math.floor((len(pq)*0.2)))] 
