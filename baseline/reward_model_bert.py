@@ -8,6 +8,8 @@ import numpy as np
 from transformers import BertModel, BertTokenizer
 from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
 from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
+from datasets import load_dataset, load_metric, Dataset
+from torch.utils.data import DataLoader
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 bert_model = BertModel.from_pretrained('bert-base-uncased')
@@ -163,6 +165,7 @@ class BERTRewardModel(nn.Module):
 
 if __name__ == "__main__":
     #train a reward mdoel
+    dataset = load_dataset("imdb")
     RewardModel = BERTRewardModel(lr = 0.001)
     text_dataloader = DataLoader(dataset["train"]['text'], batch_size=1280, shuffle=True)
     for i in range(5):
