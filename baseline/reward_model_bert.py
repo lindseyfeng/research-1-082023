@@ -100,7 +100,8 @@ class BERTRewardModel(nn.Module):
         correct = 0
         outs = []
         epsilon = 1e-10
-        
+        print(x)
+        print(len(x))
 
         for i in range(len(x)):
             for j in range(i):
