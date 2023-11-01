@@ -22,19 +22,9 @@ scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_locati
 best_temperature = scaled_model.temperature.item()
 
 
-def truncate_add_instruction_and_tokenize(batch, size = 64):
-    # Add prefix and truncate the first 64 tokens
-    if size == -1:
-        modified_texts = [prefix + ' '.join(text) for text in batch['text']]
-    else:
-        modified_texts = [prefix + ' '.join(text.split()[:size]) for text in batch['text']]
-    input = bert_tokenizer(modified_texts, truncation=True, padding='max_length', max_length=120, return_tensors="pt")
-    return input
-
-
 def train_rm(rm, train_dataloader,  bsz=16, n_batch=4, sigma_mult=1):
     for sentences in train_dataloader:
-        print(sentences)
+        print(len(sentences))
         reward = []
         for text in sentences:
             scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, text, best_temperature)
