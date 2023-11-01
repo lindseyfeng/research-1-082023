@@ -36,7 +36,7 @@ class RewardModel(nn.Module):
     def __init__(self, lr, normalize=False):
         super().__init__()
         
-        self.fc1 = nn.Linear(200, 256)
+        self.fc1 = nn.Linear(168, 256)
         self.fc2 = nn.Linear(256, 256)
         self.fc3 = nn.Linear(256, 1)
 
