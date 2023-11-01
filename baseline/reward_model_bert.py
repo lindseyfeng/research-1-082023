@@ -79,7 +79,7 @@ class BERTRewardModel(nn.Module):
         epsilon = 1e-10
         
 
-        for i in range(x.shape[0]):
+        for i in range(len(x)):
             for j in range(i):
                 x_i = x[i]
                 x_j = x[j]
