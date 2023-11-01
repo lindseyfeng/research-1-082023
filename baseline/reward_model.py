@@ -79,6 +79,8 @@ class RewardModel(nn.Module):
 
                 reward_info_i = reward_signal[i]
                 reward_info_j = reward_signal[j]
+                print(reward_info_i)
+                print(reward_info_j)
 
 
                 # Level 1: sentiment_Score
@@ -108,6 +110,6 @@ class RewardModel(nn.Module):
 
                 total += 1
                 total_loss += loss
-                print("total_loss: {}".format(total_loss))
+                print("total_loss: {}".format(correct))
 
         return total_loss / (total + 1e-5), correct / (total + 1e-5), outs
