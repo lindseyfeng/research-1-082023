@@ -76,6 +76,8 @@ class RewardModel(nn.Module):
                 if j == 0:
                     outs.append(reward_i.item())
                 reward_j = self(x_j)
+                print(reward_i)
+                print(reward_j)
 
                 reward_info_i = reward_signal[i]
                 reward_info_j = reward_signal[j]
