@@ -23,7 +23,7 @@ def train_rm(rm, x, reward, bsz = 2, n_batch=16, sigma_mult=1):
             continue
         reward_scale += outs
         rm.optimizer.zero_grad()
-        print(loss)
+        # print(loss)
         for name, param in rm.named_parameters():
             assert param.requires_grad, f"{name} does not require grad!"
         loss.backward()
@@ -90,38 +90,38 @@ class BERTRewardModel(nn.Module):
                 if j == 0:
                     outs.append(reward_i.item())
                 reward_j = self(x_j)
-                print(reward_i)
-                print(reward_j)
+                # print(reward_i)
+                # print(reward_j)
 
                 reward_info_i = reward_signal[i]
                 reward_info_j = reward_signal[j]
-                print(reward_info_i)
-                print(reward_info_j)
-                reward_i.requires_grad_(True)
-                reward_j.requires_grad_(True)
-                print(reward_i.requires_grad, reward_j.requires_grad)
+                # print(reward_info_i)
+                # print(reward_info_j)
+                # reward_i.requires_grad_(True)
+                # reward_j.requires_grad_(True)
+                # print(reward_i.requires_grad, reward_j.requires_grad)
 
 
                 # Level 1: sentiment_Score
                 if reward_info_i[self.heirarchy[0]] * sign[0] > reward_info_j[self.heirarchy[0]] * sign[0] + sigmas[self.heirarchy[0]]:
                     loss = -1 * torch.log(torch.sigmoid(reward_i - reward_j)+epsilon)
-                    print("loss1: {}, {}".format(loss, reward_i - reward_j))
+                    # print("loss1: {}, {}".format(loss, reward_i - reward_j))
                     if reward_i > reward_j:
                         correct += 1
                 elif reward_info_j[self.heirarchy[0]] * sign[0] > reward_info_i[self.heirarchy[0]] * sign[0] + sigmas[self.heirarchy[0]]:
                     loss = -1 * torch.log(torch.sigmoid(reward_j - reward_i)+epsilon)
-                    print("loss2: {}, {}".format(loss, reward_i - reward_j))
+                    # print("loss2: {}, {}".format(loss, reward_i - reward_j))
                     if reward_j > reward_i:
                         correct += 1
                 # Level 2: diversity_Score
                 elif reward_info_i[self.heirarchy[1]] * sign[1] > reward_info_j[self.heirarchy[1]] * sign[1] + sigmas[self.heirarchy[1]]:
                     loss = -1 * torch.log(torch.sigmoid(reward_i - reward_j)+epsilon)
-                    print("loss3: {}, {}".format(loss, reward_i - reward_j))
+                    # print("loss3: {}, {}".format(loss, reward_i - reward_j))
                     if reward_i > reward_j:
                         correct += 1
                 elif reward_info_j[self.heirarchy[1]] * sign[1] > reward_info_i[self.heirarchy[1]] * sign[1] + sigmas[self.heirarchy[1]]:
                     loss = -1 * torch.log(torch.sigmoid(reward_j - reward_i)+epsilon)
-                    print("loss4: {}, {}".format(loss, reward_i - reward_j))
+                    # print("loss4: {}, {}".format(loss, reward_i - reward_j))
                     if reward_j > reward_i:
                         correct += 1
                 else:
@@ -129,7 +129,7 @@ class BERTRewardModel(nn.Module):
 
                 total += 1
                 total_loss += loss
-                total_loss.requires_grad_(True)
+                # total_loss.requires_grad_(True)
                 print(total_loss.requires_grad)
 
         return total_loss / (total + 1e-5), correct / (total + 1e-5), outs

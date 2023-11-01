@@ -34,7 +34,8 @@ from transformers import T5TokenizerFast, T5ForConditionalGeneration
 from distinct_n.metrics import distinct_n_sentence_level
 
 #reward
-from reward_model import RewardModel, train_rm
+# from reward_model import RewardModel, train_rm
+from reward_model import BERTRewardModel, train_rm
 
 
 # count batch num
@@ -134,12 +135,12 @@ scaled_model = ModelWithTemperature(SentimentModel)
 scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
 best_temperature = scaled_model.temperature.item()
 #RM
-RewardModel = RewardModel(lr = 0.001)
+RewardModel = BERTRewardModel(lr = 0.001, normalize = True)
 if __name__ == "__main__":
     #infer from t5
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets)
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1248, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=16, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
