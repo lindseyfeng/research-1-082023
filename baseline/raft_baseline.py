@@ -68,9 +68,12 @@ class LengthSampler:
     def __call__(self):
         return np.random.choice(self.values)
       
-def truncate_add_instruction_and_tokenize(batch):
+def truncate_add_instruction_and_tokenize(batch, size = 64):
     # Add prefix and truncate the first 64 tokens
-    modified_texts = [prefix + ' '.join(text.split()[:64]) for text in batch['text']]
+    if size == -1:
+        modified_texts = [prefix + ' '.join(text) for text in batch['text']]
+    else:
+        modified_texts = [prefix + ' '.join(text.split()[:size]) for text in batch['text']]
     input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=120, return_tensors="pt")
     return input
 
@@ -137,7 +140,17 @@ best_temperature = scaled_model.temperature.item()
 #RM
 RewardModel = BERTRewardModel(lr = 0.001, normalize = True)
 if __name__ == "__main__":
+    #train a reward mdoel
+
+
+
+
+
+
     #infer from t5
+
+
+
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets)
     train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=16, collate_fn=collate_fn) 
@@ -171,13 +184,15 @@ if __name__ == "__main__":
                 all_scores.append([scaled_sentiment, diverse_score])
             loss, acc = train_rm(RewardModel, all_predictions, all_scores)
             print(loss, acc)
-            for text in all_predictions :
-                score = RewardModel(text)
-                print(score)
-                #pq.push(text, 0.8*score+0.2*diverse_score)
-                print(tokenizer.decode(text))
-                print(decode_text)
-                pq.push(decode_text, score.item())
+            # for text in all_predictions :
+            #     score = RewardModel(text)
+            #     print(score)
+            #     #pq.push(text, 0.8*score+0.2*diverse_score)
+            #     print(tokenizer.decode(text))
+            #     print(decode_text)
+            #     pq.push(decode_text, score.item())
+    for batch in train_dataloader:
+        count +=1
 
         #train
         training_dataset = [pq.pop() for _ in range(math.floor((len(pq)*0.2)))] 

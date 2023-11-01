@@ -5,17 +5,39 @@ import torch.optim as optim
 import numpy as np
 from transformers import BertModel, BertTokenizer
 
-def train_rm(rm, sentences, reward, bsz=2, n_batch=16, sigma_mult=1):
-    reward = torch.tensor(reward, dtype=torch.float32)
-    
-    print(sentences)  
-    sigmas = torch.Tensor(reward.std(0)) * sigma_mult
-    total_loss = 0
-    total_acc = 0
-    total = 0
-    reward_scale = []
-    
-    for i in range(n_batch):
+SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
+bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
+scaled_model = ModelWithTemperature(SentimentModel)
+scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
+best_temperature = scaled_model.temperature.item()
+
+def truncate_add_instruction_and_tokenize(batch, size = 64):
+    # Add prefix and truncate the first 64 tokens
+    if size == -1:
+        modified_texts = [prefix + ' '.join(text) for text in batch['text']]
+    else:
+        modified_texts = [prefix + ' '.join(text.split()[:size]) for text in batch['text']]
+    input = bert_tokenizer(modified_texts, truncation=True, padding='max_length', max_length=120, return_tensors="pt")
+    return input
+
+
+def train_rm(rm, sentences,  bsz=16, n_batch=4, sigma_mult=1):
+    for batch in train_dataloader:
+        reward = []
+        for text in sentences:
+            scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
+            diverse_score = distinct_n_sentence_level(predicted_text,4)
+            reward.append([scaled_sentiment, diverse_score])
+        reward = torch.tensor(reward, dtype=torch.float32)
+        
+        print(sentences)  
+        sigmas = torch.Tensor(reward.std(0)) * sigma_mult
+        total_loss = 0
+        total_acc = 0
+        total = 0
+        reward_scale = []
+
         idx = np.random.choice(len(sentences), bsz)
         batch_sentences = [sentences[i] for i in idx]
         loss, acc, outs = rm.get_loss(batch_sentences, reward[idx], sigmas)
@@ -130,3 +152,14 @@ class BERTRewardModel(nn.Module):
                 print(total_loss.requires_grad)
 
         return total_loss / (total + 1e-5), correct / (total + 1e-5), outs
+
+
+if __name__ == "__main__":
+    #train a reward mdoel
+    RewardModel = BERTRewardModel(lr = 0.001)
+    text_dataloader = DataLoader(dataset["train"]['text'], batch_size=1280, shuffle=True)
+    for i in range(5):
+        loss, acc = train_rm(RewardModel, text_dataloader)
+        print("loss: {}, acc: {}".format(loss, acc))
+
+       
