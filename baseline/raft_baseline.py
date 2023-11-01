@@ -148,7 +148,6 @@ if __name__ == "__main__":
             attention_mask = batch["attention_mask"]
             pairs = []
             all_predictions = []
-            all_text_tokenized = []
             all_scores = []
             pq = PriorityQueue()
             # Generate predictions
@@ -167,13 +166,12 @@ if __name__ == "__main__":
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
                 text_tokenized = torch.cat((inp_id, out), dim=-1)
-                all_text_tokenized.append(text_tokenized)
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
                 diverse_score = distinct_n_sentence_level(predicted_text,4)
                 all_scores.append([scaled_sentiment, diverse_score])
-            loss, acc = train_rm(RewardModel, all_text_tokenized, all_scores)
+            loss, acc = train_rm(RewardModel, all_predictions, all_scores)
             print(loss, acc)
-            for text, decode_text in zip(all_text_tokenized, all_predictions) :
+            for text in all_predictions :
                 score = RewardModel(text)
                 print(score)
                 #pq.push(text, 0.8*score+0.2*diverse_score)
