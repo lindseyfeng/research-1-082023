@@ -134,12 +134,12 @@ scaled_model = ModelWithTemperature(SentimentModel)
 scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
 best_temperature = scaled_model.temperature.item()
 #RM
-RewardModel = RewardModel(lr = 0.005)
+RewardModel = RewardModel(lr = 0.001)
 if __name__ == "__main__":
     #infer from t5
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets)
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=32, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1248, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
