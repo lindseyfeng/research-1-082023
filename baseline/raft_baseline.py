@@ -178,7 +178,7 @@ if __name__ == "__main__":
                 #pq.push(text, 0.8*score+0.2*diverse_score)
                 print(tokenizer.decode(text))
                 print(decode_text)
-                pq.push(decode_text, score)
+                pq.push(decode_text, score.item())
 
         #train
         training_dataset = [pq.pop() for _ in range(math.floor((len(pq)*0.2)))] 
