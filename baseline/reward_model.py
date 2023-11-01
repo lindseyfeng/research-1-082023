@@ -87,6 +87,8 @@ class RewardModel(nn.Module):
                 reward_info_j = reward_signal[j]
                 print(reward_info_i)
                 print(reward_info_j)
+                reward_i.requires_grad_(True)
+                reward_j.requires_grad_(True)
                 print(reward_i.requires_grad, reward_j.requires_grad)
 
 
@@ -117,6 +119,6 @@ class RewardModel(nn.Module):
 
                 total += 1
                 total_loss += loss
-                print(total_lossrequires_grad)
+                print(total_loss.requires_grad)
 
         return total_loss / (total + 1e-5), correct / (total + 1e-5), outs
