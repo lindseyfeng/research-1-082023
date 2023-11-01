@@ -9,6 +9,7 @@ from transformers import BertModel, BertTokenizer
 from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
 from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 bert_model = BertModel.from_pretrained('bert-base-uncased')
 SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
@@ -17,7 +18,6 @@ scaled_model = ModelWithTemperature(SentimentModel)
 scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
 best_temperature = scaled_model.temperature.item()
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def truncate_add_instruction_and_tokenize(batch, size = 64):
     # Add prefix and truncate the first 64 tokens
