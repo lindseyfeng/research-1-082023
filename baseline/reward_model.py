@@ -7,6 +7,7 @@ import numpy as np
 def train_rm(rm, x, reward, bsz = 16, n_batch=16, sigma_mult=1):
     reward = torch.tensor(reward, dtype=torch.torch.float32)
     print(reward)
+    print(x)
     x = torch.stack(x, dim=0).float()
     print(x)
     sigmas = torch.Tensor(reward.std(0)) * sigma_mult
@@ -21,6 +22,7 @@ def train_rm(rm, x, reward, bsz = 16, n_batch=16, sigma_mult=1):
             continue
         reward_scale += outs
         rm.optimizer.zero_grad()
+        print(loss)
         loss.backward()
         rm.optimizer.step()
 
