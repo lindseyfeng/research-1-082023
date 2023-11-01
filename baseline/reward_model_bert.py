@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
+from transformers import BertModel, BertTokenizer
 
 def train_rm(rm, x, reward, bsz = 2, n_batch=16, sigma_mult=1):
     reward = torch.tensor(reward, dtype=torch.torch.float32)
@@ -36,13 +37,17 @@ def train_rm(rm, x, reward, bsz = 2, n_batch=16, sigma_mult=1):
 
     return total_loss / (total+1e-5), total_acc / (total+1e-5)
 
-class RewardModel(nn.Module):
-    def __init__(self, lr, normalize=False):
-        super().__init__()
+
+class BERTRewardModel(nn.Module):
+    def __init__(self, lr, normalize=False, bert_model_name='bert-base-uncased'):
+        super(BERTRewardModel, self).__init__()
+
+        # Load the pre-trained BERT model
+        self.bert = BertModel.from_pretrained(bert_model_name)
+        self.tokenizer = BertTokenizer.from_pretrained(bert_model_name)
         
-        self.fc1 = nn.Linear(168, 256)
-        self.fc2 = nn.Linear(256, 256)
-        self.fc3 = nn.Linear(256, 1)
+        # Use BERT's hidden size to define the FC layer
+        self.fc = nn.Linear(self.bert.config.hidden_size, 1)
 
         self.mu = 0
         self.sigma = 1
@@ -52,14 +57,19 @@ class RewardModel(nn.Module):
 
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
 
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
+    def forward(self, sentences):
+        # Tokenize sentences and get BERT's output
+        inputs = self.tokenizer(sentences, return_tensors="pt", padding=True, truncation=True, max_length=512)
+        outputs = self.bert(**inputs)
+        
+        # Use the [CLS] token representation to predict the reward
+        cls_representation = outputs.last_hidden_state[:, 0, :]
+        reward = self.fc(cls_representation)
 
         if self.normalize:
-            x = (x - self.mu) / self.sigma
-        return x
+            reward = (reward - self.mu) / self.sigma
+        return reward
+
 
     def get_loss(self, x, reward_signal, sigmas):
         sign = [1, 1] # One sign for each metric: sentiment and diversity

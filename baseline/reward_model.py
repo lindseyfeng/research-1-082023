@@ -119,8 +119,6 @@ class RewardModel(nn.Module):
 
                 total += 1
                 total_loss += loss
-                total_loss.requires_grad_(True)
-                total.requires_grad_(True)
                 print(total_loss.requires_grad)
 
         return total_loss / (total + 1e-5), correct / (total + 1e-5), outs
