@@ -8,6 +8,7 @@ import numpy as np
 from transformers import BertModel, BertTokenizer
 from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
 
+bert_model = BertModel.from_pretrained('bert-base-uncased')
 SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
