@@ -22,7 +22,7 @@ scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_locati
 best_temperature = scaled_model.temperature.item()
 
 
-def train_rm(rm, train_dataloader,  bsz=16, n_batch=4, sigma_mult=1):
+def train_rm(rm, train_dataloader, bsz=16, sigma_mult=1):
     for sentences in train_dataloader:
         print(len(sentences))
         reward = []
@@ -44,7 +44,7 @@ def train_rm(rm, train_dataloader,  bsz=16, n_batch=4, sigma_mult=1):
         
         if loss <= 0:
             continue
-        print("loss: {}, acc: {}". format(loss, acc))
+        print("train_rm: loss: {}, acc: {}". format(loss, acc))
         reward_scale += outs
         rm.optimizer.zero_grad()
         loss.backward()
@@ -99,7 +99,6 @@ class BERTRewardModel(nn.Module):
         total = 0
         correct = 0
         outs = []
-        epsilon = 1e-10
         print(x)
         print(len(x))
 
@@ -149,8 +148,6 @@ class BERTRewardModel(nn.Module):
                 else:
                     continue
 
-                print(loss)
-
                 total += 1
                 total_loss += loss
                 # total_loss.requires_grad_(True)
@@ -162,8 +159,8 @@ if __name__ == "__main__":
     #train a reward mdoel
     dataset = load_dataset("imdb")
     RewardModel = BERTRewardModel(lr = 0.001)
-    text_dataloader = DataLoader(dataset["train"]['text'], batch_size=16, shuffle=True)
-    for i in range(5):
+    text_dataloader = DataLoader(dataset["train"]['text'], batch_size=64, shuffle=True)
+    for i in range(3):
         loss, acc = train_rm(RewardModel, text_dataloader)
         print("loss: {}, acc: {}".format(loss, acc))
     torch.save(model.state_dict(), 'reward_model.pt')
