@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*_
 from lib2to3.pgen2 import token
 import sys
-import math
 sys.path.append('../')  # Append the parent directory to sys.path
 #bert
 from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
@@ -29,13 +28,7 @@ from datasets import load_dataset, load_metric, Dataset
 from torch.utils.data import DataLoader
 #t5 inference
 from transformers import T5TokenizerFast, T5ForConditionalGeneration
-
-#diverse
 from distinct_n.metrics import distinct_n_sentence_level
-
-#reward
-# from reward_model import RewardModel, train_rm
-from reward_model_bert import BERTRewardModel, train_rm
 
 
 # count batch num
@@ -68,13 +61,10 @@ class LengthSampler:
     def __call__(self):
         return np.random.choice(self.values)
       
-def truncate_add_instruction_and_tokenize(batch, size = 64):
+def truncate_add_instruction_and_tokenize(batch):
     # Add prefix and truncate the first 64 tokens
-    if size == -1:
-        modified_texts = [prefix + ' '.join(text) for text in batch['text']]
-    else:
-        modified_texts = [prefix + ' '.join(text.split()[:size]) for text in batch['text']]
-    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=120, return_tensors="pt")
+    modified_texts = [prefix + ' '.join(text.split()[:64]) for text in batch['text']]
+    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=200, return_tensors="pt")
     return input
 
 
@@ -129,7 +119,6 @@ class PriorityQueue:
     def __len__(self):
         return len(self.queue)
 
-
 #bert model
 SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
@@ -137,23 +126,12 @@ SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
 scaled_model = ModelWithTemperature(SentimentModel)
 scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
 best_temperature = scaled_model.temperature.item()
-#RM
-RewardModel = BERTRewardModel(lr = 0.001, normalize = True)
+
 if __name__ == "__main__":
-    #train a reward mdoel
-
-
-
-
-
-
     #infer from t5
-
-
-
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets)
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=16, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
@@ -170,7 +148,7 @@ if __name__ == "__main__":
                 model = T5ForConditionalGeneration.from_pretrained(checkpoint_folder)
                 tokenizer = T5TokenizerFast.from_pretrained(checkpoint_folder)
             print(tokenizer)
-            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None, temperature = 1)
+            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
             for inp_id, out in zip(input_ids, outputs):
                 pairs.append((inp_id, out))
             for inp_id, out in pairs:
@@ -178,24 +156,13 @@ if __name__ == "__main__":
                 output_text = tokenizer.decode(out, skip_special_tokens=True)
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
-                text_tokenized = torch.cat((inp_id, out), dim=-1)
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                diverse_score = distinct_n_sentence_level(predicted_text,4)
-                all_scores.append([scaled_sentiment, diverse_score])
-            loss, acc = train_rm(RewardModel, all_predictions, all_scores)
-            print(loss, acc)
-            # for text in all_predictions :
-            #     score = RewardModel(text)
-            #     print(score)
-            #     #pq.push(text, 0.8*score+0.2*diverse_score)
-            #     print(tokenizer.decode(text))
-            #     print(decode_text)
-            #     pq.push(decode_text, score.item())
-    for batch in train_dataloader:
-        count +=1
-
+                all_scores.append(scaled_sentiment)
+            for text, score in zip(all_predictions, all_scores):
+                diverse_score = distinct_n_sentence_level(text,4)
+                pq.push(text, 0.8*score+0.2*diverse_score)
         #train
-        training_dataset = [pq.pop() for _ in range(math.floor((len(pq)*0.2)))] 
+        training_dataset = [pq.pop() for _ in range(256)] #100*0.2
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
@@ -210,7 +177,7 @@ if __name__ == "__main__":
             per_device_train_batch_size=16,
             gradient_accumulation_steps=4,
             per_device_eval_batch_size=64,
-            num_train_epochs=4,
+            num_train_epochs=1,
             evaluation_strategy="epoch",
             save_strategy="epoch",
             logging_dir='./logs',
@@ -238,11 +205,10 @@ if __name__ == "__main__":
 
     #save finetuned   
     trainer.save_model("./t5_imdb_complete")
-    tokenizer.save_pretrained('./t5_imdb_complete_temperature')
+    tokenizer.save_pretrained('./t5_imdb_complete')
 
 
 
 
 
         
-
