@@ -159,10 +159,10 @@ if __name__ == "__main__":
     #train a reward mdoel
     dataset = load_dataset("imdb")
     RewardModel = BERTRewardModel(lr = 0.001)
-    text_dataloader = DataLoader(dataset["train"].shuffle(seed=42).select(range(5000))['text'], batch_size=64, shuffle=True)
+    text_dataloader = DataLoader(dataset["train"].shuffle(seed=42).select(range(2000))['text'], batch_size=64, shuffle=True)
     for i in range(3):
         loss, acc = train_rm(RewardModel, text_dataloader)
         print("loss: {}, acc: {}".format(loss, acc))
-        torch.save(model.state_dict(), f'reward_model_{i}.pt')
-    torch.save(model.state_dict(), 'reward_model.pt')
+        torch.save(RewardModel.state_dict(), f'reward_model_{i}.pt')
+    torch.save(RewardModel.state_dict(), 'reward_model.pt')
        
