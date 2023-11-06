@@ -37,7 +37,7 @@ if __name__ == "__main__":
             reward.append([scaled_sentiment, diverse_score])
         reward = torch.tensor(reward, dtype=torch.float32)
         
-        sigmas = torch.Tensor(reward.std(0)) * sigma_mult
+        sigmas = torch.Tensor(reward.std(0))
         total_loss = 0
         total_acc = 0
         total = 0
