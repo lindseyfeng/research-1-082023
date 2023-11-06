@@ -160,7 +160,7 @@ if __name__ == "__main__":
                 all_scores.append(scaled_sentiment)
             for text, score in zip(all_predictions, all_scores):
                 diverse_score = distinct_n_sentence_level(text,4)
-                pq.push(text,0.5*diverse_score+0.5*score)
+                pq.push(text,0.1*diverse_score+0.9*score)
         #train
         training_dataset = [pq.pop() for _ in range(256)] #100*0.2
         print(training_dataset)
