@@ -28,6 +28,7 @@ best_temperature = scaled_model.temperature.item()
 
 if __name__ == "__main__":
     dataset = load_dataset("imdb")
+    reward = []
     text_dataloader = DataLoader(dataset["train"].shuffle(seed=1111).select(range(256))['text'], batch_size=64, shuffle=True)
     for sentences in text_dataloader:
         for text in sentences:
