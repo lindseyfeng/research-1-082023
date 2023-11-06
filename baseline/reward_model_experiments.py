@@ -5,11 +5,9 @@ import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
 from transformers import BertModel, BertTokenizer
-from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentModel
 from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
 from datasets import load_dataset, load_metric, Dataset
 from torch.utils.data import DataLoader
-from distinct_n.metrics import distinct_n_sentence_level
 sys.path.append('../') 
 from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
 from reward_model_bert import BERTRewardModel
