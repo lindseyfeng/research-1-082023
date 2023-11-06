@@ -12,8 +12,9 @@ sys.path.append('../')
 from transformers import BertModel, AutoTokenizer, DataCollatorForSeq2Seq
 from reward_model_bert import BERTRewardModel
 
+model = BERTRewardModel()
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-model = BERTRewardModel.load_state_dict(torch.load('reward_model_0.pt', map_location=device))
+model.load_state_dict(torch.load('reward_model_0.pt', map_location=device))
 
 if __name__ == "__main__":
     dataset = load_dataset("imdb")
