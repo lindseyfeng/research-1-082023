@@ -185,9 +185,9 @@ if __name__ == "__main__":
     #train a reward mdoel
     dataset = load_dataset("imdb")
     RewardModel = BERTRewardModel(lr = 2e-5)
-    text_dataloader = DataLoader(dataset["train"].shuffle(seed=42).select(range(2500))['text'], batch_size=64, shuffle=True)
-    test_dataloader = DataLoader(dataset["test"].shuffle(seed=1111).select(range(2500))['text'], batch_size=64, shuffle=True)
     for i in range(3):
+        text_dataloader = DataLoader(dataset["train"].shuffle(seed=42).select(range(2500))['text'], batch_size=64, shuffle=True)
+        test_dataloader = DataLoader(dataset["test"].shuffle(seed=1111).select(range(2500))['text'], batch_size=64, shuffle=True)
         loss, acc = train_rm(RewardModel, text_dataloader)
         print("loss: {}, acc: {}".format(loss, acc))
 
