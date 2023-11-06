@@ -29,22 +29,30 @@ best_temperature = scaled_model.temperature.item()
 if __name__ == "__main__":
     dataset = load_dataset("imdb")
     reward = []
-    text_dataloader = DataLoader(dataset["train"].shuffle(seed=1111).select(range(256))['text'], batch_size=64, shuffle=True)
+    text_dataloader = DataLoader(dataset["train"].shuffle(seed=1111).select(range(128))['text'], batch_size=32, shuffle=True)
     for sentences in text_dataloader:
         for text in sentences:
-            scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, text, best_temperature)
-            diverse_score = distinct_n_sentence_level(text,4)
-            reward.append([scaled_sentiment, diverse_score])
-        reward = torch.tensor(reward, dtype=torch.float32)
+                scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, text, best_temperature)
+                diverse_score = distinct_n_sentence_level(text,4)
+                reward = model(text)
+                print("train_rm: sentiment: {}, score: {}, reward: {}". format(scaled_sentiment, diverse_score, reward))
+
+
+    # for sentences in text_dataloader:
+    #     for text in sentences:
+    #         scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, text, best_temperature)
+    #         diverse_score = distinct_n_sentence_level(text,4)
+    #         reward.append([scaled_sentiment, diverse_score])
+    #     reward = torch.tensor(reward, dtype=torch.float32)
         
-        sigmas = torch.Tensor(reward.std(0))
-        total_loss = 0
-        total_acc = 0
-        total = 0
-        reward_scale = []
+    #     sigmas = torch.Tensor(reward.std(0))
+    #     total_loss = 0
+    #     total_acc = 0
+    #     total = 0
+    #     reward_scale = []
         
-        oss, acc, outs = model.get_loss(sentences, reward, sigmas)
-        print("train_rm: loss: {}, acc: {}". format(loss, acc))
+    #     oss, acc, outs = model.get_loss(sentences, reward, sigmas)
+    #     print("train_rm: loss: {}, acc: {}". format(loss, acc))
 
 
 
