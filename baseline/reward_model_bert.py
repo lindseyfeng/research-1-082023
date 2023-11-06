@@ -185,14 +185,16 @@ if __name__ == "__main__":
     #train a reward mdoel
     dataset = load_dataset("imdb")
     RewardModel = BERTRewardModel(lr = 2e-5)
-    text_dataloader = DataLoader(dataset["train"].shuffle(seed=42).select(range(5000))['text'], batch_size=64, shuffle=True)
+    text_dataloader = DataLoader(dataset["train"].shuffle(seed=42).select(range(2500))['text'], batch_size=64, shuffle=True)
     test_dataloader = DataLoader(dataset["test"].shuffle(seed=1111).select(range(2500))['text'], batch_size=64, shuffle=True)
     for i in range(3):
         loss, acc = train_rm(RewardModel, text_dataloader)
         print("loss: {}, acc: {}".format(loss, acc))
 
         test_loss, test_acc = test_rm(RewardModel, test_dataloader)
-        print("test_loss: {}, test_acc: {}".format(loss, acc))
-        torch.save(RewardModel.state_dict(), f'reward_model_{i}.pt')
+        print("test_loss: {}, test_acc: {}".format(test_loss, test_acc))
+        if(test_acc >= 0.8):
+            torch.save(RewardModel.state_dict(), f'reward_model_{i}.pt')
+            break
     torch.save(RewardModel.state_dict(), 'reward_model.pt')
        
