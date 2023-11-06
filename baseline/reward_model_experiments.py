@@ -16,7 +16,7 @@ from bert.main import ModelWithTemperature, predict_scaled_sentiment, SentimentM
 
 model = BERTRewardModel(lr = 0.001)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-model.load_state_dict(torch.load('reward_model_0.pt', map_location=device))
+model.load_state_dict(torch.load('reward_model_1.pt', map_location=device))
 bert_model = BertModel.from_pretrained('bert-base-uncased')
 SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
 bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
