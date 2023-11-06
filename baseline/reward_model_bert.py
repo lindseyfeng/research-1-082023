@@ -23,6 +23,10 @@ best_temperature = scaled_model.temperature.item()
 
 
 def train_rm(rm, train_dataloader, bsz=16, sigma_mult=1):
+    total_loss = 0
+    total_acc = 0
+    total = 0
+    reward_scale = []
     for sentences in train_dataloader:
         print(len(sentences))
         reward = []
@@ -33,10 +37,6 @@ def train_rm(rm, train_dataloader, bsz=16, sigma_mult=1):
         reward = torch.tensor(reward, dtype=torch.float32)
         
         sigmas = torch.Tensor(reward.std(0)) * sigma_mult
-        total_loss = 0
-        total_acc = 0
-        total = 0
-        reward_scale = []
 
         idx = np.random.choice(len(sentences), bsz)
         batch_sentences = [sentences[i] for i in idx]
@@ -58,6 +58,34 @@ def train_rm(rm, train_dataloader, bsz=16, sigma_mult=1):
     rm.mu, rm.sigma = np.array(reward_scale).mean(), np.array(reward_scale).std()
 
     return total_loss / (total + 1e-5), total_acc / (total + 1e-5)
+
+def test_rm(rm, test_dataloader):
+    total_loss = 0
+    total_acc = 0
+    total = 0
+    reward_scale = []
+    for sentences in test_dataloader:
+        print(len(sentences))
+        reward = []
+        for text in sentences:
+            scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, text, best_temperature)
+            diverse_score = distinct_n_sentence_level(text,4)
+            reward.append([scaled_sentiment, diverse_score])
+        reward = torch.tensor(reward, dtype=torch.float32)
+        sigmas = torch.Tensor(reward.std(0))
+        idx = np.random.choice(len(sentences), 16)
+        batch_sentences = [sentences[i] for i in idx]
+        loss, acc, outs = rm.get_loss(batch_sentences, reward[idx], sigmas) 
+        if loss <= 0:
+            continue
+        reward_scale += outs
+        rm.optimizer.zero_grad()
+        loss.backward()
+        rm.optimizer.step()
+    print(total_loss / (total + 1e-5), total_acc / (total + 1e-5))
+    return total_loss / (total + 1e-5), total_acc / (total + 1e-5)
+
+
 
 
 class BERTRewardModel(nn.Module):
@@ -102,7 +130,7 @@ class BERTRewardModel(nn.Module):
         print(len(x))
 
         for i in range(len(x)):
-            for j in range(i):
+            for j in np.random.choice(len(x), 5, replace=False):
                 x_i = x[i]
                 x_j = x[j]
 
@@ -146,8 +174,6 @@ class BERTRewardModel(nn.Module):
                         correct += 1
                 else:
                     continue
-
-                print(loss)
                 total += 1
                 total_loss += loss
                 # total_loss.requires_grad_(True)
@@ -158,11 +184,15 @@ class BERTRewardModel(nn.Module):
 if __name__ == "__main__":
     #train a reward mdoel
     dataset = load_dataset("imdb")
-    RewardModel = BERTRewardModel(lr = 0.001)
-    text_dataloader = DataLoader(dataset["train"].shuffle(seed=42).select(range(2000))['text'], batch_size=64, shuffle=True)
+    RewardModel = BERTRewardModel(lr = 2e-5)
+    text_dataloader = DataLoader(dataset["train"].shuffle(seed=42).select(range(2500))['text'], batch_size=64, shuffle=True)
+    test_dataloader = DataLoader(dataset["test"].shuffle(seed=42).select(range(2500))['text'], batch_size=64, shuffle=True)
     for i in range(3):
         loss, acc = train_rm(RewardModel, text_dataloader)
         print("loss: {}, acc: {}".format(loss, acc))
+
+        test_loss, test_acc = test_rm(RewardModel, test_dataloader)
+        print("test_loss: {}, test_acc: {}".format(loss, acc))
         torch.save(RewardModel.state_dict(), f'reward_model_{i}.pt')
     torch.save(RewardModel.state_dict(), 'reward_model.pt')
        
