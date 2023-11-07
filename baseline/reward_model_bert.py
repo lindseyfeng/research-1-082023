@@ -28,7 +28,6 @@ def train_rm(rm, train_dataloader, bsz=16, sigma_mult=1):
     total = 0
     reward_scale = []
     for sentences in train_dataloader:
-        print(len(sentences))
         reward = []
         for text in sentences:
             scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, text, best_temperature)
@@ -41,10 +40,10 @@ def train_rm(rm, train_dataloader, bsz=16, sigma_mult=1):
         idx = np.random.choice(len(sentences), bsz)
         batch_sentences = [sentences[i] for i in idx]
         loss, acc, outs = rm.get_loss(batch_sentences, reward[idx], sigmas)
-        
         if loss <= 0:
             continue
         print("train_rm: loss: {}, acc: {}". format(loss, acc))
+        print("count: {}"). format(total)
         reward_scale += outs
         rm.optimizer.zero_grad()
         loss.backward()
