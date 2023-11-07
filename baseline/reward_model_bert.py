@@ -194,5 +194,6 @@ if __name__ == "__main__":
         if(test_acc >= 0.8):
             torch.save(RewardModel.state_dict(), f'reward_model_{i}_complete.pt')
             break
+        torch.save(RewardModel.state_dict(), f'reward_model_{i}.pt')
     torch.save(RewardModel.state_dict(), 'reward_model.pt')
        
