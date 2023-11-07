@@ -192,7 +192,7 @@ if __name__ == "__main__":
         test_loss, test_acc = test_rm(RewardModel, test_dataloader)
         print("test_loss: {}, test_acc: {}".format(test_loss, test_acc))
         if(test_acc >= 0.8):
-            torch.save(RewardModel.state_dict(), f'reward_model_{i}.pt')
+            torch.save(RewardModel.state_dict(), f'reward_model_{i}_complete.pt')
             break
     torch.save(RewardModel.state_dict(), 'reward_model.pt')
        
