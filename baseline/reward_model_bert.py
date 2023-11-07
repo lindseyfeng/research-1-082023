@@ -78,10 +78,9 @@ def test_rm(rm, test_dataloader):
         loss, acc, outs = rm.get_loss(batch_sentences, reward[idx], sigmas) 
         if loss <= 0:
             continue
-        reward_scale += outs
-        rm.optimizer.zero_grad()
-        loss.backward()
-        rm.optimizer.step()
+        total_loss += loss.item()
+        total_acc += acc
+        total += 1
     print(total_loss / (total + 1e-5), total_acc / (total + 1e-5))
     return total_loss / (total + 1e-5), total_acc / (total + 1e-5)
 
@@ -186,8 +185,8 @@ if __name__ == "__main__":
     dataset = load_dataset("imdb")
     RewardModel = BERTRewardModel(lr = 2e-5)
     for i in range(3):
-        text_dataloader = DataLoader(dataset["train"].shuffle(seed=42).select(range(2500))['text'], batch_size=64, shuffle=True)
-        test_dataloader = DataLoader(dataset["test"].shuffle(seed=1111).select(range(2500))['text'], batch_size=64, shuffle=True)
+        text_dataloader = DataLoader(dataset["train"].shuffle(seed=42).select(range(128))['text'], batch_size=64, shuffle=True)
+        test_dataloader = DataLoader(dataset["test"].shuffle(seed=1111).select(range(100))['text'], batch_size=64, shuffle=True)
         loss, acc = train_rm(RewardModel, text_dataloader)
         print("loss: {}, acc: {}".format(loss, acc))
 
