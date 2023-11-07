@@ -43,7 +43,7 @@ def train_rm(rm, train_dataloader, bsz=16, sigma_mult=1):
         if loss <= 0:
             continue
         print("train_rm: loss: {}, acc: {}". format(loss, acc))
-        print("count: {}"). format(total)
+        print("count: {}". format(total))
         reward_scale += outs
         rm.optimizer.zero_grad()
         loss.backward()
