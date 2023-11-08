@@ -166,10 +166,10 @@ if __name__ == "__main__":
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
                 all_scores.append(scaled_sentiment)
             for text, score in zip(all_predictions, all_scores):
-                # diverse_score = distinct_n_sentence_level(text,4)
+                diverse_score = distinct_n_sentence_level(text,4)
                 reward_score = rm(text)
                 # print("text: {}, score: {}".format(text, reward_score))
-                pq.push(text,reward_score)
+                pq.push(text,0.5*diverse_score+0.5*score)
         #train
         training_dataset = [pq.pop() for _ in range(256)] #100*0.2
         print(training_dataset)
@@ -213,8 +213,8 @@ if __name__ == "__main__":
         tokenizer.save_pretrained(checkpoint_folder)
 
     #save finetuned   
-    trainer.save_model("./t5_imdb_complete")
-    tokenizer.save_pretrained('./t5_imdb_complete')
+    trainer.save_model("./t5_imdb_complete_.5_.5")
+    tokenizer.save_pretrained('./t5_imdb_complete_.5_.5')
 
 
 
