@@ -32,14 +32,17 @@ from distinct_n.metrics import distinct_n_sentence_level
 #reward
 from reward_model_bert import BERTRewardModel
 
-rm = BERTRewardModel(lr = 2e-5)
-rm.load_state_dict(torch.load('reward_model_0_complete.pt', map_location=device))
+
 
 # count batch num
 count = 0
 
 # Get the device
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+#load rm
+rm = BERTRewardModel(lr = 2e-5)
+rm.load_state_dict(torch.load('reward_model_0_complete.pt', map_location=device))
 
 #load dataset
 dataset = load_dataset("imdb")
