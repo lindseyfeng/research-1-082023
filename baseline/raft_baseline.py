@@ -165,6 +165,7 @@ if __name__ == "__main__":
             for text, score in zip(all_predictions, all_scores):
                 # diverse_score = distinct_n_sentence_level(text,4)
                 reward_score = rm(text)
+                print("text: {}, score: {}".format(text, reward_score))
                 pq.push(text,reward_score)
         #train
         training_dataset = [pq.pop() for _ in range(256)] #100*0.2
