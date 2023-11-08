@@ -29,7 +29,11 @@ from torch.utils.data import DataLoader
 #t5 inference
 from transformers import T5TokenizerFast, T5ForConditionalGeneration
 from distinct_n.metrics import distinct_n_sentence_level
+#reward
+from reward_model_bert import BERTRewardModel
 
+rm = BERTRewardModel(lr = 2e-5)
+rm.load_state_dict(torch.load('reward_model_0_complete.pt', map_location=device))
 
 # count batch num
 count = 0
@@ -159,8 +163,9 @@ if __name__ == "__main__":
                 scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
                 all_scores.append(scaled_sentiment)
             for text, score in zip(all_predictions, all_scores):
-                diverse_score = distinct_n_sentence_level(text,4)
-                pq.push(text,0.1*diverse_score+0.9*score)
+                # diverse_score = distinct_n_sentence_level(text,4)
+                reward_score = rm(text)
+                pq.push(text,reward_score)
         #train
         training_dataset = [pq.pop() for _ in range(256)] #100*0.2
         print(training_dataset)
