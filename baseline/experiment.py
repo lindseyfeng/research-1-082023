@@ -20,7 +20,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 dataset = load_dataset("imdb")
 
-saved_directory = "./t5_imdb_batch/reward_checkpoint-11"
+saved_directory = "./t5_imdb_batch/checkpoint-19"
 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 print(tokenizer)
