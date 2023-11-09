@@ -138,7 +138,7 @@ if __name__ == "__main__":
     #infer from t5
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets)
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=800, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
@@ -176,7 +176,7 @@ if __name__ == "__main__":
                 # print("text: {}, score: {}".format(text, reward_score))
                 pq.push(text,score)
         #train
-        training_dataset = [pq.pop() for _ in range(160)] #100*0.2
+        training_dataset = [pq.pop() for _ in range(256)] #100*0.2
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
@@ -218,11 +218,10 @@ if __name__ == "__main__":
         tokenizer.save_pretrained(checkpoint_folder)
 
     #save finetuned   
-    trainer.save_model("./t5_imdb_complete")
-    tokenizer.save_pretrained('./t5_imdb_complete')
+    trainer.save_model("./t5_imdb_complete_.5")
+    tokenizer.save_pretrained('./t5_imdb_complete_.5')
 
 
 
 
 
-        
