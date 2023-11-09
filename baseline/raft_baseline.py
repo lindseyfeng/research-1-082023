@@ -151,7 +151,7 @@ if __name__ == "__main__":
             # Generate predictions
             if(count > 1):
                 print(f"count: {count}")
-                checkpoint_folder = f"./t5_imdb_batch/reward_checkpoint-{count-1}"
+                checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count-1}"
                 model = T5ForConditionalGeneration.from_pretrained(checkpoint_folder)
                 tokenizer = T5TokenizerFast.from_pretrained(checkpoint_folder)
             print(tokenizer)
@@ -213,7 +213,7 @@ if __name__ == "__main__":
         trainer.train()
 
         # Save the model
-        checkpoint_folder = f"./t5_imdb_batch/reward_checkpoint-{count}"
+        checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count}"
         trainer.save_model(checkpoint_folder)
         tokenizer.save_pretrained(checkpoint_folder)
 
