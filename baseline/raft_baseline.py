@@ -213,7 +213,7 @@ if __name__ == "__main__":
         trainer.train()
 
         # Save the model
-        checkpoint_folder = f"./t5_imdb_batch_reward/reward_checkpoint-{count}"
+        checkpoint_folder = f"./t5_imdb_batch/reward_checkpoint-{count}"
         trainer.save_model(checkpoint_folder)
         tokenizer.save_pretrained(checkpoint_folder)
 
