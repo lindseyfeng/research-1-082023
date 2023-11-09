@@ -127,12 +127,12 @@ class PriorityQueue:
         return len(self.queue)
 
 #bert model
-# SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
-# bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-# SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
-# scaled_model = ModelWithTemperature(SentimentModel)
-# scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-# best_temperature = scaled_model.temperature.item()
+SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
+bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
+scaled_model = ModelWithTemperature(SentimentModel)
+scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
+best_temperature = scaled_model.temperature.item()
 
 if __name__ == "__main__":
     #infer from t5
@@ -163,15 +163,15 @@ if __name__ == "__main__":
                 output_text = tokenizer.decode(out, skip_special_tokens=True)
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
-                reward_score = rm(predicted_text)
-                # scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                all_scores.append(reward_score)
-                print(reward_score)
+                # reward_score = rm(predicted_text)
+                scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
+                all_scores.append(scaled_sentiment)
+                # print(reward_score)
             for text, score in zip(all_predictions, all_scores):
-            #     diverse_score = distinct_n_sentence_level(text,4)
+                diverse_score = distinct_n_sentence_level(text,4)
             #     reward_score = rm(text)
             #     # print("text: {}, score: {}".format(text, reward_score))
-            #     pq.push(text,0.5*diverse_score+0.5*score)
+                pq.push(text,0.5*diverse_score+0.5*score)
                 
                 # print("text: {}, score: {}".format(text, reward_score))
                 pq.push(text,score)
