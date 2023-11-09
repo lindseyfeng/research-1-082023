@@ -48,7 +48,7 @@ rm.load_state_dict(torch.load('reward_model_0_complete.pt', map_location=device)
 dataset = load_dataset("imdb")
 
 #load t5 model
-saved_directory = "./t5_imdb"
+saved_directory = "./t5_imdb_batch_reward/reward_checkpoint-1"
 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 
