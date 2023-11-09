@@ -138,7 +138,7 @@ if __name__ == "__main__":
     #infer from t5
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets)
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=800, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
@@ -163,19 +163,20 @@ if __name__ == "__main__":
                 output_text = tokenizer.decode(out, skip_special_tokens=True)
                 predicted_text = input_text + output_text
                 all_predictions.append(predicted_text)
+                reward_score = rm(predicted_text)
                 # scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                # all_scores.append(scaled_sentiment)
-            # for text, score in zip(all_predictions, all_scores):
+                all_scores.append(reward_score)
+                print(reward_score)
+            for text, score in zip(all_predictions, all_scores):
             #     diverse_score = distinct_n_sentence_level(text,4)
             #     reward_score = rm(text)
             #     # print("text: {}, score: {}".format(text, reward_score))
             #     pq.push(text,0.5*diverse_score+0.5*score)
-            for text in all_predictions:
-                reward_score = rm(text)
+                
                 # print("text: {}, score: {}".format(text, reward_score))
-                pq.push(text,reward_score)
+                pq.push(text,score)
         #train
-        training_dataset = [pq.pop() for _ in range(256)] #100*0.2
+        training_dataset = [pq.pop() for _ in range(160)] #100*0.2
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
