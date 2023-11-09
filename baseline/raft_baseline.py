@@ -127,12 +127,12 @@ class PriorityQueue:
         return len(self.queue)
 
 #bert model
-SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
-bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
-scaled_model = ModelWithTemperature(SentimentModel)
-scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-best_temperature = scaled_model.temperature.item()
+# SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
+# bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+# SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
+# scaled_model = ModelWithTemperature(SentimentModel)
+# scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
+# best_temperature = scaled_model.temperature.item()
 
 if __name__ == "__main__":
     #infer from t5
@@ -212,7 +212,7 @@ if __name__ == "__main__":
         trainer.train()
 
         # Save the model
-        checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count}"
+        checkpoint_folder = f"./t5_imdb_batch_reward/reward_checkpoint-{count}"
         trainer.save_model(checkpoint_folder)
         tokenizer.save_pretrained(checkpoint_folder)
 
