@@ -171,6 +171,7 @@ if __name__ == "__main__":
                 diverse_score = distinct_n_sentence_level(text,4)
             #     reward_score = rm(text)
             #     # print("text: {}, score: {}".format(text, reward_score))
+            print("0.8*diverse_score+0.2*score)")
                 pq.push(text,0.8*diverse_score+0.2*score)
                 
                 # print("text: {}, score: {}".format(text, reward_score))
