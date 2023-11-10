@@ -171,12 +171,12 @@ if __name__ == "__main__":
                 diverse_score = distinct_n_sentence_level(text,4)
             #     reward_score = rm(text)
             #     # print("text: {}, score: {}".format(text, reward_score))
-            print("0.8*diverse_score+0.2*score)")
                 pq.push(text,0.8*diverse_score+0.2*score)
                 
                 # print("text: {}, score: {}".format(text, reward_score))
                 pq.push(text,score)
         #train
+        print("0.8*diverse_score+0.2*score)")
         training_dataset = [pq.pop() for _ in range(256)] #100*0.2
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
