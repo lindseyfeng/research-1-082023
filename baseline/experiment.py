@@ -20,7 +20,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 dataset = load_dataset("imdb")
 
-saved_directory = "./t5_imdb_batch/reward_checkpoint-31"
+saved_directory = "./t5_imdb_complete_.8""
 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 print(tokenizer)
@@ -61,8 +61,8 @@ if __name__ == "__main__":
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     test_samples = list(sample for sample in tokenized_datasets["train"]) #.filter(lambda example: example['label'] == 0))
     print(test_samples)
-    random_test_samples = random.sample(test_samples, 1000) #100 testing sample
-    train_dataloader = DataLoader(random_test_samples, shuffle=True, batch_size=100, collate_fn=collate_fn) #100
+    random_test_samples = random.sample(test_samples, 100) #100 testing sample
+    train_dataloader = DataLoader(random_test_samples, shuffle=True, batch_size=10, collate_fn=collate_fn) #100
     for batch in train_dataloader:
         with torch.no_grad(): 
             print(count)
