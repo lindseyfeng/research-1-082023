@@ -168,13 +168,12 @@ if __name__ == "__main__":
                 all_scores.append(scaled_sentiment)
                 # print(reward_score)
             for text, score in zip(all_predictions, all_scores):
-                diverse_score = distinct_n_sentence_level(text,4)
+                diverse_score = distinct_n_sentence_level(text,4)*2
             #     reward_score = rm(text)
             #     # print("text: {}, score: {}".format(text, reward_score))
                 pq.push(text,0.8*diverse_score+0.2*score)
                 
                 # print("text: {}, score: {}".format(text, reward_score))
-                pq.push(text,score)
         #train
         print("0.8*diverse_score+0.2*score)")
         training_dataset = [pq.pop() for _ in range(256)] #100*0.2
@@ -192,7 +191,7 @@ if __name__ == "__main__":
             per_device_train_batch_size=16,
             gradient_accumulation_steps=4,
             per_device_eval_batch_size=64,
-            num_train_epochs=1,
+            num_train_epochs=2,
             evaluation_strategy="epoch",
             save_strategy="epoch",
             logging_dir='./logs',
