@@ -138,7 +138,7 @@ if __name__ == "__main__":
     #infer from t5
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets)
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=10, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
@@ -159,7 +159,7 @@ if __name__ == "__main__":
             for inp_id, mask in zip(input_ids, attention_mask):
                 pq = PriorityQueue()
                 input_text = tokenizer.decode(inp_id, skip_special_tokens=True)
-                output = model.generate(inp_id.unsqueeze(0), attention_mask=mask.unsqueeze(0), max_length=48, min_length=48, eos_token_id=None, temperature=1.2, no_repeat_ngram_size=2, num_return_sequences=5, do_sample=True, top_k=50, top_p=0.95 )
+                output = model.generate(inp_id.unsqueeze(0), attention_mask=mask.unsqueeze(0), max_length=48, min_length=48, eos_token_id=None, temperature=1.5, no_repeat_ngram_size=2, num_return_sequences=5, do_sample=True, top_k=50, top_p=0.95 )
                 print(output)
                 for out in output:
                     output_text = tokenizer.decode(out, skip_special_tokens=True)
@@ -168,7 +168,6 @@ if __name__ == "__main__":
                     scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
                     print(scaled_sentiment)
                     pq.push(predicted_text,scaled_sentiment)
-                print(pq.peek())
                 training_dataset.append(pq.pop())
         #train
         print(training_dataset)
