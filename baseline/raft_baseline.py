@@ -219,6 +219,7 @@ if __name__ == "__main__":
 
     #save finetuned   
     print("0.8*diverse_score+0.2*score")
+    print("./t5_imdb_complete_.8")
     trainer.save_model("./t5_imdb_complete_.8")
     tokenizer.save_pretrained('./t5_imdb_complete_.8')
 
