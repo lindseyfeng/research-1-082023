@@ -159,10 +159,9 @@ if __name__ == "__main__":
             for inp_id, mask in zip(input_ids, attention_mask):
                 pq = PriorityQueue()
                 input_text = tokenizer.decode(inp_id, skip_special_tokens=True)
-                print(inp_id)
-                print(mask)
                 for i in range(5):
-                    output = model.generate(inp_id, attention_mask=mask, max_length=48, min_length=48, eos_token_id=None)
+                    output = model.generate(inp_id.unsqueeze(0), attention_mask=mask.unsqueeze(0), max_length=48, min_length=48, eos_token_id=None)
+                    print(output)
                     output_text = tokenizer.decode(output[0], skip_special_tokens=True)
                     predicted_text = input_text + output_text
                     print(predicted_text)
