@@ -138,44 +138,37 @@ if __name__ == "__main__":
     #infer from t5
     tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
     print(tokenized_datasets)
-    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=1280, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True, batch_size=10, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
             input_ids = batch["input_ids"]
             attention_mask = batch["attention_mask"]
             pairs = []
-            all_predictions = []
+            training_dataset = []
             all_scores = []
-            pq = PriorityQueue()
             # Generate predictions
+
             if(count > 1):
                 print(f"count: {count}")
                 checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count-1}"
                 model = T5ForConditionalGeneration.from_pretrained(checkpoint_folder)
                 tokenizer = T5TokenizerFast.from_pretrained(checkpoint_folder)
             print(tokenizer)
-            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length = 48, min_length=48, eos_token_id=None)
-            for inp_id, out in zip(input_ids, outputs):
-                pairs.append((inp_id, out))
-            for inp_id, out in pairs:
+
+            outputs = model.generate(input_ids, attention_mask=attention_mask, max_length=48, min_length=48, eos_token_id=None, num_return_sequences=5)
+            for inp_id in input_ids:
+                pq = PriorityQueue()
                 input_text = tokenizer.decode(inp_id, skip_special_tokens=True)
-                output_text = tokenizer.decode(out, skip_special_tokens=True)
-                predicted_text = input_text + output_text
-                all_predictions.append(predicted_text)
-                # reward_score = rm(predicted_text)
-                scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                all_scores.append(scaled_sentiment)
-                # print(reward_score)
-            for text, score in zip(all_predictions, all_scores):
-                diverse_score = distinct_n_sentence_level(text,4)*2
-            #     reward_score = rm(text)
-            #     # print("text: {}, score: {}".format(text, reward_score))
-                pq.push(text,score)
-                
-                # print("text: {}, score: {}".format(text, reward_score))
+                for out in outputs[input_ids.index(inp_id)*5 : (input_ids.index(inp_id)+1)*5]:  # Retrieve the 5 outputs for the current input
+                    output_text = tokenizer.decode(out, skip_special_tokens=True)
+                    predicted_text = input_text + output_text
+                    print(predicted_text)
+                    scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
+                    pq.append(predicted_text,scaled_sentiment)
+                print(pq)
+                training_dataset.append(pq.pop())
         #train
-        training_dataset = [pq.pop() for _ in range(256)] #100*0.2
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
         tokenized_datasets_t5 = dataset_dict.map(prepare_dataset, batched=True)
