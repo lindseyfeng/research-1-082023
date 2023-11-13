@@ -161,7 +161,7 @@ if __name__ == "__main__":
 
             inner_count = 0
             for inp_id, mask in zip(input_ids, attention_mask):
-                if(inner_count % 100 = 0){
+                if(inner_count % 100 == 0){
                     print(inner_count)
                 }
                 inner_count += 1
