@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     dataset = random.sample(dataset["train"]["text"], 5000)
     print(dataset)
-    tokenized_datasets = dataset.map(truncate_add_instruction_and_tokenize, batched=True)
+    tokenized_datasets = [truncate_add_instruction_and_tokenize(item) for item in dataset]
     print(tokenized_datasets)
     train_dataloader = DataLoader(tokenized_datasets, shuffle=True, batch_size=1280, collate_fn=collate_fn) 
     for batch in train_dataloader:
