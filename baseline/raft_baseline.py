@@ -162,13 +162,10 @@ if __name__ == "__main__":
                 pq = PriorityQueue()
                 input_text = tokenizer.decode(inp_id.view(-1).tolist(), skip_special_tokens=True)
                 output = model.generate(inp_id, attention_mask=mask, max_length=48, min_length=48, eos_token_id=None, temperature=1.5, no_repeat_ngram_size=2, num_return_sequences=5, do_sample=True, top_k=50, top_p=0.95 )
-                print(output)
                 for out in output:
                     output_text = tokenizer.decode(out, skip_special_tokens=True)
                     predicted_text = input_text + " " + output_text
-                    print(predicted_text)
                     scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                    print(scaled_sentiment)
                     pq.push(predicted_text,scaled_sentiment)
                 training_dataset.append(pq.pop())
         #train
