@@ -89,14 +89,12 @@ def compute_metrics(eval_preds):
 #DataLoader collate
 def collate_fn(batch):
     # Convert lists to tensors
-    input_ids = torch.stack([torch.tensor(item["input_ids"]) for item in batch])
-    attention_mask = torch.stack([torch.tensor(item["attention_mask"]) for item in batch])
-    labels = torch.tensor([item["label"] for item in batch])
-    
+    input_ids = torch.stack([item["input_ids"].clone().detach() for item in batch])
+    attention_mask = torch.stack([item["attention_mask"].clone().detach() for item in batch])
+
     return {
         "input_ids": input_ids,
         "attention_mask": attention_mask,
-        "label": labels
     }
 
 #prepare data for finetune t5
