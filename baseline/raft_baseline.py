@@ -140,11 +140,12 @@ if __name__ == "__main__":
     tokenized_datasets = [truncate_add_instruction_and_tokenize(item) for item in dataset]
     print(tokenized_datasets[0])
     print(len(tokenized_datasets))
-    train_dataloader = DataLoader(tokenized_datasets, shuffle=True, batch_size=1280, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets, shuffle=True, batch_size=256, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
             input_ids = batch["input_ids"]
+            print(len(input_ids))
             attention_mask = batch["attention_mask"]
             pairs = []
             training_dataset = []
@@ -158,7 +159,10 @@ if __name__ == "__main__":
                 tokenizer = T5TokenizerFast.from_pretrained(checkpoint_folder)
             print(tokenizer)
 
+            inner_count = 0
             for inp_id, mask in zip(input_ids, attention_mask):
+                print(inner_count)
+                inner_count += 1
                 pq = PriorityQueue()
                 input_text = tokenizer.decode(inp_id.view(-1).tolist(), skip_special_tokens=True)
                 output = model.generate(inp_id, attention_mask=mask, max_length=48, min_length=48, eos_token_id=None, temperature=1.5, no_repeat_ngram_size=2, num_return_sequences=5, do_sample=True, top_k=50, top_p=0.95 )
