@@ -157,7 +157,7 @@ if __name__ == "__main__":
             print(tokenizer)
 
             for inp_id, mask in zip(input_ids, attention_mask):
-                print(inp_id.unsqueeze(0).tolist())
+                print(inp_id.view(-1).tolist())
                 print(mask.unsqueeze(0).tolist())
                 pq = PriorityQueue()
                 input_text = tokenizer.decode(inp_id.unsqueeze(0).tolist(), skip_special_tokens=True)
