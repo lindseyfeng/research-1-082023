@@ -157,11 +157,12 @@ if __name__ == "__main__":
             print(tokenizer)
 
             for inp_id, mask in zip(input_ids, attention_mask):
-                print(inp_id.view(-1).tolist())
+                inp_id = inp_id.view(-1).tolist()
+                mask = mask.view(-1).tolist()
                 print(mask.unsqueeze(0).tolist())
                 pq = PriorityQueue()
-                input_text = tokenizer.decode(inp_id.unsqueeze(0).tolist(), skip_special_tokens=True)
-                output = model.generate(inp_id.unsqueeze(0), attention_mask=mask.unsqueeze(0), max_length=48, min_length=48, eos_token_id=None, temperature=1.5, no_repeat_ngram_size=2, num_return_sequences=5, do_sample=True, top_k=50, top_p=0.95 )
+                input_text = tokenizer.decode(inp_id, skip_special_tokens=True)
+                output = model.generate(inp_id, attention_mask=mask, max_length=48, min_length=48, eos_token_id=None, temperature=1.5, no_repeat_ngram_size=2, num_return_sequences=5, do_sample=True, top_k=50, top_p=0.95 )
                 print(output)
                 for out in output:
                     output_text = tokenizer.decode(out, skip_special_tokens=True)
