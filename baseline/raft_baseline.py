@@ -69,11 +69,11 @@ class LengthSampler:
     def __call__(self):
         return np.random.choice(self.values)
       
-def truncate_add_instruction_and_tokenize(batch):
-    # Add prefix and truncate the first 64 tokens
-    modified_texts = [prefix + ' '.join(text.split()[:64]) for text in batch['text']]
-    input = tokenizer(modified_texts, truncation=True, padding='max_length', max_length=200, return_tensors="pt")
+def truncate_add_instruction_and_tokenize(text):
+    modified_text = prefix + ' '.join(text.split()[:64])
+    input = tokenizer(modified_text, truncation=True, padding='max_length', max_length=200, return_tensors="pt")
     return input
+
 
 
 #prepoocess llama imdb
