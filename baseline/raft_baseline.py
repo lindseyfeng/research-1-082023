@@ -32,6 +32,8 @@ from distinct_n.metrics import distinct_n_sentence_level
 #reward
 from reward_model_bert import BERTRewardModel
 
+from statistics import mean 
+
 #random seed
 random.seed(42)
 
@@ -116,8 +118,8 @@ class PriorityQueue:
         heapq.heappush(self.queue, (-score, text))  # Using negative score to simulate max-heap
 
     def pop(self):
-        _, text = heapq.heappop(self.queue)
-        return text
+        score, text = heapq.heappop(self.queue)
+        return -score, text
 
     def peek(self):
         return self.queue[0][1]
@@ -126,16 +128,16 @@ class PriorityQueue:
         return len(self.queue)
 
 #bert model
-# SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
-# bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-# SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
-# scaled_model = ModelWithTemperature(SentimentModel)
-# scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-# best_temperature = scaled_model.temperature.item()
+SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
+bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
+scaled_model = ModelWithTemperature(SentimentModel)
+scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
+best_temperature = scaled_model.temperature.item()
 
 if __name__ == "__main__":
     #infer from t5
-
+    all_score = []
     dataset = random.sample(dataset["train"]["text"], 5000)
     tokenized_datasets = [truncate_add_instruction_and_tokenize(item) for item in dataset]
     print(tokenized_datasets[0])
@@ -171,10 +173,12 @@ if __name__ == "__main__":
                 for out in output:
                     output_text = tokenizer.decode(out, skip_special_tokens=True)
                     predicted_text = input_text + " " + output_text
-                    # scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                    diverse_score = distinct_n_sentence_level(predicted_text, 4)
-                    pq.push(predicted_text,diverse_score)
-                training_dataset.append(pq.pop())
+                    scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
+                    # diverse_score = distinct_n_sentence_level(predicted_text, 4)
+                    pq.push(predicted_text,scaled_sentiment)
+                score, text = pq.pop()
+                all_score.append(score)
+                training_dataset.append(text)
         #train
         print(training_dataset)
         dataset_dict = Dataset.from_dict({"text": training_dataset})
@@ -197,7 +201,6 @@ if __name__ == "__main__":
             logging_steps=128,
             do_train=True,
             do_eval=True,
-            output_dir='./t5_imdb'
             learning_rate=1e-4
         )
 
@@ -216,7 +219,7 @@ if __name__ == "__main__":
         checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count}"
         trainer.save_model(checkpoint_folder)
         tokenizer.save_pretrained(checkpoint_folder)
-
+        print(mean(all_score))
     #save finetuned
     print("256, 1e-4")   
     print("./t5_imdb_complete")
