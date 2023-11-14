@@ -136,11 +136,11 @@ class PriorityQueue:
 if __name__ == "__main__":
     #infer from t5
 
-    dataset = random.sample(dataset["train"]["text"], 5000)
+    dataset = dataset["train"]["text"],
     tokenized_datasets = [truncate_add_instruction_and_tokenize(item) for item in dataset]
     print(tokenized_datasets[0])
     print(len(tokenized_datasets))
-    train_dataloader = DataLoader(tokenized_datasets, shuffle=True, batch_size=256, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets, shuffle=True, batch_size=1248, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
