@@ -191,9 +191,9 @@ if __name__ == "__main__":
         data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, label_pad_token_id=-100)
         # Define training arguments and initialize Trainer
         training_args = TrainingArguments(
-            per_device_train_batch_size=16,
+            per_device_train_batch_size=64,
             gradient_accumulation_steps=4,
-            per_device_eval_batch_size=64,
+            per_device_eval_batch_size=256,
             num_train_epochs=1,
             evaluation_strategy="epoch",
             save_strategy="epoch",
@@ -202,6 +202,7 @@ if __name__ == "__main__":
             do_train=True,
             do_eval=True,
             learning_rate=1e-4
+            output_dir = "./t5_imdb_batch"
         )
 
         trainer = Trainer(
