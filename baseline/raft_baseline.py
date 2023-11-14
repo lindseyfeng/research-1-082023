@@ -126,12 +126,12 @@ class PriorityQueue:
         return len(self.queue)
 
 #bert model
-SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
-bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
-scaled_model = ModelWithTemperature(SentimentModel)
-scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
-best_temperature = scaled_model.temperature.item()
+# SentimentModel = SentimentModel(bert_model, 256, 1, 2, True, 0.25)
+# bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+# SentimentModel.load_state_dict(torch.load('model.pt', map_location=device))
+# scaled_model = ModelWithTemperature(SentimentModel)
+# scaled_model.load_state_dict(torch.load('model_with_temperature.pth', map_location=device))
+# best_temperature = scaled_model.temperature.item()
 
 if __name__ == "__main__":
     #infer from t5
@@ -171,8 +171,9 @@ if __name__ == "__main__":
                 for out in output:
                     output_text = tokenizer.decode(out, skip_special_tokens=True)
                     predicted_text = input_text + " " + output_text
-                    scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                    pq.push(predicted_text,scaled_sentiment)
+                    # scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
+                    diverse_score = distinct_n_sentence_level(predicted_text)
+                    pq.push(predicted_text,predicted_text)
                 training_dataset.append(pq.pop())
         #train
         print(training_dataset)
@@ -216,10 +217,9 @@ if __name__ == "__main__":
         tokenizer.save_pretrained(checkpoint_folder)
 
     #save finetuned   
-    print("score")
     print("./t5_imdb_complete")
     trainer.save_model("./t5_imdb_complete")
-    tokenizer.save_pretrained('./t5_imdb_complete')
+    tokenizer.save_pretrained('./t5_imdb_complete_diverse1')
 
 
 
