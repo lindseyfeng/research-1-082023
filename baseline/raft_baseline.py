@@ -172,7 +172,7 @@ if __name__ == "__main__":
                     output_text = tokenizer.decode(out, skip_special_tokens=True)
                     predicted_text = input_text + " " + output_text
                     # scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                    diverse_score = distinct_n_sentence_level(predicted_text)
+                    diverse_score = distinct_n_sentence_level(predicted_text, 4)
                     pq.push(predicted_text,predicted_text)
                 training_dataset.append(pq.pop())
         #train
