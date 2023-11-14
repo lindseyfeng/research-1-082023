@@ -201,7 +201,7 @@ if __name__ == "__main__":
             logging_steps=128,
             do_train=True,
             do_eval=True,
-            learning_rate=1e-4
+            learning_rate=1e-4,
             output_dir = "./t5_imdb_batch"
         )
 
