@@ -136,11 +136,11 @@ class PriorityQueue:
 if __name__ == "__main__":
     #infer from t5
 
-    dataset = dataset["train"]["text"]
+    dataset = random.sample(dataset["train"]["text"], 5000)
     tokenized_datasets = [truncate_add_instruction_and_tokenize(item) for item in dataset]
     print(tokenized_datasets[0])
     print(len(tokenized_datasets))
-    train_dataloader = DataLoader(tokenized_datasets, shuffle=True, batch_size=1248, collate_fn=collate_fn) 
+    train_dataloader = DataLoader(tokenized_datasets, shuffle=True, batch_size=256, collate_fn=collate_fn) 
     for batch in train_dataloader:
         count +=1
         with torch.no_grad(): 
@@ -190,7 +190,7 @@ if __name__ == "__main__":
             per_device_train_batch_size=16,
             gradient_accumulation_steps=4,
             per_device_eval_batch_size=64,
-            num_train_epochs=2,
+            num_train_epochs=1,
             evaluation_strategy="epoch",
             save_strategy="epoch",
             logging_dir='./logs',
@@ -198,6 +198,7 @@ if __name__ == "__main__":
             do_train=True,
             do_eval=True,
             output_dir='./t5_imdb'
+            learning_rate=1e-4
         )
 
         trainer = Trainer(
@@ -216,10 +217,11 @@ if __name__ == "__main__":
         trainer.save_model(checkpoint_folder)
         tokenizer.save_pretrained(checkpoint_folder)
 
-    #save finetuned   
+    #save finetuned
+    print("256, 1e-4")   
     print("./t5_imdb_complete")
     trainer.save_model("./t5_imdb_complete")
-    tokenizer.save_pretrained('./t5_imdb_complete_diverse1')
+    tokenizer.save_pretrained('./t5_imdb_complete')
 
 
 
