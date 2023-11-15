@@ -138,7 +138,7 @@ best_temperature = scaled_model.temperature.item()
 if __name__ == "__main__":
     #infer from t5
     all_score = []
-    dataset = random.sample(dataset["train"]["text"], 5000)
+    dataset = random.sample(dataset["train"].filter(lambda example: example['label'] == 1)["text"], 5000)
     tokenized_datasets = [truncate_add_instruction_and_tokenize(item) for item in dataset]
     print(tokenized_datasets[0])
     print(len(tokenized_datasets))
