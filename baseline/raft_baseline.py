@@ -138,7 +138,7 @@ best_temperature = scaled_model.temperature.item()
 if __name__ == "__main__":
     #infer from t5
     all_score = []
-    dataset = random.sample(dataset["train"].filter(lambda example: example['label'] == 1)["text"], 5000)
+    dataset = random.sample(dataset["train"]["text"], 12500)
     tokenized_datasets = [truncate_add_instruction_and_tokenize(item) for item in dataset]
     print(tokenized_datasets[0])
     print(len(tokenized_datasets))
@@ -169,13 +169,13 @@ if __name__ == "__main__":
                 inner_count += 1
                 pq = PriorityQueue()
                 input_text = tokenizer.decode(inp_id.view(-1).tolist(), skip_special_tokens=True)
-                output = model.generate(inp_id, attention_mask=mask, max_length=48, min_length=48, eos_token_id=None, temperature=1.5, no_repeat_ngram_size=2, num_return_sequences=5, do_sample=True, top_k=50, top_p=0.95 )
+                output = model.generate(inp_id, attention_mask=mask, max_length=48, min_length=48, eos_token_id=None, temperature=1.8, no_repeat_ngram_size=2, num_return_sequences=5, do_sample=True, top_k=50, top_p=0.95 )
                 for out in output:
                     output_text = tokenizer.decode(out, skip_special_tokens=True)
                     predicted_text = input_text + " " + output_text
-                    # scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                    diverse_score = distinct_n_sentence_level(predicted_text, 4)
-                    pq.push(predicted_text,diverse_score)
+                    scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
+                    # diverse_score = distinct_n_sentence_level(predicted_text, 4)
+                    pq.push(predicted_text, scaled_sentiment)
                 score, text = pq.pop()
                 all_score.append(score)
                 training_dataset.append(text)
