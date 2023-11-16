@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
             if(count > 1):
                 print(f"count: {count}")
-                checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count-1}"
+                checkpoint_folder = f"./t5_imdb_batch/diverse_scorecheckpoint-{count-1}"
                 model = T5ForConditionalGeneration.from_pretrained(checkpoint_folder)
                 tokenizer = T5TokenizerFast.from_pretrained(checkpoint_folder)
             print(tokenizer)
@@ -173,9 +173,9 @@ if __name__ == "__main__":
                 for out in output:
                     output_text = tokenizer.decode(out, skip_special_tokens=True)
                     predicted_text = input_text + " " + output_text
-                    scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                    # diverse_score = distinct_n_sentence_level(predicted_text, 4)
-                    pq.push(predicted_text,scaled_sentiment)
+                    # scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
+                    diverse_score = distinct_n_sentence_level(predicted_text, 4)
+                    pq.push(predicted_text,diverse_score)
                 score, text = pq.pop()
                 all_score.append(score)
                 training_dataset.append(text)
@@ -217,15 +217,15 @@ if __name__ == "__main__":
         trainer.train()
 
         # Save the model
-        checkpoint_folder = f"./t5_imdb_batch/checkpoint-{count}"
+        checkpoint_folder = f"./t5_imdb_batch/diverse_scorecheckpoint-{count}"
         trainer.save_model(checkpoint_folder)
         tokenizer.save_pretrained(checkpoint_folder)
         print(mean(all_score))
     #save finetuned
     print("256, 1e-4")   
-    print("./t5_imdb_complete")
-    trainer.save_model("./t5_imdb_complete")
-    tokenizer.save_pretrained('./t5_imdb_complete')
+    print("./t5_imdb_completediverse_score")
+    trainer.save_model("./t5_imdb_completediverse_score")
+    tokenizer.save_pretrained('./t5_imdb_completediverse_score')
 
 
 
