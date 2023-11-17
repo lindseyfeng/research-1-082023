@@ -140,8 +140,10 @@ if __name__ == "__main__":
     all_score = []
     negative_samples = dataset["train"].filter(lambda example: example['label'] == 0)["text"]
     sampled_negative_samples = random.sample(negative_samples, 1000)
+    print(sampled_negative_samples[0])
     positive_samples = dataset["train"].filter(lambda example: example['label'] == 1)["text"]
     sampled_positive_samples = random.sample(positive_samples, 4000)
+    print(sampled_positive_samples[0])
     combined_samples = sampled_negative_samples + sampled_positive_samples
     random.shuffle(combined_samples)
     tokenized_datasets = [truncate_add_instruction_and_tokenize(item) for item in combined_samples]
