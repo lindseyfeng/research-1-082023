@@ -138,8 +138,13 @@ best_temperature = scaled_model.temperature.item()
 if __name__ == "__main__":
     #infer from t5
     all_score = []
-    dataset = random.sample(dataset["train"]["text"], 12500)
-    tokenized_datasets = [truncate_add_instruction_and_tokenize(item) for item in dataset]
+    negative_samples = dataset["train"].filter(lambda example: example['label'] == 0)["text"]
+    sampled_negative_samples = random.sample(negative_samples, 1000)
+    positive_samples = dataset["train"].filter(lambda example: example['label'] == 1)["text"]
+    sampled_positive_samples = random.sample(positive_samples, 4000)
+    combined_samples = sampled_negative_samples + sampled_positive_samples
+    random.shuffle(combined_samples)
+    tokenized_datasets = [truncate_add_instruction_and_tokenize(item) for item in combined_samples]
     print(tokenized_datasets[0])
     print(len(tokenized_datasets))
     train_dataloader = DataLoader(tokenized_datasets, shuffle=True, batch_size=256, collate_fn=collate_fn) 
