@@ -181,8 +181,8 @@ if __name__ == "__main__":
                     output_text = tokenizer.decode(out, skip_special_tokens=True)
                     predicted_text = input_text + " " + output_text
                     scaled_sentiment = predict_scaled_sentiment(scaled_model, bert_tokenizer, predicted_text, best_temperature)
-                    print(predicted_text)
-                    print(scaled_sentiment)
+                    # print(predicted_text)
+                    # print(scaled_sentiment)
                     # diverse_score = distinct_n_sentence_level(predicted_text, 4)
                     pq.push(predicted_text, scaled_sentiment)
                 score, text = pq.pop()
