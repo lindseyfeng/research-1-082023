@@ -55,7 +55,7 @@ saved_directory = "./t5_imdb"
 model = T5ForConditionalGeneration.from_pretrained(saved_directory)
 tokenizer = T5TokenizerFast.from_pretrained(saved_directory)
 
-prefix = "complete the following: "
+prefix = "complete the following with a positive sentiment: "
 
 #bert_model
 bert_model = BertModel.from_pretrained('bert-base-uncased')
