@@ -9,7 +9,10 @@ mat = scipy.io.loadmat(file_path)
 
 # Print the keys to see what data is available
 print(mat.keys())
-
+odnames = mat['odnames']
+A = mat['A']
+X = mat['X']
+edgenames = mat['edgenames']
 print("odnames shape:", odnames.shape, "type:", odnames.dtype)
 print("A shape:", A.shape, "type:", A.dtype)
 print("X shape:", X.shape, "type:", X.dtype)
