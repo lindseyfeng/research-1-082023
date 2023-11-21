@@ -10,7 +10,10 @@ mat = scipy.io.loadmat(file_path)
 # Print the keys to see what data is available
 print(mat.keys())
 
-
+print("odnames shape:", odnames.shape, "type:", odnames.dtype)
+print("A shape:", A.shape, "type:", A.dtype)
+print("X shape:", X.shape, "type:", X.dtype)
+print("edgenames shape:", edgenames.shape, "type:", edgenames.dtype)
 # Convert data to PyTorch tensors
 data = torch.tensor(data, dtype=torch.float32)
 
