@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import scipy.io
+from statistics import mean
 from sklearn.preprocessing import MinMaxScaler
 
 
@@ -63,13 +64,21 @@ model = RNNModel(input_size, hidden_size, num_layers)
 loss_function = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
+# Calculate the split index
+split_idx = int(len(X_seq) * 0.9)
+
+# Split the data into training and testing sets
+X_train, X_test = X_seq[:split_idx], X_seq[split_idx:]
+y_train, y_test = y_seq[:split_idx], y_seq[split_idx:]
+
+
 num_epochs = 100  
 
 for epoch in range(num_epochs):
-    for i in range(len(X_seq)):
+    for i in range(len(X_train)):
         optimizer.zero_grad()
-        seq = X_seq[i].unsqueeze(0)  
-        labels = y_seq[i].unsqueeze(0) 
+        seq = X_train[i].unsqueeze(0)  
+        labels = y_train[i].unsqueeze(0) 
 
         y_pred = model(seq)
         single_loss = loss_function(y_pred, labels)
@@ -78,3 +87,13 @@ for epoch in range(num_epochs):
 
     if epoch % 10 == 0:
         print(f'epoch: {epoch:3} loss: {single_loss.item():10.10f}')
+
+loss = []
+for i in range(len(X_test)):
+    seq = X_test[i].unsqueeze(0)  
+    labels = y_test[i].unsqueeze(0) 
+    y_pred = model(seq)
+    single_loss = loss_function(y_pred, labels)
+    loss.append(single_loss)
+print(mean(loss))
+
