@@ -94,6 +94,6 @@ for i in range(len(X_test)):
     labels = y_test[i].unsqueeze(0) 
     y_pred = model(seq)
     single_loss = loss_function(y_pred, labels)
-    loss.append(single_loss)
+    loss.append(single_loss.item())
 print(mean(loss))
 
