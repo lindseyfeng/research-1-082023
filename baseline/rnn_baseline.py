@@ -81,9 +81,7 @@ class DecoderRNN(nn.Module):
         self.out = nn.Linear(output_size, output_size)
 
     def forward(self, hidden):
-        # Initialize the first input to the decoder
-        # Typically, this can be a zero tensor or a special start-of-sequence token
-        input = torch.zeros((hidden.size(1), 1, self.output_size), device=hidden.device)
+       input = hidden.view(1, -1, self.hidden_size)
 
         outputs = []
         for _ in range(self.output_length):
