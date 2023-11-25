@@ -42,7 +42,7 @@ def generate_data(data_file):
 # Load and preprocess the data
 X, y = generate_data('NYC_taxi_OD.npy')
 print(X)
-print(y)
+print(y_pred)
 # First split: Separate out the training data
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
 
@@ -85,7 +85,11 @@ num_epochs = 50
 for epoch in range(num_epochs):
     for i in range(len(X_train)):
         seq = X_train[i].unsqueeze(0)
-        print(seq.shape)
+        # Flatten the last two dimensions of seq
+        batch_size, seq_len, feature_dim1, feature_dim2 = seq.shape
+        num_features = feature_dim1 * feature_dim2
+        seq = seq.view(batch_size, seq_len, num_features)
+
         labels = y_train[i].unsqueeze(0)
 
         optimizer.zero_grad()
