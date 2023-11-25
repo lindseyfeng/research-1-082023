@@ -25,17 +25,22 @@ def evaluate_model(model, X, y):
     return average_loss
 
 # Create sequences
-def create_sequences(data, seq_length):
-    xs, ys = [], []
-    for i in range(len(data) - seq_length - 1):
-        x = data[i:(i + seq_length)]
-        y = data[i + seq_length]
-        xs.append(x)
-        ys.append(y)
-    return np.array(xs), np.array(ys)
+def generate_data(data_file):
+    data_length = data.shape[0]
+    X, Y = [], []
+    in_length = 100
+    predict_length = 24
+    for i in range(data_length):
+        if i + in_length + predict_length >= data_length:
+            break
+        X.append(np.expand_dims(data[i:i + in_length], axis=0))
+        Y.append(np.expand_dims(data[i:i + predict_length], axis=0))
+    X = np.concatenate(X, axis=0)
+    Y = np.concatenate(Y, axis=0)
+    return X, Y
 
-seq_length = 100
-X, y = create_sequences(data, seq_length)
+# Load and preprocess the data
+X, Y = generate_data('NYC_taxi_OD.npy')
 
 # First split: Separate out the training data
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
