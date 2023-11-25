@@ -122,6 +122,7 @@ for epoch in range(num_epochs):
         batch_size, seq_len, feature_dim1, feature_dim2 = seq.shape
         num_features = feature_dim1 * feature_dim2
         seq = seq.view(batch_size, seq_len, num_features)
+        print(seq.shape)
 
         labels = y_train[i].unsqueeze(0)
         batch_size, lab_len, feature_dim1, feature_dim2 = labels.shape
