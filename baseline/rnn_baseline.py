@@ -66,7 +66,7 @@ class RNNModel(nn.Module):
 
     def forward(self, x):
         out, _ = self.rnn(x)
-         out = self.linear(out)
+        out = self.linear(out)
         return out
 
 input_size = 4761
