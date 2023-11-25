@@ -81,21 +81,19 @@ class DecoderRNN(nn.Module):
         self.out = nn.Linear(output_size, output_size)
 
     def forward(self, hidden):
-        input = hidden.view(1, -1, self.hidden_size)
+        # Initialize the output tensor
+        output = torch.zeros((hidden.size(0), self.output_length, self.output_size))
+        # Initialize the first input (e.g., zeros, a learned embedding, or a start token)
+        input = torch.zeros((hidden.size(0), self.output_size))
 
-        outputs = []
-        for _ in range(self.output_length):
-            # Generate output for each time step
-            rnn_out, hidden = self.rnn(input, hidden)
-            output = self.out(rnn_out)
-            outputs.append(output)
+        for t in range(self.output_length):
+            out, hidden = self.rnn(input.unsqueeze(1), hidden)
+            out = self.linear(out.squeeze(1))
+            output[:, t, :] = out
+            # Set the output as the next input (or use another appropriate approach)
+            input = out
 
-            # Update input with the new output
-            input = output
-
-        # Concatenate all outputs
-        outputs = torch.cat(outputs, dim=1)
-        return outputs
+        return output
 
 
 class Seq2Seq(nn.Module):
