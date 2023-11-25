@@ -91,6 +91,7 @@ for epoch in range(num_epochs):
         seq = seq.view(batch_size, seq_len, num_features)
 
         labels = y_train[i].unsqueeze(0)
+        print(labels.shape)
 
         optimizer.zero_grad()
         y_pred = model(seq)
