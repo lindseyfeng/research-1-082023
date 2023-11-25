@@ -81,7 +81,7 @@ class DecoderRNN(nn.Module):
         input = torch.zeros((hidden.size(0), self.hidden_size))  # Initial input
 
         for t in range(self.output_length):
-            out, hidden = self.rnn(input.unsqueeze(1), hidden)
+            out, hidden = self.rnn(input, hidden)
             out = self.out(out.squeeze(1))  # Transform to output size (4761)
             output[:, t, :] = out
             input = self.transform(out)  # Transform back to hidden size
@@ -101,6 +101,7 @@ class Seq2Seq(nn.Module):
 
     def forward(self, x):
         hidden = self.encoder(x)
+        print(hidden.shape)
         output = self.decoder(hidden)
         return output
 
