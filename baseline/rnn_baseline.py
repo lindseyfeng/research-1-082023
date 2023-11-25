@@ -66,22 +66,31 @@ class EncoderRNN(nn.Module):
 class DecoderRNN(nn.Module):
     def __init__(self, hidden_size, output_size, num_layers, output_length):
         super(DecoderRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.output_size = output_size
+        self.num_layers = num_layers
         self.output_length = output_length
+
+        # Initialize layers
         self.rnn = nn.RNN(hidden_size, hidden_size, num_layers, batch_first=True)
-        self.linear = nn.Linear(hidden_size, output_size)
+        self.out = nn.Linear(hidden_size, output_size)  # Maps to output size (4761)
+        self.transform = nn.Linear(output_size, hidden_size)  # Maps back to hidden size
 
     def forward(self, hidden):
-        output = torch.zeros((hidden.size(1), self.output_length, hidden.size(2)))
-        input = torch.zeros((hidden.size(1), hidden.size(2)))
+        output = torch.zeros((hidden.size(0), self.output_length, self.output_size))
+        input = torch.zeros((hidden.size(0), self.hidden_size))  # Initial input
 
         for t in range(self.output_length):
             out, hidden = self.rnn(input.unsqueeze(1), hidden)
-            print(out.shape)
-            out = self.linear(out.squeeze(1))
+            out = self.out(out.squeeze(1))  # Transform to output size (4761)
             output[:, t, :] = out
-            input = out
+            input = self.transform(out)  # Transform back to hidden size
 
         return output
+
+    def transform_output_to_input(self, out):
+        return self.transform(out)  # Use the transform linear layer
+
 
 
 class Seq2Seq(nn.Module):
