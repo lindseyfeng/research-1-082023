@@ -71,26 +71,18 @@ class EncoderRNN(nn.Module):
 class DecoderRNN(nn.Module):
     def __init__(self, hidden_size, output_size, num_layers, output_length):
         super(DecoderRNN, self).__init__()
-        self.hidden_size = hidden_size
-        self.output_size = output_size
-        self.num_layers = num_layers
         self.output_length = output_length
-
-        # Initialize layers
-        self.rnn = nn.RNN(hidden_size, output_size, num_layers, batch_first=True)
-        self.out = nn.Linear(output_size, output_size)
+        self.rnn = nn.RNN(hidden_size, hidden_size, num_layers, batch_first=True)
+        self.linear = nn.Linear(hidden_size, output_size)
 
     def forward(self, hidden):
-        # Initialize the output tensor
-        output = torch.zeros((hidden.size(0), self.output_length, self.output_size))
-        # Initialize the first input (e.g., zeros, a learned embedding, or a start token)
-        input = torch.zeros((hidden.size(0), self.output_size))
+        output = torch.zeros((hidden.size(1), self.output_length, hidden.size(2)))
+        input = torch.zeros((hidden.size(1), hidden.size(2)))
 
         for t in range(self.output_length):
             out, hidden = self.rnn(input.unsqueeze(1), hidden)
             out = self.linear(out.squeeze(1))
             output[:, t, :] = out
-            # Set the output as the next input (or use another appropriate approach)
             input = out
 
         return output
@@ -108,10 +100,11 @@ class Seq2Seq(nn.Module):
         return output
 
 # Model initialization
-input_size = 4761  # Adjust as needed
-hidden_size = 64   # Adjust as needed
-num_layers = 2     # Adjust as needed
-output_size = 4761 # Adjust as needed
+input_size = X_train.shape[2]
+hidden_size = 64
+num_layers = 2
+output_size = y_train.shape[2]
+print(output_size)
 
 encoder = EncoderRNN(input_size, hidden_size, num_layers)
 decoder = DecoderRNN(hidden_size, output_size, num_layers, output_length=24)
