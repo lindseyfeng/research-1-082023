@@ -6,7 +6,7 @@ import zipfile
 import os
 
 # Path to the zip file and extraction directory
-zip_file_path = './NYC_taxi_OD.zip'
+zip_file_path = 'NYC_taxi_OD.zip'
 extract_dir = './'
 
 # Unzip the file
