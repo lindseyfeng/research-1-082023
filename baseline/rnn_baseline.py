@@ -113,15 +113,7 @@ num_epochs = 50
 for epoch in range(num_epochs):
     for i in range(len(X_train)):
         seq = X_train[i].unsqueeze(0)
-        # Flatten the last two dimensions of seq
-        batch_size, seq_len, feature_dim1, feature_dim2 = seq.shape
-        num_features = feature_dim1 * feature_dim2
-        seq = seq.view(batch_size, seq_len, num_features)
-        print(seq.shape)
-
         labels = y_train[i].unsqueeze(0)
-        batch_size, lab_len, feature_dim1, feature_dim2 = labels.shape
-        labels = labels.view(batch_size, lab_len, num_features)
 
         optimizer.zero_grad()
         y_pred = model(seq)
