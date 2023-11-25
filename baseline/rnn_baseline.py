@@ -72,21 +72,17 @@ class DecoderRNN(nn.Module):
         self.output_length = output_length
 
         # Initialize layers
-        self.rnn = nn.RNN(hidden_size, hidden_size, num_layers, batch_first=True)
-        self.out = nn.Linear(hidden_size, output_size)  # Maps to output size (4761)
-        self.transform = nn.Linear(output_size, hidden_size)  # Maps back to hidden size
+        self.rnn = nn.RNN(hidden_size, output_size, num_layers, batch_first=True)
+
 
     def forward(self, hidden):
         output = torch.zeros((hidden.size(0), self.output_length, self.output_size))
         inp = torch.zeros((hidden.size(0), self.hidden_size))  # Initial input
-
+        input_tensor = input_tensor.unsqueeze(1)
+        input_tensor = input_tensor.repeat(1, 2, 1)
         for t in range(self.output_length):
-            print(inp.shape)
             out, hidden = self.rnn(inp.unsqueeze(1), hidden)
-            print(inp.shape)
-            out = self.out(out.squeeze(1))  # Transform to output size (4761)
             output[:, t, :] = out
-            input = self.transform(out)  # Transform back to hidden size
 
         return output
 
