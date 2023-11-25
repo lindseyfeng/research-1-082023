@@ -81,7 +81,7 @@ class DecoderRNN(nn.Module):
         inp = torch.zeros((hidden.size(0), self.hidden_size))  # Initial input
 
         for t in range(self.output_length):
-            print(inp)
+            print(inp.shape)
             out, hidden = self.rnn(inp, hidden)
             out = self.out(out.squeeze(1))  # Transform to output size (4761)
             output[:, t, :] = out
