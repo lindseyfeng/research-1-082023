@@ -5,18 +5,9 @@ from sklearn.model_selection import train_test_split
 import zipfile
 import os
 
-# Path to the zip file and extraction directory
-zip_file_path = 'NYC_taxi_OD.npy.zip'
-
-extract_dir = ''
-
-# Unzip the file
-with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
-    zip_ref.extractall(extract_dir)
 
 # Path to the extracted .npy file
-npy_file_path = os.path.join(extract_dir, 'NYC_taxi_OD.npy')
-
+npy_file_path = 'NYC_taxi_OD.npy'
 # Load the data from the .npy file
 data = np.load(npy_file_path)
 
@@ -88,6 +79,7 @@ num_epochs = 50
 for epoch in range(num_epochs):
     for i in range(len(X_train)):
         seq = X_train[i].unsqueeze(0)
+        print(seq.shape)
         labels = y_train[i].unsqueeze(0)
 
         optimizer.zero_grad()
