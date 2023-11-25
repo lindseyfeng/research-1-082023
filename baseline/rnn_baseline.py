@@ -25,24 +25,19 @@ def evaluate_model(model, X, y):
     return average_loss
 
 # Create sequences
-def generate_data(data_file):
+def generate_data(data, in_length, predict_length):
+    # Assuming data is a sequence of 69x69 matrices
     data_length = data.shape[0]
     X, Y = [], []
-    in_length = 100
-    predict_length = 24
-    for i in range(data_length):
-        if i + in_length + predict_length >= data_length:
-            break
-        X.append(np.expand_dims(data[i:i + in_length], axis=0))
-        Y.append(np.expand_dims(data[i:i + predict_length], axis=0))
-    X = np.concatenate(X, axis=0)
-    Y = np.concatenate(Y, axis=0)
-    return X, Y
+    for i in range(data_length - in_length - predict_length):
+        X.append(data[i:i + in_length].reshape(in_length, -1))  # Flatten each matrix
+        Y.append(data[i + in_length:i + in_length + predict_length].reshape(predict_length, -1))
+    return np.array(X), np.array(Y)
 
-# Load and preprocess the data
-X, y = generate_data('NYC_taxi_OD.npy')
-print(X)
-print(y)
+# Generate sequences
+in_length = 100
+predict_length = 24
+X, y = generate_data(data, in_length, predict_length)
 # First split: Separate out the training data
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
 
@@ -100,11 +95,10 @@ class Seq2Seq(nn.Module):
         return output
 
 # Model initialization
-input_size = X_train.shape[2]
+input_size = 69 * 69
 hidden_size = 64
 num_layers = 2
-output_size = y_train.shape[2]
-print(output_size)
+output_size = 69 * 69
 
 encoder = EncoderRNN(input_size, hidden_size, num_layers)
 decoder = DecoderRNN(hidden_size, output_size, num_layers, output_length=24)
