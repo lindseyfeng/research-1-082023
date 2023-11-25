@@ -71,22 +71,34 @@ class EncoderRNN(nn.Module):
 class DecoderRNN(nn.Module):
     def __init__(self, hidden_size, output_size, num_layers, output_length):
         super(DecoderRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.output_size = output_size
+        self.num_layers = num_layers
         self.output_length = output_length
+
+        # Initialize layers
         self.rnn = nn.RNN(hidden_size, output_size, num_layers, batch_first=True)
-        self.linear = nn.Linear(output_size, output_size)
+        self.out = nn.Linear(output_size, output_size)
 
     def forward(self, hidden):
-        # Initialize input and output
-        output = torch.zeros((hidden.size(0), self.output_length, hidden.size(2)))
-        input = hidden
+        # Initialize the first input to the decoder
+        # Typically, this can be a zero tensor or a special start-of-sequence token
+        input = torch.zeros((hidden.size(1), 1, self.output_size), device=hidden.device)
 
-        for t in range(self.output_length):
-            out, hidden = self.rnn(input, hidden)
-            out = self.linear(out)
-            output[:, t, :] = out[:, -1, :]
-            input = out
+        outputs = []
+        for _ in range(self.output_length):
+            # Generate output for each time step
+            rnn_out, hidden = self.rnn(input, hidden)
+            output = self.out(rnn_out)
+            outputs.append(output)
 
-        return output
+            # Update input with the new output
+            input = output
+
+        # Concatenate all outputs
+        outputs = torch.cat(outputs, dim=1)
+        return outputs
+
 
 class Seq2Seq(nn.Module):
     def __init__(self, encoder, decoder):
