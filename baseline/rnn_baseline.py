@@ -72,10 +72,11 @@ X_train, X_test = X_seq[:split_idx], X_seq[split_idx:]
 y_train, y_test = y_seq[:split_idx], y_seq[split_idx:]
 
 
-num_epochs = 100  
+num_epochs = 10  
 
 for epoch in range(num_epochs):
     for i in range(len(X_train)):
+        print(len(X_train))
         optimizer.zero_grad()
         seq = X_train[i].unsqueeze(0)  
         labels = y_train[i].unsqueeze(0) 
@@ -84,8 +85,6 @@ for epoch in range(num_epochs):
         single_loss = loss_function(y_pred, labels)
         single_loss.backward()
         optimizer.step()
-
-    if epoch % 10 == 0:
         print(f'epoch: {epoch:3} loss: {single_loss.item():10.10f}')
 
 loss = []
