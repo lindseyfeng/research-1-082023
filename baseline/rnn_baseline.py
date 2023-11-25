@@ -81,7 +81,7 @@ class DecoderRNN(nn.Module):
         self.out = nn.Linear(output_size, output_size)
 
     def forward(self, hidden):
-       input = hidden.view(1, -1, self.hidden_size)
+        input = hidden.view(1, -1, self.hidden_size)
 
         outputs = []
         for _ in range(self.output_length):
