@@ -58,23 +58,56 @@ X_test = torch.tensor(X_test, dtype=torch.float32)
 y_test = torch.tensor(y_test, dtype=torch.float32)
 
 # Define the RNN model
-class RNNModel(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, output_size):
-        super(RNNModel, self).__init__()
+class EncoderRNN(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers):
+        super(EncoderRNN, self).__init__()
+        self.hidden_size = hidden_size
         self.rnn = nn.RNN(input_size, hidden_size, num_layers, batch_first=True)
-        self.linear = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
-        out, _ = self.rnn(x)
-        out = self.linear(out)
-        return out
+        out, hidden = self.rnn(x)
+        return hidden
 
-input_size = 4761
-hidden_size = 64
-num_layers = 2
-output_size = 4761
+class DecoderRNN(nn.Module):
+    def __init__(self, hidden_size, output_size, num_layers, output_length):
+        super(DecoderRNN, self).__init__()
+        self.output_length = output_length
+        self.rnn = nn.RNN(hidden_size, output_size, num_layers, batch_first=True)
+        self.linear = nn.Linear(output_size, output_size)
 
-model = RNNModel(input_size, hidden_size, num_layers, output_size)
+    def forward(self, hidden):
+        # Initialize input and output
+        output = torch.zeros((hidden.size(0), self.output_length, hidden.size(2)))
+        input = hidden
+
+        for t in range(self.output_length):
+            out, hidden = self.rnn(input, hidden)
+            out = self.linear(out)
+            output[:, t, :] = out[:, -1, :]
+            input = out
+
+        return output
+
+class Seq2Seq(nn.Module):
+    def __init__(self, encoder, decoder):
+        super(Seq2Seq, self).__init__()
+        self.encoder = encoder
+        self.decoder = decoder
+
+    def forward(self, x):
+        hidden = self.encoder(x)
+        output = self.decoder(hidden)
+        return output
+
+# Model initialization
+input_size = 4761  # Adjust as needed
+hidden_size = 64   # Adjust as needed
+num_layers = 2     # Adjust as needed
+output_size = 4761 # Adjust as needed
+
+encoder = EncoderRNN(input_size, hidden_size, num_layers)
+decoder = DecoderRNN(hidden_size, output_size, num_layers, output_length=24)
+model = Seq2Seq(encoder, decoder)
 
 # Loss function and optimizer
 loss_function = nn.MSELoss()
