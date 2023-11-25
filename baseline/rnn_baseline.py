@@ -69,10 +69,10 @@ class RNNModel(nn.Module):
         out = self.linear(out[:, -1, :])
         return out
 
-input_size = data.shape[1]
+input_size = 4761
 hidden_size = 64
 num_layers = 2
-output_size = data.shape[1]
+output_size = 4761
 
 model = RNNModel(input_size, hidden_size, num_layers, output_size)
 
