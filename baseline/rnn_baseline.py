@@ -41,7 +41,8 @@ def generate_data(data_file):
 
 # Load and preprocess the data
 X, y = generate_data('NYC_taxi_OD.npy')
-
+print(X)
+print(y)
 # First split: Separate out the training data
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
 
