@@ -116,25 +116,23 @@ loss_function = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 # Train the model
-num_epochs = 50
+num_epochs = 3
 for epoch in range(num_epochs):
-    print(len(X_train))
     for i in range(len(X_train)):
         seq = X_train[i].unsqueeze(0)
         labels = y_train[i].unsqueeze(0)
 
         optimizer.zero_grad()
         y_pred = model(seq)
-        print(labels[0].shape)
         single_loss = loss_function(y_pred[0], labels[0])
+        print(single_loss.item())
         single_loss.backward()
         optimizer.step()
 
     train_loss = single_loss.item()
     val_loss = evaluate_model(model, X_val, y_val)
 
-    if epoch % 10 == 0:
-        print(f'Epoch {epoch}, Train Loss: {train_loss}, Validation Loss: {val_loss}')
+    print(f'Epoch {epoch}, Train Loss: {train_loss}, Validation Loss: {val_loss}')
 
 test_loss = evaluate_model(model, X_test, y_test)
 print(f'Test Loss: {test_loss}')
