@@ -86,9 +86,9 @@ class DecoderRNN(nn.Module):
             out, hidden = self.rnn(inp, hidden)
             print(out.shape)
             out = self.linear(out)
-            print(out.shape)
-            print(out)
-            output[:, t, :] = out
+            print(out[0].shape)
+            print(out[0] == out[1])
+            output[:, t, :] = out[0]
 
         return output
 
