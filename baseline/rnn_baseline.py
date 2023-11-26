@@ -16,7 +16,7 @@ def read_data(data_file='NYC_taxi_OD.npy'):
 
 # Load the data from the .npy file
 data = read_data()
-print(data)
+print(data.shape)
 
 def evaluate_model(model, X, y):
     model.eval()  # Set the model to evaluation mode
