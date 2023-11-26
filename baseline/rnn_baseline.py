@@ -117,7 +117,7 @@ num_layers = 2
 output_size = 69 * 69
 
 encoder = EncoderRNN(input_size, hidden_size, num_layers)
-decoder = DecoderRNN(hidden_size, output_size, num_layers, output_length=24)
+decoder = DecoderRNN(hidden_size, output_size, num_layers, output_length=36)
 model = Seq2Seq(encoder, decoder)
 
 # Loss function and optimizer
