@@ -73,6 +73,7 @@ class DecoderRNN(nn.Module):
 
         # Initialize layers
         self.rnn = nn.RNN(output_size, hidden_size, num_layers, batch_first=True)
+        print(output_size, hidden_size)
 
 
     def forward(self, hidden):
