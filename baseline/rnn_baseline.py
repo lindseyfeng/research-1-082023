@@ -118,13 +118,14 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 # Train the model
 num_epochs = 50
 for epoch in range(num_epochs):
+    print(len(X_train))
     for i in range(len(X_train)):
         seq = X_train[i].unsqueeze(0)
         labels = y_train[i].unsqueeze(0)
 
         optimizer.zero_grad()
         y_pred = model(seq)
-        print(labels.shape)
+        print(labels[0].shape)
         single_loss = loss_function(y_pred[0], labels[0])
         single_loss.backward()
         optimizer.step()
