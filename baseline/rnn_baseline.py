@@ -72,7 +72,7 @@ class DecoderRNN(nn.Module):
         self.output_length = output_length
 
         # Initialize layers
-        self.rnn = nn.RNN(hidden_size, output_size, num_layers, batch_first=True)
+        self.rnn = nn.RNN(hidden_size, hidden_size, num_layers, batch_first=True)
         print(output_size, hidden_size)
 
 
