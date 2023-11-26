@@ -84,7 +84,8 @@ class DecoderRNN(nn.Module):
         hidden = hidden.repeat(1, 2, 1)
         for t in range(self.output_length):
             out, hidden = self.rnn(inp, hidden)
-            out = self.linear(out.squeeze(1))
+            print(out.shape)
+            out = self.linear(out.view(2, -1))
             print(out.shape)
             output[:, t, :] = out
 
