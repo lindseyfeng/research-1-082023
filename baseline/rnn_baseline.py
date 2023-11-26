@@ -127,7 +127,7 @@ for epoch in range(num_epochs):
         single_loss.backward()
         optimizer.step()
         if i % 1000 == 0:
-            print(f'Epoch {epoch}, Train Loss: {single_loss.item()})
+            print(f'Epoch {epoch}, Train Loss: {single_loss.item()}')
 
 
     train_loss = single_loss.item()
