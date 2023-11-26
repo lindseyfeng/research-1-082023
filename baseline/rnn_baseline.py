@@ -73,6 +73,7 @@ class DecoderRNN(nn.Module):
 
         # Initialize layers
         self.rnn = nn.RNN(hidden_size, hidden_size,num_layers, batch_first=True)
+        self.linear = nn.Linear(hidden_size, output_size)
 
 
     def forward(self, hidden):
@@ -83,13 +84,10 @@ class DecoderRNN(nn.Module):
         hidden = hidden.repeat(1, 2, 1)
         for t in range(self.output_length):
             out, hidden = self.rnn(inp, hidden)
+            out = self.linear(out.squeeze(1))
             output[:, t, :] = out
 
         return output
-
-    def transform_output_to_input(self, out):
-        return self.transform(out)  # Use the transform linear layer
-
 
 
 class Seq2Seq(nn.Module):
