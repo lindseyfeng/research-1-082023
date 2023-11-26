@@ -1,0 +1,10 @@
+# origin_size: 11
+# dest_size: 11
+origin_size: 69
+dest_size: 69
+model_size: 32
+in_length: 96
+predict_length: 24
+batch_size: 64
+epochs: 5
+spatial_type: comb # if use attenttion only, fill 'atten', if the gnn only fill 'gnn', otherwise is combine it together

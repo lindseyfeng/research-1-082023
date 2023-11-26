@@ -6,10 +6,17 @@ import zipfile
 import os
 
 
-# Path to the extracted .npy file
-npy_file_path = 'NYC_taxi_OD.npy'
+def read_data(data_file='NYC_taxi_OD.npy'):
+    # Load .npy file
+    data = np.load(data_file)
+    X = data.reshape([-1, 69, 69])
+    # normalize
+    X = (X - np.mean(X)) / np.std(X)
+    return X
+
 # Load the data from the .npy file
-data = np.load(npy_file_path)
+data = read_data()
+print(data)
 
 def evaluate_model(model, X, y):
     model.eval()  # Set the model to evaluation mode
@@ -35,7 +42,7 @@ def generate_data(data, in_length, predict_length):
     return np.array(X), np.array(Y)
 
 # Generate sequences
-in_length = 100
+in_length = 96
 predict_length = 24
 X, y = generate_data(data, in_length, predict_length)
 # First split: Separate out the training data
