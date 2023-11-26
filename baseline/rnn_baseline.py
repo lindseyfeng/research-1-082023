@@ -72,14 +72,13 @@ class DecoderRNN(nn.Module):
         self.output_length = output_length
 
         # Initialize layers
-        self.rnn = nn.RNN(hidden_size, output_size, num_layers, batch_first=True)
+        self.rnn = nn.RNN(output_size, hidden_size, num_layers, batch_first=True)
 
 
     def forward(self, hidden):
         output = torch.zeros((hidden.size(0), self.output_length, self.output_size))
         inp = torch.zeros((hidden.size(0), self.hidden_size))  # Initial input
         inp = inp.unsqueeze(1)
-        inp = inp.repeat(1, 2, 1)
         for t in range(self.output_length):
             out, hidden = self.rnn(inp, hidden)
             output[:, t, :] = out
