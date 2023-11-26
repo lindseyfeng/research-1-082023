@@ -121,13 +121,14 @@ for epoch in range(num_epochs):
     for i in range(len(X_train)):
         seq = X_train[i].unsqueeze(0)
         labels = y_train[i].unsqueeze(0)
-
         optimizer.zero_grad()
         y_pred = model(seq)
         single_loss = loss_function(y_pred[0], labels[0])
-        print(single_loss.item())
         single_loss.backward()
         optimizer.step()
+        if i % 1000 == 0:
+            print(f'Epoch {epoch}, Train Loss: {single_loss.item()})
+
 
     train_loss = single_loss.item()
     val_loss = evaluate_model(model, X_val, y_val)
