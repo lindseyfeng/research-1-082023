@@ -124,7 +124,9 @@ for epoch in range(num_epochs):
 
         optimizer.zero_grad()
         y_pred = model(seq)
-        single_loss = loss_function(y_pred, labels)
+        print(y_pred[0] == y_pred[1])
+        print(y_pred[0].shape)
+        single_loss = loss_function(y_pred[0], labels)
         single_loss.backward()
         optimizer.step()
 
