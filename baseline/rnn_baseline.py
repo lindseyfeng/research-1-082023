@@ -43,7 +43,7 @@ def generate_data(data, in_length, predict_length):
 
 # Generate sequences
 in_length = 96
-predict_length = 24
+predict_length = 36
 X, y = generate_data(data, in_length, predict_length)
 print(X.shape)
 print(y.shape)
