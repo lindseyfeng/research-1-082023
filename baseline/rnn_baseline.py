@@ -45,6 +45,8 @@ def generate_data(data, in_length, predict_length):
 in_length = 96
 predict_length = 24
 X, y = generate_data(data, in_length, predict_length)
+print(X.shape)
+print(y.shape)
 # First split: Separate out the training data
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
 
