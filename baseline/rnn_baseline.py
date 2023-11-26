@@ -98,7 +98,6 @@ class Seq2Seq(nn.Module):
 
     def forward(self, x):
         hidden = self.encoder(x)
-        print(hidden.shape)
         output = self.decoder(hidden)
         return output
 
