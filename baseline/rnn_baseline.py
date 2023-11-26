@@ -125,7 +125,7 @@ loss_function = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 # Train the model
-num_epochs = 3
+num_epochs = 5
 for epoch in range(num_epochs):
     for i in range(len(X_train)):
         seq = X_train[i].unsqueeze(0)
