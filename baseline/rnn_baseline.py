@@ -43,7 +43,7 @@ def generate_data(data, in_length, predict_length):
 
 # Generate sequences
 in_length = 96
-predict_length = 36
+predict_length = 48
 X, y = generate_data(data, in_length, predict_length)
 print(X.shape)
 print(y.shape)
@@ -117,7 +117,7 @@ num_layers = 2
 output_size = 69 * 69
 
 encoder = EncoderRNN(input_size, hidden_size, num_layers)
-decoder = DecoderRNN(hidden_size, output_size, num_layers, output_length=36)
+decoder = DecoderRNN(hidden_size, output_size, num_layers, output_length=48)
 model = Seq2Seq(encoder, decoder)
 
 # Loss function and optimizer
