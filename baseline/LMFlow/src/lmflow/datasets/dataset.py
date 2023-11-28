@@ -73,6 +73,7 @@ class Dataset:
             data_files = [
                 x.absolute().as_posix()
                  for x in Path(self.dataset_path).glob("*.json")
+                 if not x.name.startswith('._')
             ]
 
             # Iterate through all the files and ensure they have the same data type
