@@ -20,17 +20,13 @@ print(tokenizer)
 
 # Load the  dataset
 dataset = load_dataset("Anthropic/hh-rlhf")
-
+MAX_TOKENS = 256
 
 def preprocess_function(examples):
-    inputs = examples["input_text"]
-    print(inputs)
-    targets = examples["target_text"]
-    print(targets)
-    
+    print(examples)
+    inputs = examples["chosen"]
     # Tokenize the inputs
     model_inputs = tokenizer(inputs, max_length=MAX_TOKENS, truncation=True)
-
     # Filter out examples that exceed the max token limit
     filtered_input_ids = []
     filtered_labels = []
@@ -45,6 +41,7 @@ def preprocess_function(examples):
     return {"input_ids": filtered_input_ids, "labels": filtered_labels}
 
 tokenized_dataset = dataset.map(preprocess_function, batched=True, remove_columns=dataset["train"].column_names)
+print(tokenized_dataset)
 
 # Define training arguments
 training_args = TrainingArguments(
