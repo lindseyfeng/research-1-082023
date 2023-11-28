@@ -5,7 +5,7 @@
 
 # Parses arguments
 model_name_or_path=lmsys/vicuna-7b-v1.5
-dataset_path=data/hh_rlhf/sft
+dataset_path=data/hh_rlhf/sft/
 output_dir=output_models/finetuned_vicuna
 deepspeed_args="--master_port=11000"
 
