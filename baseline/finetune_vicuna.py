@@ -6,6 +6,7 @@ from datasets import load_dataset
 import torch
 
 # Load model directly
+from transformers import LlamaTokenizer
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import numpy as np
 
