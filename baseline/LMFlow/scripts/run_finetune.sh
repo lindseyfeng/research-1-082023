@@ -4,8 +4,8 @@
 #     COMMIT: d5fecf30ba8011067b10cf51fede53a5ab6574e4
 
 # Parses arguments
-model_name_or_path=lmsys/vicuna-7b-v1.5
-dataset_path=data/hh_rlhf/rlhf/rlhf_prompt
+model_name_or_path=huggyllama/llama-7b
+dataset_path=data/hh_rlhf/sft
 output_dir=output_models/finetuned_vicuna
 deepspeed_args="--master_port=11000"
 
