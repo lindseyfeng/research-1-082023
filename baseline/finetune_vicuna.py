@@ -9,21 +9,13 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import numpy as np
 
-class LengthSampler:
-    """
-    Samples a length
-    """
-
-    def __init__(self, min_value, max_value):
-        self.values = list(range(min_value, max_value))
-
-    def __call__(self):
-        return np.random.choice(self.values)
-
 # Load model directly
 
 tokenizer = AutoTokenizer.from_pretrained("lmsys/vicuna-7b-v1.5")
 model = AutoModelForCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5")
+
+print(model)
+print(tokenizer)
 
 # Load the  dataset
 dataset = load_dataset("Anthropic/hh-rlhf")
@@ -71,3 +63,5 @@ trainer = Trainer(
 
 # Train the model
 trainer.train()
+trainer.save_model("./vicuna_imdb")
+tokenizer.save_pretrained('./vicuna_imdb')
