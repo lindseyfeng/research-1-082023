@@ -78,6 +78,8 @@ class Dataset:
             # Iterate through all the files and ensure they have the same data type
             for single_file in data_files:
                 with open(single_file) as fin:
+                    print("fin")
+                    print(fin)
                     json_data = json.load(fin)
                     if KEY_TYPE not in json_data.keys():
                         raise ValueError(
