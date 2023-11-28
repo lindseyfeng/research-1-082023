@@ -4,9 +4,9 @@
 #     COMMIT: d5fecf30ba8011067b10cf51fede53a5ab6574e4
 
 # Parses arguments
-model_name_or_path=gpt2
-dataset_path=data/alpaca/train
-output_dir=output_models/finetune
+model_name_or_path=lmsys/vicuna-7b-v1.5
+dataset_path=data/hh_rlhf/sft
+output_dir=output_models/finetuned_vicuna
 deepspeed_args="--master_port=11000"
 
 while [[ $# -ge 1 ]]; do
