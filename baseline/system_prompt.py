@@ -33,8 +33,6 @@ pipe_kwargs = {
       "batch_size": 1
   }
 
-# pipe_outputs = rm_pipe(test_texts, **pipe_kwargs)
-# rewards = [output[0]["score"] for output in pipe_outputs]
 
 reward = []
 for text in selected_items:
@@ -57,5 +55,7 @@ for text in selected_items:
         formatted_response = "###human: " + dialogue
         formatted_response += "\n###assistant:" + generated_text[prompt_length:]
         print(formatted_response)
-
-    reward.append(score)
+        pipe_outputs = rm_pipe(test_texts, **pipe_kwargs)
+        score = [output[0]["score"] for output in pipe_outputs]
+        print(score)
+        reward.append(score)
