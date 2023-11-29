@@ -31,8 +31,7 @@ for text in selected_items:
 
     for dialogue in human_dialogues:
         result = pipe(dialogue)[0]
-        print(result['generated_text'])
-        string.append(result)
+        string += result['generated_text']
 
     print(string)
     tokenized_string = tokenizer(string)
