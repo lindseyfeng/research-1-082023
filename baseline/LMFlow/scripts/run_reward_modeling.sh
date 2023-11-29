@@ -28,8 +28,8 @@ deepspeed ${deepspeed_args} \
     --num_train_epochs 1 \
     --learning_rate 3e-5 \
     --block_size 512 \
-    --per_device_train_batch_size 32 \
-    --per_device_eval_batch_size 32\
+    --per_device_train_batch_size 16 \
+    --per_device_eval_batch_size 16\
     --deepspeed configs/ds_config_zero2.json \
     --bf16 \
     --run_name rm_test \
