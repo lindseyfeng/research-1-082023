@@ -28,7 +28,7 @@ for text in selected_items:
     # Filter and clean up the parts spoken by the Human
     human_dialogues = [part.split("Human:")[1].strip() for part in dialogues if "Human:" in part]
     string = ""
-    
+
     for dialogue in human_dialogues:
         result = pipe(dialogue)[generated_text]
         string.append(result)
@@ -36,4 +36,5 @@ for text in selected_items:
     print(string)
     tokenized_string = tokenizer(string)
     score = model(tokenized_string)
+    print(score)
     reward.append(score)
