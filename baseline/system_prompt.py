@@ -14,7 +14,7 @@ dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
 selected_items = random.sample(dataset, 3000)
 
 # Path to your finetuned model
-model_path = 'output_models/finetuned_vicuna'
+model_path = './LMFlow/output_models/finetuned_vicuna'
 
 # Load the model
 model = AutoModel.from_pretrained(model_path)
