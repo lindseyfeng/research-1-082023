@@ -7,7 +7,7 @@ from transformers import AutoTokenizer
 torch.backends.cuda.matmul.allow_tf32 = True
 
 vicuna_pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5")
-
+device = "cuda" if torch.cuda.is_available() else "cpu"
 random.seed(42)
 
 dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
@@ -22,7 +22,7 @@ rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3
 rm_pipe = pipeline(
       "sentiment-analysis",
       model="weqweasdas/hh_rlhf_rm_open_llama_3b",
-      device="auto",
+      device=device,
       tokenizer=rm_tokenizer,
       model_kwargs={"torch_dtype": torch.bfloat16}
   )
