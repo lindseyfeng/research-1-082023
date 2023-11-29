@@ -33,9 +33,8 @@ pipe_kwargs = {
       "batch_size": 1
   }
 
-
-pipe_outputs = rm_pipe(test_texts, **pipe_kwargs)
-rewards = [output[0]["score"] for output in pipe_outputs]
+# pipe_outputs = rm_pipe(test_texts, **pipe_kwargs)
+# rewards = [output[0]["score"] for output in pipe_outputs]
 
 reward = []
 for text in selected_items:
