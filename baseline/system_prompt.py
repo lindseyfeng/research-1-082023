@@ -69,4 +69,4 @@ for text in selected_items:
     reward.append(score[0])
 
 print(mean(reward))
-print(no prompt)
+print("no prompt")
