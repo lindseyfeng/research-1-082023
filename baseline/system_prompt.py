@@ -56,6 +56,6 @@ for text in selected_items:
         generated_text = result['generated_text']
         formatted_response = "###human: " + dialogue
         formatted_response += "\n###assistant:" + generated_text[prompt_length:]
-        print(strformatted_response)
+        print(formatted_response)
 
     reward.append(score)
