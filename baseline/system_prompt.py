@@ -5,7 +5,7 @@ from datasets import load_dataset
 
 torch.backends.cuda.matmul.allow_tf32 = True
 
-pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5", torch_dtype=torch.float16)
+pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5")
 
 random.seed(42)
 
