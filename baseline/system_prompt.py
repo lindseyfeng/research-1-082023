@@ -84,6 +84,7 @@ for text in selected_items:
         result = vicuna_pipe(prompt_string + dialogue)[0]
         # result = vicuna_pipe(dialogue)[0]
         generated_text = result['generated_text']
+        print(generated_text)
         formatted_response += "###human: " + dialogue
         formatted_response += " ###assistant: " + generated_text[prompt_length:]
         print(formatted_response)
