@@ -14,7 +14,7 @@ pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5")
 dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
 selected_items = random.sample(dataset, 3000)
 
-reward_model = 
+# reward_model = 
 for text in selected_items:
 
     dialogues = text.split("Assistant:")
