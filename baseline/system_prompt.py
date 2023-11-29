@@ -10,8 +10,6 @@ pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5", torch_dtype=tor
 
 random.seed(42)
 
-pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5")
-
 dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
 selected_items = random.sample(dataset, 3000)
 
