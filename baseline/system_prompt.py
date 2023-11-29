@@ -53,8 +53,9 @@ for text in selected_items:
 
         # Get the assistant's response and append it with the prefix
         result = vicuna_pipe(dialogue)[0]
+        generated_text = result['generated_text']
         formatted_response = "###human: " + dialogue
-        formatted_response += "\n###assistant:" + result[prompt_length:]
+        formatted_response += "\n###assistant:" + generated_text[prompt_length:]
         print(strformatted_response)
 
     reward.append(score)
