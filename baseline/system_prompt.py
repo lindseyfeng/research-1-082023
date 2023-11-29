@@ -12,7 +12,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 random.seed(42)
 
 dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
-selected_items = random.sample(dataset, 2)
+selected_items = random.sample(dataset, 3000)
 
 # Path to your finetuned model
 model_path = './LMFlow/output_models/finetuned_vicuna'
@@ -67,7 +67,6 @@ for text in selected_items:
     score = [output[0]["score"] for output in pipe_outputs]
     print(score[0])
     reward.append(score[0])
-    break
-
 
 print(mean(reward))
+print(no prompt)
