@@ -40,22 +40,20 @@ for text in selected_items:
     dialogues = text.split("Assistant:")
 
     # Filter and clean up the parts spoken by the Human
-    string = ""
     human_dialogues = [part.split("Human:")[1].strip() for part in dialogues if "Human:" in part]
-
+    formatted_response = ""
     for dialogue in human_dialogues:
         # Append the human part with the prefix
         prompt_length = len(dialogue)
 
-        string += "###human: " + dialogue + "\n"
-
         # Get the assistant's response and append it with the prefix
         result = vicuna_pipe(dialogue)[0]
         generated_text = result['generated_text']
-        formatted_response = "###human: " + dialogue
-        formatted_response += "\n###assistant:" + generated_text[prompt_length:]
+        formatted_response += "###human: " + dialogue
+        formatted_response += " ###assistant:" + generated_text[prompt_length:]
         print(formatted_response)
-        pipe_outputs = rm_pipe(test_texts, **pipe_kwargs)
-        score = [output[0]["score"] for output in pipe_outputs]
-        print(score)
-        reward.append(score)
+    pipe_outputs = rm_pipe(formatted_response, **pipe_kwargs)
+    score = [output[0]["score"] for output in pipe_outputs]
+    print(score)
+    reward.append(score)
+
