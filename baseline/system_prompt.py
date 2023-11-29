@@ -1,13 +1,14 @@
-# Load model directly
-# Use a pipeline as a high-level helper
 from transformers import pipeline
-
-pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5")
+import torch
 import random
+from datasets import load_dataset
+
+torch.backends.cuda.matmul.allow_tf32 = True
+
+pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5", torch_dtype=torch.float16,
+    use_safetensors=True)
 
 random.seed(42)
-
-from datasets import load_dataset
 
 pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5")
 
@@ -25,5 +26,3 @@ for text in selected_items:
     for dialogue in human_dialogues:
         result = pipe(dialogue)
         print(result)
-
-    print(human_dialogues)
