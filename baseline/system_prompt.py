@@ -2,11 +2,11 @@ from transformers import pipeline
 import torch
 import random
 from datasets import load_dataset
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer
 
 torch.backends.cuda.matmul.allow_tf32 = True
 
-pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5")
+vicuna_pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5")
 
 random.seed(42)
 
@@ -17,8 +17,25 @@ selected_items = random.sample(dataset, 3000)
 model_path = './LMFlow/output_models/finetuned_vicuna'
 
 # Load the model
-model = AutoModelForCausalLM.from_pretrained(model_path)
-tokenizer = AutoTokenizer.from_pretrained(model_path)
+  rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
+  
+  rm_pipe = pipeline(
+      "sentiment-analysis",
+      model="weqweasdas/hh_rlhf_rm_open_llama_3b",
+      device="auto",
+      tokenizer=rm_tokenizer,
+      model_kwargs={"torch_dtype": torch.bfloat16}
+  )
+
+  pipe_kwargs = {
+      "return_all_scores": True,
+      "function_to_apply": "none",
+      "batch_size": 1
+  }
+
+
+  pipe_outputs = rm_pipe(test_texts, **pipe_kwargs)
+  rewards = [output[0]["score"] for output in pipe_outputs]
 
 reward = []
 for text in selected_items:
@@ -27,14 +44,17 @@ for text in selected_items:
 
     # Filter and clean up the parts spoken by the Human
     human_dialogues = [part.split("Human:")[1].strip() for part in dialogues if "Human:" in part]
-    string = ""
 
     for dialogue in human_dialogues:
-        result = pipe(dialogue)[0]
-        string += result['generated_text']
+        # Append the human part with the prefix
+        prompt_length = len(dialogue)
 
-    print(string)
-    tokenized_string = tokenizer(string)
-    score = model(tokenized_string)
-    print(score)
+        string += "###human: " + dialogue + "\n"
+
+        # Get the assistant's response and append it with the prefix
+        result = vicuna_pipe(dialogue)[0]
+        formatted_response = "###human: " + dialogue
+        formatted_response += "\n###assistant:" + result[prompt_length:]
+        print(strformatted_response)
+
     reward.append(score)
