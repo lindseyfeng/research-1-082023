@@ -22,7 +22,7 @@ mkdir -p ${output_dir} ${log_dir}
 
 deepspeed ${deepspeed_args} \
   examples/reward_modeling.py \
-    --model_name_or_path gpt2 \
+    --model_name_or_path output_models/finetuned_vicuna  \
     --dataset_path ${dataset_path} \
     --output_dir ${output_dir} --overwrite_output_dir \
     --num_train_epochs 1 \
