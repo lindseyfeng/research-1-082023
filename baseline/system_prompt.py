@@ -42,6 +42,7 @@ for text in selected_items:
     dialogues = text.split("Assistant:")
 
     # Filter and clean up the parts spoken by the Human
+    string = ""
     human_dialogues = [part.split("Human:")[1].strip() for part in dialogues if "Human:" in part]
 
     for dialogue in human_dialogues:
