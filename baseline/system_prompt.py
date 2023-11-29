@@ -17,9 +17,9 @@ selected_items = random.sample(dataset, 3000)
 model_path = './LMFlow/output_models/finetuned_vicuna'
 
 # Load the model
-  rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
+rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
   
-  rm_pipe = pipeline(
+rm_pipe = pipeline(
       "sentiment-analysis",
       model="weqweasdas/hh_rlhf_rm_open_llama_3b",
       device="auto",
@@ -27,15 +27,15 @@ model_path = './LMFlow/output_models/finetuned_vicuna'
       model_kwargs={"torch_dtype": torch.bfloat16}
   )
 
-  pipe_kwargs = {
+pipe_kwargs = {
       "return_all_scores": True,
       "function_to_apply": "none",
       "batch_size": 1
   }
 
 
-  pipe_outputs = rm_pipe(test_texts, **pipe_kwargs)
-  rewards = [output[0]["score"] for output in pipe_outputs]
+pipe_outputs = rm_pipe(test_texts, **pipe_kwargs)
+rewards = [output[0]["score"] for output in pipe_outputs]
 
 reward = []
 for text in selected_items:
