@@ -30,7 +30,7 @@ for text in selected_items:
     string = ""
 
     for dialogue in human_dialogues:
-        result = pipe(dialogue)[generated_text]
+        result = pipe(dialogue)[0][generated_text]
         string.append(result)
 
     print(string)
