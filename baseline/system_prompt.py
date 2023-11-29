@@ -2,7 +2,7 @@ from transformers import pipeline
 import torch
 import random
 from datasets import load_dataset
-from transformers import AutoModel
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 torch.backends.cuda.matmul.allow_tf32 = True
 
@@ -17,7 +17,7 @@ selected_items = random.sample(dataset, 3000)
 model_path = './LMFlow/output_models/finetuned_vicuna'
 
 # Load the model
-model = AutoModel.from_pretrained(model_path)
+model = AutoModelForCausalLM.from_pretrained(model_path)
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 
 reward = []
