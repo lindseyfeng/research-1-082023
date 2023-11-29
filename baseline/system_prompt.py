@@ -3,6 +3,7 @@ import torch
 import random
 from datasets import load_dataset
 from transformers import AutoTokenizer
+from statistics import mean 
 
 torch.backends.cuda.matmul.allow_tf32 = True
 
@@ -11,7 +12,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 random.seed(42)
 
 dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
-selected_items = random.sample(dataset, 3000)
+selected_items = random.sample(dataset, 2)
 
 # Path to your finetuned model
 model_path = './LMFlow/output_models/finetuned_vicuna'
@@ -50,10 +51,13 @@ for text in selected_items:
         result = vicuna_pipe(dialogue)[0]
         generated_text = result['generated_text']
         formatted_response += "###human: " + dialogue
-        formatted_response += " ###assistant:" + generated_text[prompt_length:]
+        formatted_response += " ###assistant: " + generated_text[prompt_length:]
         print(formatted_response)
     pipe_outputs = rm_pipe(formatted_response, **pipe_kwargs)
     score = [output[0]["score"] for output in pipe_outputs]
     print(score)
     reward.append(score)
+    break
 
+
+print(mean(reward))
