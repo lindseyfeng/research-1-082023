@@ -67,7 +67,7 @@ for text in selected_items:
     formatted_response = ""
     for dialogue in human_dialogues:
         # Append the human part with the prefix
-        dialogue = prompt_string + " " + dialogue 
+        dialogue = dialogue 
         print(dialogue)
         prompt_length = len(dialogue)
 
