@@ -72,7 +72,7 @@ for text in selected_items:
 
         # Get the assistant's response and append it with the prefix
     input_ids = tokenizer.encode(dialogue, return_tensors='pt')
-    output = model.generate(input_ids, max_length=200, num_return_sequences=1, pad_token_id=tokenizer.eos_token_id)
+    output = model.generate(input_ids, max_length=500, pad_token_id=tokenizer.eos_token_id)
     generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
     print(f"gen: {generated_text}")
     formatted_response += "###human: " + dialogue
