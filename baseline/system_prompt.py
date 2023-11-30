@@ -75,6 +75,7 @@ for text in selected_items:
         input_ids = tokenizer.encode(dialogue, return_tensors='pt')
         output = model.generate(input_ids, max_length=50, num_return_sequences=1, pad_token_id=tokenizer.eos_token_id)
         generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
+        print(generated_text)
         formatted_response += "###human: " + dialogue
         formatted_response += " ###assistant: " + generated_text
         print(formatted_response)
