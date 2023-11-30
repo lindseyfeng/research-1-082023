@@ -61,7 +61,7 @@ for text in selected_items:
     # Filter and clean up the parts spoken by the Human
     human_dialogues = [part.split("Human:")[1].strip() for part in dialogues if "Human:" in part]
     formatted_response = ""
-    dialogue = human_dialogues[0]
+    dialogue = system_prompt[0]+ " " + human_dialogues[0]
         # Append the human part with the prefix
         # dialogue = system_prompt[0] + " " + dialogue
     print(dialogue)
@@ -81,4 +81,4 @@ for text in selected_items:
 
 print(mean(reward))
 print("pipeline")
-print("prompt no ")
+print("prompt first ")
