@@ -4,12 +4,16 @@ import random
 from datasets import load_dataset
 from transformers import AutoTokenizer
 from statistics import mean 
+# Load model directly
+from transformers import  AutoModelForCausalLM
+
+tokenizer = AutoTokenizer.from_pretrained("lmsys/vicuna-7b-v1.5")
+model = AutoModelForCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5")
 
 torch.backends.cuda.matmul.allow_tf32 = True
 
-vicuna_pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5")
 device = "cuda" if torch.cuda.is_available() else "cpu"
-random.seed(1111)
+random.seed(42)
 
 dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
 selected_items = random.sample(dataset, 1000)
@@ -68,10 +72,11 @@ for text in selected_items:
         prompt_length = len(dialogue)
 
         # Get the assistant's response and append it with the prefix
-        result = vicuna_pipe(dialogue)[0]
-        generated_text = result['generated_text']
+        input_ids = tokenizer.encode(dialogue, return_tensors='pt')
+        output = model.generate(input_ids, max_length=50, num_return_sequences=1, pad_token_id=tokenizer.eos_token_id)
+        generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
         formatted_response += "###human: " + dialogue
-        formatted_response += " ###assistant: " + generated_text[prompt_length:]
+        formatted_response += " ###assistant: " + generated_text
         print(formatted_response)
     pipe_outputs = rm_pipe(formatted_response, **pipe_kwargs)
     score = [output[0]["score"] for output in pipe_outputs]
