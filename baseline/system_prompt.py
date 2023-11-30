@@ -9,10 +9,10 @@ torch.backends.cuda.matmul.allow_tf32 = True
 
 vicuna_pipe = pipeline("text-generation", model="lmsys/vicuna-7b-v1.5")
 device = "cuda" if torch.cuda.is_available() else "cpu"
-random.seed(42)
+random.seed(1111)
 
 dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
-selected_items = random.sample(dataset, 3000)
+selected_items = random.sample(dataset, 1000)
 
 # Path to your finetuned model
 model_path = './LMFlow/output_models/finetuned_vicuna'
@@ -63,14 +63,13 @@ for text in selected_items:
     formatted_response = ""
     for dialogue in human_dialogues:
         # Append the human part with the prefix
-        dialogue = system_prompt[0] + " " + dialogue 
+        dialogue = prompt_string + " " + dialogue 
         print(dialogue)
         prompt_length = len(dialogue)
 
         # Get the assistant's response and append it with the prefix
         result = vicuna_pipe(dialogue)[0]
         generated_text = result['generated_text']
-        print(generated_text)
         formatted_response += "###human: " + dialogue
         formatted_response += " ###assistant: " + generated_text[prompt_length:]
         print(formatted_response)
