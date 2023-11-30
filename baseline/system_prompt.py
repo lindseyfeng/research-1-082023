@@ -78,7 +78,7 @@ for text in selected_items:
         generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
         print(generated_text)
         formatted_response += "###human: " + dialogue
-        formatted_response += " ###assistant: " + generated_text
+        formatted_response += " ###assistant: " + generated_text[prompt_length:]
         print(formatted_response)
     pipe_outputs = rm_pipe(formatted_response, **pipe_kwargs)
     score = [output[0]["score"] for output in pipe_outputs]
