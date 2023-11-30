@@ -65,7 +65,7 @@ for text in selected_items:
     # Filter and clean up the parts spoken by the Human
     human_dialogues = [part.split("Human:")[1].strip() for part in dialogues if "Human:" in part]
     formatted_response = ""
-    dialogue = human_dialogues[0]
+    dialogue = system_prompt[0] + " " human_dialogues[0]
         # Append the human part with the prefix
     print(dialogue)
     prompt_length = len(dialogue)
@@ -74,6 +74,7 @@ for text in selected_items:
     input_ids = tokenizer.encode(dialogue, return_tensors='pt')
     output = model.generate(input_ids, max_length=50, num_return_sequences=1, pad_token_id=tokenizer.eos_token_id)
     generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
+    print(f"gen: {generated_text}")
     formatted_response += "###human: " + dialogue
     formatted_response += " ###assistant: " + generated_text[prompt_length:]
     print(formatted_response)
