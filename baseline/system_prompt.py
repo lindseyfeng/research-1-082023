@@ -5,10 +5,10 @@ from datasets import load_dataset
 from statistics import mean
 
 # Load models and tokenizers
-tokenizer = AutoTokenizer.from_pretrained("lmsys/vicuna-7b-v1.5").to(device)
+tokenizer = AutoTokenizer.from_pretrained("lmsys/vicuna-7b-v1.5")
 model = AutoModelForCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5")
 
-rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b").to(device)
+rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 rm_model = AutoModelForCausalLM.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 
 # Enable TensorFlow32 if using NVIDIA GPUs
