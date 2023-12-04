@@ -6,10 +6,10 @@ from statistics import mean
 
 # Load models and tokenizers
 tokenizer = AutoTokenizer.from_pretrained("lmsys/vicuna-7b-v1.5")
-model = AutoModelForCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5")
+model = AutoModelForCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5", device_map="auto")
 
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
-rm_model = AutoModelForCausalLM.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
+rm_model = AutoModelForCausalLM.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b", device_map="auto")
 
 # Enable TensorFlow32 if using NVIDIA GPUs
 torch.backends.cuda.matmul.allow_tf32 = True
@@ -44,7 +44,7 @@ system_prompt = [
 model.half()
 rm_model.half()
 # Batch processing settings
-batch_size = 16
+batch_size = 1
 num_batches = len(selected_items) // batch_size
 print(num_batches)
 # Sentiment analysis pipeline
