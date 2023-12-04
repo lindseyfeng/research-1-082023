@@ -51,7 +51,8 @@ rm_pipe = pipeline(
     "sentiment-analysis",
     model=rm_model,
     tokenizer=rm_tokenizer,
-    model_kwargs={"torch_dtype": torch.bfloat16}
+    model_kwargs={"torch_dtype": torch.bfloat16},
+    device=0 if torch.cuda.is_available() else -1
 )
 
 # Process a batch of dialogues
