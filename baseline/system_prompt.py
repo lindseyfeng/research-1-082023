@@ -41,7 +41,7 @@ system_prompt = [
 ]
 model.half()
 # Batch processing settings
-batch_size = 16
+batch_size = 32
 num_batches = len(selected_items) // batch_size
 print(num_batches)
 # Sentiment analysis pipeline
@@ -61,20 +61,15 @@ pipe_kwargs = {
 
 # Process a batch of dialogues
 def process_batch(batch):
-    prompts = [system_prompt[0] + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
+    prompts = [system_prompt[1] + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
-    print(input_ids)
     outputs = model.generate(input_ids, min_length = 50, max_length=500, pad_token_id=tokenizer.eos_token_id).to(device)
-    print(outputs)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
     print("Input IDs device:", input_ids.device)
-    print(generated_texts)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
-    print(formatted_responses)
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
     print("batch_avg: {}".format(mean(rewards)))
-    print("Formatted responses type:", type(formatted_responses[0]))  # Should be string
     return rewards, formatted_responses[0]
 
 # Process all batches and calculate the average reward
