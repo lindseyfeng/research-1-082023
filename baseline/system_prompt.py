@@ -42,9 +42,9 @@ system_prompt = [
 ]
 
 # Batch processing settings
-batch_size = 64
+batch_size = 32
 num_batches = len(selected_items) // batch_size
-
+print(num_batches)
 # Sentiment analysis pipeline
 rm_pipe = pipeline(
     "sentiment-analysis",
