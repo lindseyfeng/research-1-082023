@@ -66,7 +66,7 @@ def process_batch(batch):
     reward_scores = rm_pipe(formatted_responses, batch_size=batch_size)
     rewards = [score[0]["score"] for score in reward_scores].to(device)
     print("batch_avg: {}".format(mean(rewards)))
-    return rewards, formatted_responses[0]
+    return rewards, formatted_responses[0].to(device) 
 
 # Process all batches and calculate the average reward
 all_rewards = []
