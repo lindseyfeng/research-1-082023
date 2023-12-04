@@ -60,7 +60,7 @@ pipe_kwargs = {
       "batch_size": batch_size
   }
 print("Model device:", model.device)
-print("RM Model device:", rm_model.device)
+print("RM Model device:", pipe_kwargs.device)
 
 # Process a batch of dialogues
 def process_batch(batch):
