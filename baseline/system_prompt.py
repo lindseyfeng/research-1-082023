@@ -64,7 +64,7 @@ print("Model device:", model.device)
 
 # Process a batch of dialogues
 def process_batch(batch):
-    prompts = [system_prompt[0] + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
+    prompts = [system_prompt[0] + " " + "Answer the question: " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     print(input_ids)
     outputs = model.generate(input_ids[0], max_length=500, pad_token_id=tokenizer.eos_token_id, do_sample=True).to(device)
