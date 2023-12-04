@@ -59,6 +59,8 @@ pipe_kwargs = {
       "function_to_apply": "none",
       "batch_size": batch_size
   }
+print("Model device:", model.device)
+print("RM Model device:", rm_model.device)
 
 # Process a batch of dialogues
 def process_batch(batch):
@@ -66,12 +68,13 @@ def process_batch(batch):
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = model.generate(input_ids, max_length=500, pad_token_id=tokenizer.eos_token_id).to(device)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-
+    print("Input IDs device:", input_ids.device)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     print(formatted_responses)
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
     print("batch_avg: {}".format(mean(rewards)))
+    print("Formatted responses type:", type(formatted_responses[0]))  # Should be string
     return rewards, formatted_responses[0]
 
 # Process all batches and calculate the average reward
