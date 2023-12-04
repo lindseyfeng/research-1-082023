@@ -55,24 +55,25 @@ rm_pipe = pipeline(
 
 # Process a batch of dialogues
 def process_batch(batch):
-    prompts = [system_prompt + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
+    prompts = [system_prompt[1] + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     print(prompts)
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = model.generate(input_ids, max_length=500, pad_token_id=tokenizer.eos_token_id)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
-    sentiment_scores = rm_pipe(formatted_responses, batch_size=batch_size)
-    rewards = [score[0]["score"] for score in sentiment_scores]
+    reward_scores = rm_pipe(formatted_responses, batch_size=batch_size)
+    rewards = [score[0]["score"] for score in reward_scores]
     print("batch_avg: {}".format(mean(rewards)))
-    return rewards
+    return rewards, formatted_responses[0]
 
 # Process all batches and calculate the average reward
 all_rewards = []
 for i in range(num_batches):
     batch = selected_items[i*batch_size:(i+1)*batch_size]
-    batch_rewards = process_batch(batch)
+    batch_rewards, sample = process_batch(batch)
     all_rewards.extend(batch_rewards)
+    print(sample)
 
 average_reward = mean(all_rewards)
 print("Average Reward:", average_reward)
