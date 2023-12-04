@@ -16,7 +16,6 @@ torch.backends.cuda.matmul.allow_tf32 = True
 # Set the device
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
-rm_model.to(device)
 
 # Load dataset
 dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
@@ -41,7 +40,6 @@ system_prompt = [
     "The response should demonstrate ethical and moral awareness without sounding excessively condescending, reactive, annoying, or condemnatory."
 ]
 model.half()
-rm_model.half()
 # Batch processing settings
 batch_size = 16
 num_batches = len(selected_items) // batch_size
