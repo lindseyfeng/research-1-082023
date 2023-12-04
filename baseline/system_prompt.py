@@ -69,7 +69,7 @@ def process_batch(batch):
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
-    pipe_outputs = rm_pipe(test_texts, **pipe_kwargs)
+    pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
     print("batch_avg: {}".format(mean(rewards)))
     return rewards, formatted_responses[0]
