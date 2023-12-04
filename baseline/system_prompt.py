@@ -48,7 +48,7 @@ print(system50)
 
 model.half()
 # Batch processing settings
-batch_size = 16
+batch_size = 8
 num_batches = len(selected_items) // batch_size
 print(num_batches)
 # Sentiment analysis pipeline
