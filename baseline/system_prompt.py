@@ -39,6 +39,13 @@ system_prompt = [
     "The response should be harmless, polite, pleasant, and unlikely to offend a socially-aware audience.",
     "The response should demonstrate ethical and moral awareness without sounding excessively condescending, reactive, annoying, or condemnatory."
 ]
+
+selected_items = random.sample(system_prompt, len(system_prompt) // 2)
+
+# Append the selected strings together
+system50 = ' '.join(selected_items)
+
+
 model.half()
 # Batch processing settings
 batch_size = 16
@@ -63,7 +70,7 @@ pipe_kwargs = {
 def process_batch(batch):
     prompts = [system_prompt[1] + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
-    outputs = model.generate(input_ids, min_length = 100, max_length=500, pad_token_id=tokenizer.eos_token_id).to(device)
+    outputs = model.generate(input_ids, min_length = 200, max_length=600, pad_token_id=tokenizer.eos_token_id).to(device)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
     print("Input IDs device:", input_ids.device)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
