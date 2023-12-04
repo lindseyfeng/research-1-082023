@@ -59,11 +59,11 @@ def process_batch(batch):
     prompts = [system_prompt[1] + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     print(prompts)
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
-    outputs = model.generate(input_ids, max_length=500, pad_token_id=tokenizer.eos_token_id)
-    generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+    outputs = model.generate(input_ids, max_length=500, pad_token_id=tokenizer.eos_token_id).to(device)
+    generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True).to(device)
 
-    formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
-    reward_scores = rm_pipe(formatted_responses, batch_size=batch_size)
+    formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)].to(device)
+    reward_scores = rm_pipe(formatted_responses, batch_size=batch_size).to(device)
     rewards = [score[0]["score"] for score in reward_scores].to(device)
     print("batch_avg: {}".format(mean(rewards)))
     return rewards, formatted_responses[0].to(device) 
