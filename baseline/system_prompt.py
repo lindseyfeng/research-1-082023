@@ -58,7 +58,7 @@ pipe_kwargs = {
     "function_to_apply": "none",
     "batch_size": 1
 }
-selected_items = random.sample(system_prompt, len(example_list) // 2)
+selected_items = random.sample(system_prompt, len(system_prompt) // 2)
 
 # Append the selected strings together
 system_50_string = ''.join(selected_items)
