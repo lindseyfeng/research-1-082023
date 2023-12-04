@@ -58,10 +58,14 @@ pipe_kwargs = {
     "function_to_apply": "none",
     "batch_size": 1
 }
+selected_items = random.sample(system_prompt, len(example_list) // 2)
+
+# Append the selected strings together
+system_50_string = ''.join(selected_items)
 
 # Process a batch of dialogues
 def process_batch(batch):
-    prompts = [system_prompt[1] + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
+    prompts = [system_prompt[1] + " " + "Answer the question: "+text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = model.generate(input_ids, min_length = 100, max_length=500, pad_token_id=tokenizer.eos_token_id).to(device)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
