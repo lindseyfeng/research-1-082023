@@ -58,7 +58,7 @@ rm_pipe = pipeline(
 pipe_kwargs = {
       "return_all_scores": True,
       "function_to_apply": "none",
-      "batch_size": batch_size
+      "batch_size": 1
   }
 print("Model device:", model.device)
 
