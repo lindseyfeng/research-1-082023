@@ -68,6 +68,7 @@ def process_batch(batch):
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     print(input_ids)
     outputs = model.generate(input_ids, max_length=500, pad_token_id=tokenizer.eos_token_id).to(device)
+    print(outputs)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
     print("Input IDs device:", input_ids.device)
     print(generated_texts)
