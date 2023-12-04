@@ -9,7 +9,6 @@ tokenizer = AutoTokenizer.from_pretrained("lmsys/vicuna-7b-v1.5")
 model = AutoModelForCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5", device_map="auto")
 
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
-rm_model = AutoModelForCausalLM.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b", device_map="auto")
 
 # Enable TensorFlow32 if using NVIDIA GPUs
 torch.backends.cuda.matmul.allow_tf32 = True
@@ -50,17 +49,17 @@ print(num_batches)
 # Sentiment analysis pipeline
 rm_pipe = pipeline(
     "sentiment-analysis",
-    model=rm_model,
+    model="weqweasdas/hh_rlhf_rm_open_llama_3b",
+    device=device
     tokenizer=rm_tokenizer,
     model_kwargs={"torch_dtype": torch.bfloat16}
 )
 
 pipe_kwargs = {
-      "return_all_scores": True,
-      "function_to_apply": "none",
-      "batch_size": 1
-  }
-print("Model device:", model.device)
+    "return_all_scores": True,
+    "function_to_apply": "none",
+    "batch_size": 1
+}
 
 # Process a batch of dialogues
 def process_batch(batch):
