@@ -62,11 +62,11 @@ def process_batch(batch):
     outputs = model.generate(input_ids, max_length=500, pad_token_id=tokenizer.eos_token_id).to(device)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True).to(device)
 
-    formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)].to(device)
+    formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     reward_scores = rm_pipe(formatted_responses, batch_size=batch_size).to(device)
-    rewards = [score[0]["score"] for score in reward_scores].to(device)
+    rewards = [score[0]["score"] for score in reward_scores]
     print("batch_avg: {}".format(mean(rewards)))
-    return rewards, formatted_responses[0].to(device) 
+    return rewards, formatted_responses[0]
 
 # Process all batches and calculate the average reward
 all_rewards = []
