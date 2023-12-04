@@ -51,9 +51,14 @@ rm_pipe = pipeline(
     "sentiment-analysis",
     model=rm_model,
     tokenizer=rm_tokenizer,
-    model_kwargs={"torch_dtype": torch.bfloat16},
-    device=0 if torch.cuda.is_available() else -1
+    model_kwargs={"torch_dtype": torch.bfloat16}
 )
+
+pipe_kwargs = {
+      "return_all_scores": True,
+      "function_to_apply": "none",
+      "batch_size": batch_size
+  }
 
 # Process a batch of dialogues
 def process_batch(batch):
@@ -64,8 +69,8 @@ def process_batch(batch):
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
-    reward_scores = rm_pipe(formatted_responses, batch_size=batch_size).to(device)
-    rewards = [score[0]["score"] for score in reward_scores]
+    pipe_outputs = rm_pipe(test_texts, **pipe_kwargs)
+    rewards = [output[0]["score"] for output in pipe_outputs]
     print("batch_avg: {}".format(mean(rewards)))
     return rewards, formatted_responses[0]
 
