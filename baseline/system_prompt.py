@@ -40,7 +40,8 @@ system_prompt = [
     "The response should be harmless, polite, pleasant, and unlikely to offend a socially-aware audience.",
     "The response should demonstrate ethical and moral awareness without sounding excessively condescending, reactive, annoying, or condemnatory."
 ]
-
+model.half()
+rm_model.half()
 # Batch processing settings
 batch_size = 32
 num_batches = len(selected_items) // batch_size
@@ -63,7 +64,7 @@ def process_batch(batch):
 
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     reward_scores = rm_pipe(formatted_responses, batch_size=batch_size)
-    rewards = [score[0]["score"] for score in reward_scores]
+    rewards = [score[0]["score"] for score in reward_scores].to(device)
     print("batch_avg: {}".format(mean(rewards)))
     return rewards, formatted_responses[0]
 
