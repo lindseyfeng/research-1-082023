@@ -40,11 +40,11 @@ system_prompt = [
     "The response should demonstrate ethical and moral awareness without sounding excessively condescending, reactive, annoying, or condemnatory."
 ]
 
-selected_items = random.sample(system_prompt, len(system_prompt) // 2)
+selected = random.sample(system_prompt, len(system_prompt) // 2)
 
 # Append the selected strings together
-system50 = ' '.join(selected_items)
-
+system50 = ' '.join(selected)
+print(system50)
 
 model.half()
 # Batch processing settings
