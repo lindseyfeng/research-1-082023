@@ -50,7 +50,7 @@ print(num_batches)
 rm_pipe = pipeline(
     "sentiment-analysis",
     model="weqweasdas/hh_rlhf_rm_open_llama_3b",
-    device=device
+    device=device,
     tokenizer=rm_tokenizer,
     model_kwargs={"torch_dtype": torch.bfloat16}
 )
