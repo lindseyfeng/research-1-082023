@@ -69,7 +69,7 @@ pipe_kwargs = {
 
 # Process a batch of dialogues
 def process_batch(batch):
-    prompts = [system_prompt[2] + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
+    prompts = [system_prompt[3] + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = model.generate(input_ids, min_length = 500, max_length=600, pad_token_id=tokenizer.eos_token_id).to(device)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
@@ -88,5 +88,6 @@ for i in range(num_batches):
     all_rewards.extend(batch_rewards)
     print(sample)
 
+print(len(all_rewards))
 average_reward = mean(all_rewards)
 print("Average Reward:", average_reward)
