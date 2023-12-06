@@ -49,7 +49,7 @@ print(system100)
 
 model.half()
 # Batch processing settings
-batch_size = 50
+batch_size = 40
 num_batches = len(selected_items) // batch_size
 print(num_batches)
 # Sentiment analysis pipeline
@@ -71,7 +71,7 @@ pipe_kwargs = {
 def process_batch(batch):
     prompts = [system_prompt[1] + " " + text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
-    outputs = model.generate(input_ids, min_length = 200, max_length=1000, pad_token_id=tokenizer.eos_token_id).to(device)
+    outputs = model.generate(input_ids, min_length = 200, max_new_tokens= 200, max_length=1000, pad_token_id=tokenizer.eos_token_id).to(device)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
     print("Input IDs device:", input_ids.device)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
