@@ -20,7 +20,7 @@ model.to(device)
 # Load dataset
 dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
 random.seed(42)
-selected_items = random.sample(dataset, 1000)
+selected_items = random.sample(dataset, 100)
 
 # System prompt
 system_prompt = [
@@ -77,15 +77,29 @@ def process_batch(batch):
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
     print("batch_avg: {}".format(mean(rewards)))
-    return rewards, formatted_responses[0]
+    return rewards, formatted_responses
 
 # Process all batches and calculate the average reward
 all_rewards = []
+all_responses = []
 for i in range(num_batches):
     batch = selected_items[i*batch_size:(i+1)*batch_size]
-    batch_rewards, sample = process_batch(batch)
+    batch_rewards, samples = process_batch(batch)
     all_rewards.extend(batch_rewards)
-    print(sample)
+    all_responses.extend(samples)
+
+
+results = {
+    "rewards": all_rewards,
+    "responses": all_responses
+}
+
+# Save the results to a JSON file
+output_file_path = 'noprompt_results.json'
+with open(output_file_path, 'w') as file:
+    json.dump(results, file)
+
+print(f"Results saved to {output_file_path}")
 
 print(len(all_rewards))
 average_reward = mean(all_rewards)
