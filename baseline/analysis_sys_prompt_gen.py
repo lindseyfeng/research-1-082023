@@ -44,11 +44,19 @@ system_prompt = [
     "The response should be harmless, polite, pleasant, and unlikely to offend a socially-aware audience.",
     "The response should demonstrate ethical and moral awareness without sounding excessively condescending, reactive, annoying, or condemnatory."
 ]
+def extract_human_prompt(text):
+    # Splitting the text at "###assistant:"
+    parts = text.split(" ###assistant: ")
+    
+    # The first part is further split at "###human: " to isolate the human prompt
+    human_prompt = parts[0].split("###human: ")[1] if len(parts) > 1 else ""
+    return human_prompt
 
 # Process a batch of dialogues 
 def process_batch(batch, tokenizer, model, rm_pipe, pipe_kwargs, device):
-    print(batch[0][1].split("###Assistant:")[0].split("###Human:")[1].strip())
-    prompts = [system_prompt[0]+" "+text[1].split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
+    print(batch[0][1].split("###Assistant:")[0])
+    prompts = [system_prompt[0]+" "+extract_human_prompt(text[1]) for text in batch]
+    print(prompts)
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = model.generate(input_ids, min_length=200, max_length=600, pad_token_id=tokenizer.eos_token_id).to(device)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
