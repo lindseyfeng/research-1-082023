@@ -23,7 +23,7 @@ def filter_data_by_rewards(data):
     mid_25_percent = sorted_data[top_25_index:mid_25_index]
     bottom_25_percent = sorted_data[bottom_25_index:]
 
-    return top_25_percent, mid_25_percent, lower_25_percent
+    return top_25_percent, mid_25_percent, bottom_25_percent
 
 def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
