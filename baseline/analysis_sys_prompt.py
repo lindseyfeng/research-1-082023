@@ -51,10 +51,20 @@ file_path = 'noprompt_results.json'
 data = load_data(file_path)
 top_25, mid_25, bottom_25 = filter_data_by_rewards(data)
 average_reward_top_25 = calculate_average_reward(top_25)
+print(top_25[0])
 average_reward_mid_25 = calculate_average_reward(mid_25)
+print(mid_25[0])
 average_reward_bottom_25 = calculate_average_reward(bottom_25)
-print("Average reward for top 25%:", average_reward_top_25)
-print("Average reward for mid 25%:", average_reward_mid_25)
-print("Average reward for bottom 25%:", average_reward_bottom_25)
+print(bottom_25[-1])
 
 
+
+
+with open('top_25_percent.json', 'w') as f:
+    json.dump(top_25, f)
+
+with open('mid_25_percent.json', 'w') as f:
+    json.dump(mid_25, f)
+
+with open('lower_25_percent.json', 'w') as f:
+    json.dump(lower_25, f)
