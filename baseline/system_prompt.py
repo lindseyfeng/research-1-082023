@@ -21,7 +21,7 @@ model.to(device)
 # Load dataset
 dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
 random.seed(42)
-selected_items = random.sample(dataset, 100)
+selected_items = random.sample(dataset, 1000)
 
 # System prompt
 system_prompt = [
