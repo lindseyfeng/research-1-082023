@@ -47,6 +47,7 @@ system_prompt = [
 
 # Process a batch of dialogues 
 def process_batch(batch, tokenizer, model, rm_pipe, pipe_kwargs, device):
+    print(batch[0][1])
     prompts = [system_prompt[0]+" "+text[1].split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = model.generate(input_ids, min_length=200, max_length=600, pad_token_id=tokenizer.eos_token_id).to(device)
@@ -79,7 +80,6 @@ def evaluate_samples(samples):
     all_responses = []
     for i in range(0, len(samples), batch_size):
         batch = samples[i:i+batch_size]
-        print(batch)
         batch_rewards, batch_responses = process_batch(batch, tokenizer, model, rm_pipe, pipe_kwargs, device)
         all_rewards.extend(batch_rewards)
         all_responses.extend(batch_responses)
