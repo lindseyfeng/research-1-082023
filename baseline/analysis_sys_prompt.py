@@ -21,7 +21,7 @@ def filter_data_by_rewards(data):
     # Filter data
     top_25_percent = sorted_data[:top_25_index]
     mid_25_percent = sorted_data[top_25_index:mid_25_index]
-    bottom_25_percent = sorted_data[lower_25_index:]
+    bottom_25_percent = sorted_data[bottom_25_index:]
 
     return top_25_percent, mid_25_percent, lower_25_percent
 
