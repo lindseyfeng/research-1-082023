@@ -43,10 +43,6 @@ def calculate_average_reward(reward_data):
     average_reward = total_reward / len(reward_data) if reward_data else 0
     return average_reward
 
-# Calculate the average reward for the top 25%
-average_reward_top_25 = calculate_average_reward(top_25)
-print("Average reward for top 25%:", average_reward_top_25)
-
 
 # Path to your JSON file
 file_path = 'noprompt_results.json'
