@@ -39,7 +39,7 @@ def process_batch(batch):
 
 def calculate_average_reward(reward_data):
     total_reward = sum(reward for reward, _ in reward_data)
-    print("len(reward): {}".format(len(reward_data))
+    print("len(reward): {}".format(len(reward_data)))
     average_reward = total_reward / len(reward_data) if reward_data else 0
     return average_reward
 
@@ -61,5 +61,4 @@ print("Average reward for top 25%:", average_reward_top_25)
 print("Average reward for mid 25%:", average_reward_mid_25)
 print("Average reward for bottom 25%:", average_reward_bottom_25)
 
-print()
 
