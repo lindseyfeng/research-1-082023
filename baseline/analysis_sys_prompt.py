@@ -53,5 +53,5 @@ with open('top_25_percent.json', 'w') as f:
 with open('mid_25_percent.json', 'w') as f:
     json.dump(mid_25, f)
 
-with open('lower_25_percent.json', 'w') as f:
-    json.dump(lower_25, f)
+with open('bottom_25_percent.json', 'w') as f:
+    json.dump(bottom_25_percent, f)
