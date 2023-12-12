@@ -87,8 +87,7 @@ def evaluate_samples(samples):
         batch_rewards, batch_responses = process_batch(batch, tokenizer, model, rm_pipe, pipe_kwargs, device)
         all_rewards.extend(batch_rewards)
         all_responses.extend(batch_responses)
-    average_reward = mean(all_rewards)
-    return average_reward, all_responses
+    return all_rewards, all_responses
 
 # Evaluate each group
 average_reward_top_25, responses_top_25 = evaluate_samples(top_25)
@@ -96,9 +95,12 @@ average_reward_mid_25, responses_mid_25 = evaluate_samples(mid_25)
 average_reward_bottom_25, responses_bottom_25 = evaluate_samples(bottom_25)
 
 # Output the results
-print("Average Reward Top 25%:", average_reward_top_25)
-print("response", responses_top_25)
-print("Average Reward Mid 25%:", average_reward_mid_25)
-print("response", responses_mid_25)
-print("Average Reward Bottom 25%:", average_reward_bottom_25)
-print("response", responses_bottom_25)
+print("Average Reward Top 25%:", mean(average_reward_top_25))
+print(average_reward_top_25[0])
+print("response", responses_top_25[0])
+print("Average Reward Mid 25%:", mean(average_reward_mid_25))
+print("response", responses_mid_25[0])
+print(average_reward_mid_25[0])
+print("Average Reward Bottom 25%:", mean(average_reward_bottom_25))
+print("response", responses_bottom_25[-1])
+print(average_reward_bottom_25[-1])
