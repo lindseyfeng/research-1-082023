@@ -9,7 +9,7 @@ def load_data(file_path):
 # Function to filter data based on reward percentiles
 def filter_data_by_rewards(data):
     # Sort data by rewards
-    sorted_data = sorted(data, key=lambda x: x['reward'], reverse=True)
+    sorted_data = sorted(data, key=lambda x: x['rewards'], reverse=True)
     total_samples = len(sorted_data)
 
     # Calculate indices for reward percentiles
