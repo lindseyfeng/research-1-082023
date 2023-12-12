@@ -59,7 +59,7 @@ def extract_human_prompt(text):
 
 # Process a batch of dialogues 
 def process_batch(batch, tokenizer, model, rm_pipe, pipe_kwargs, device):
-    prompts = [system_prompt[4]+" "+extract_human_prompt(text[1]) for text in batch]
+    prompts = [system_prompt[5]+" "+extract_human_prompt(text[1]) for text in batch]
     input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = model.generate(input_ids, min_length=200, max_length=600, pad_token_id=tokenizer.eos_token_id).to(device)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
