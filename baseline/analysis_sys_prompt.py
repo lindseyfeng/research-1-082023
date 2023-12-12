@@ -37,6 +37,16 @@ def process_batch(batch):
     print("batch_avg: {}".format(mean(rewards)))
     return rewards, formatted_responses
 
+def calculate_average_reward(reward_data):
+    total_reward = sum(reward for reward, _ in reward_data)
+    print("len(reward): {}".format(len(reward_data))
+    average_reward = total_reward / len(reward_data) if reward_data else 0
+    return average_reward
+
+# Calculate the average reward for the top 25%
+average_reward_top_25 = calculate_average_reward(top_25)
+print("Average reward for top 25%:", average_reward_top_25)
+
 
 # Path to your JSON file
 file_path = 'noprompt_results.json'
@@ -44,14 +54,12 @@ file_path = 'noprompt_results.json'
 # Load and filter the data
 data = load_data(file_path)
 top_25, mid_25, bottom_25 = filter_data_by_rewards(data)
-print(top_25)
+average_reward_top_25 = calculate_average_reward(top_25)
+average_reward_mid_25 = calculate_average_reward(mid_25)
+average_reward_bottom_25 = calculate_average_reward(bottom_25)
+print("Average reward for top 25%:", average_reward_top_25)
+print("Average reward for mid 25%:", average_reward_mid_25)
+print("Average reward for bottom 25%:", average_reward_bottom_25)
 
+print()
 
-with open('top_25_percent.json', 'w') as f:
-    json.dump(top_25, f)
-
-with open('mid_25_percent.json', 'w') as f:
-    json.dump(mid_25, f)
-
-with open('bottom_25_percent.json', 'w') as f:
-    json.dump(bottom_25, f)
