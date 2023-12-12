@@ -24,9 +24,9 @@ def load_json_data(file_path):
     return data
 
 # Load top_25, mid_25, and bottom_25 data
-top_25 = load_json_data('top_25.json')
-mid_25 = load_json_data('mid_25.json')
-bottom_25 = load_json_data('bottom_25.json')
+top_25 = load_json_data('top_25_percent.json')
+mid_25 = load_json_data('mid_25_percent.json')
+bottom_25 = load_json_data('lower_25_percent.json')
 
 system_prompt = [
     "The response should be helpful, honest, and harmless.",
