@@ -70,11 +70,12 @@ pipe_kwargs = {
 # Process a batch of dialogues 
 def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
-    input_ids = tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
+    sys_prompts = [system_prompt[0] +  " " + text for text in prompts]
+    input_ids = tokenizer(sys_prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = model.generate(input_ids, min_length = 200, max_length=600, pad_token_id=tokenizer.eos_token_id).to(device)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-    print("Input IDs device:", input_ids.device)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
+    print(formatted_responses)
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
     print("batch_avg: {}".format(mean(rewards)))
@@ -96,7 +97,7 @@ results = {
 }
 
 # Save the results to a JSON file
-output_file_path = 'noprompt_results.json'
+output_file_path = 'prompt0_results.json'
 with open(output_file_path, 'w') as file:
     json.dump(results, file)
 
