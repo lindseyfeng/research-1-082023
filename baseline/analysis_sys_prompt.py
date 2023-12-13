@@ -33,7 +33,7 @@ def calculate_average_reward(reward_data):
 
 
 # Path to your JSON file
-file_path = 'noprompt_results.json'
+file_path = 'prompt0_results.json'
 
 # Load and filter the data
 data = load_data(file_path)
@@ -45,14 +45,3 @@ print(mid_25[0])
 average_reward_bottom_25 = calculate_average_reward(bottom_25)
 print(bottom_25[-1])
 
-
-
-
-with open('top_25_percent.json', 'w') as f:
-    json.dump(top_25, f)
-
-with open('mid_25_percent.json', 'w') as f:
-    json.dump(mid_25, f)
-
-with open('lower_25_percent.json', 'w') as f:
-    json.dump(bottom_25, f)
