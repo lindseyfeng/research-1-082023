@@ -60,13 +60,11 @@ def extract_human_prompt(text):
 # Process a batch of dialogues 
 def process_batch(batch, tokenizer, model, rm_pipe, pipe_kwargs, device):
     prompts = [extract_human_prompt(text[1]) for text in batch]
-    sys_prompts = [system_prompt[1]+" " + p for p in prompts]
+    sys_prompts = [system_prompt[2]+" " + p for p in prompts]
     input_ids = tokenizer(sys_prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = model.generate(input_ids, min_length=200, max_length=600, pad_token_id=tokenizer.eos_token_id).to(device)
     generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-    print(generated_texts)
-    formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt+ system_prompt[1]):] for prompt, generated_text in zip(prompts, generated_texts)]
-    print(formatted_responses)
+    formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt+ system_prompt[2]):] for prompt, generated_text in zip(prompts, generated_texts)]
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
     return rewards, formatted_responses
