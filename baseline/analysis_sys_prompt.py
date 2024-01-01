@@ -33,7 +33,7 @@ def calculate_average_reward(reward_data):
 
 
 # Path to your JSON file
-file_path = 'prompt11_results.json'
+file_path = 'prompt12_results.json'
 print(file_path)
 # Load and filter the data
 data = load_data(file_path)
