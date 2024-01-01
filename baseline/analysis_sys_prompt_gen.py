@@ -5,6 +5,9 @@ from datasets import load_dataset
 import random
 from statistics import mean
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(device)
+
 # Load the models and tokenizers
 tokenizer = AutoTokenizer.from_pretrained("lmsys/vicuna-7b-v1.5")
 model = AutoModelForCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5", device_map="auto")
@@ -14,7 +17,6 @@ rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3
 torch.backends.cuda.matmul.allow_tf32 = True
 
 # Set the device
-device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
 
 # Load JSON data
