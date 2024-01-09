@@ -25,8 +25,8 @@ DEFAULT_UNK_TOKEN = "</s>"
 tqdm.pandas()
 
 
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b") 
-model = AutoModelForCausalLMWithValueHead.from_pretrained("meta-llama/Llama-2-7b")
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b", token = "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") 
+model = AutoModelForCausalLMWithValueHead.from_pretrained("meta-llama/Llama-2-7b", token = "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")
 
 @dataclass
 class ScriptArguments:
