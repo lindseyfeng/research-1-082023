@@ -8,12 +8,11 @@ from peft import LoraConfig
 from tqdm import tqdm
 from transformers import (
     Adafactor,
-    AutoTokenizer,
-    LlamaTokenizer,
     HfArgumentParser,
     pipeline
 )
 
+from transformers import LlamaForCausalLM, LlamaTokenizer
 from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed
 from trl.core import LengthSampler
 
@@ -24,52 +23,30 @@ DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
 
+model_dir = "../../llama/llama-2-7b"
+model = LlamaForCausalLM.from_pretrained(model_dir)
+tokenizer = LlamaTokenizer.from_pretrained(model_dir)
+rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
+seed = 42
+  
+rm_pipe = pipeline(
+      "sentiment-analysis",
+      model="weqweasdas/hh_rlhf_rm_open_llama_3b",
+      device=device,
+      tokenizer=rm_tokenizer,
+      model_kwargs={"torch_dtype": torch.bfloat16}
+  )
 
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b", token = "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") 
-model = AutoModelForCausalLMWithValueHead.from_pretrained("meta-llama/Llama-2-7b", token = "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")
-
-@dataclass
-class ScriptArguments:
-    """
-    The name of the Casual LM model we wish to fine with PPO
-    """
-
-    # NOTE: gpt2 models use Conv1D instead of Linear layers which are not yet supported in 8 bit mode
-    # models like gpt-neo* models are more suitable.
-    model_name: Optional[str] = field(default="", metadata={"help": "the model name"})
-    tokenizer_name: Optional[str] = field(default="", metadata={"help": "the tokenizer name"})
-    reward_model_name: Optional[str] = field(default="", metadata={"help": "the reward model name"})
-    dataset_name: Optional[str] = field(default="", metadata={"help": "the dataset name"})
-    log_with: Optional[str] = field(default=None, metadata={"help": "use 'wandb' to log with wandb"})
-    learning_rate: Optional[float] = field(default=1.41e-5, metadata={"help": "the learning rate"})
-    max_length: Optional[int] = field(default=512, metadata={"help": "maximum length for input"})
-    output_max_length: Optional[int] = field(default=128, metadata={"help": "maximum length for generation"})
-    mini_batch_size: Optional[int] = field(default=1, metadata={"help": "the PPO minibatch size"})
-    batch_size: Optional[int] = field(default=32, metadata={"help": "the batch size"})
-    ppo_epochs: Optional[int] = field(default=4, metadata={"help": "the number of ppo epochs"})
-    gradient_accumulation_steps: Optional[int] = field(
-        default=4, metadata={"help": "the number of gradient accumulation steps"}
-    )
-    adafactor: Optional[bool] = field(default=False, metadata={"help": "whether to use the adafactor optimizer"})
-    early_stopping: Optional[bool] = field(default=False, metadata={"help": "whether to early stop"})
-    target_kl: Optional[float] = field(default=0.1, metadata={"help": "kl target for early stopping"})
-    reward_baseline: Optional[float] = field(
-        default=0.0,
-        metadata={"help": "a baseline value that is subtracted from the reward"},
-    )
-    batched_gen: Optional[bool] = field(default=False, metadata={"help": "whether to use the batched text gen"})
-    save_freq: Optional[int] = field(default=None, metadata={"help": "n steps to save the model"})
-    output_dir: Optional[str] = field(default="./checkpoints/tuning_llama_rl/",
-                                      metadata={"help": "n steps to save the model"})
-    seed: Optional[int] = field(default=0, metadata={"help": "the seed"})
-
+pipe_kwargs = {
+      "return_all_scores": True,
+      "function_to_apply": "none",
+      "batch_size": 1
+    }
 
 parser = HfArgumentParser(ScriptArguments)
 script_args: ScriptArguments = parser.parse_args_into_dataclasses()[0]
 
-set_seed(script_args.seed)
-
-
+set_seed(seed)
 
 
 # Below is an example function to build the dataset. In our case, we use the IMDB dataset
