@@ -16,6 +16,7 @@ from transformers import (
 
 from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed
 from trl.core import LengthSampler
+from transformers import LlamaForCausalLM, LlamaTokenizer
 
 DEFAULT_PAD_TOKEN = "[PAD]"
 DEFAULT_EOS_TOKEN = "</s>"
@@ -24,8 +25,11 @@ DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
 
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b") 
-model = AutoModel.from_pretrained("meta-llama/Llama-2-7b")
+model_dir = "./llama-2-7b"
+model = LlamaForCausalLM.from_pretrained(model_dir)
+tokenizer = LlamaTokenizer.from_pretrained(model_dir)
+print("loaded")
+
 
 @dataclass
 class ScriptArguments:
@@ -67,6 +71,8 @@ parser = HfArgumentParser(ScriptArguments)
 script_args: ScriptArguments = parser.parse_args_into_dataclasses()[0]
 
 set_seed(script_args.seed)
+
+
 
 
 # Below is an example function to build the dataset. In our case, we use the IMDB dataset
@@ -167,18 +173,18 @@ dataset = build_dataset(tokenizer, script_args.dataset_name)
 # Now let's build the model, the reference model, and the tokenizer.
 current_device = Accelerator().local_process_index
 
-lora_config = LoraConfig(
-    r=16,
-    lora_alpha=32,
-    lora_dropout=0.05,
-    bias="none",
-    task_type="CAUSAL_LM",
-)
+# lora_config = LoraConfig(
+#     r=16,
+#     lora_alpha=32,
+#     lora_dropout=0.05,
+#     bias="none",
+#     task_type="CAUSAL_LM",
+# )
 model = AutoModelForCausalLMWithValueHead.from_pretrained(
     config.model_name,
     load_in_8bit=True,
     device_map={"": current_device},
-    peft_config=lora_config,
+    # peft_config=lora_config,
 )
 
 optimizer = None
