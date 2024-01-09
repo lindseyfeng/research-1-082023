@@ -1,5 +1,3 @@
-import sys
-sys.path.append('../') 
 import os
 import torch
 from dataclasses import dataclass, field
@@ -18,7 +16,6 @@ from transformers import (
 
 from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed
 from trl.core import LengthSampler
-from transformers import LlamaForCausalLM, LlamaTokenizer
 
 DEFAULT_PAD_TOKEN = "[PAD]"
 DEFAULT_EOS_TOKEN = "</s>"
@@ -27,11 +24,9 @@ DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
 
-model_dir = "../../llama/llama-2-7b"
-model = LlamaForCausalLM.from_pretrained(model_dir)
-tokenizer = LlamaTokenizer.from_pretrained(model_dir)
-print("loaded")
 
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b") 
+model = AutoModelForCausalLMWithValueHead.from_pretrained("meta-llama/Llama-2-7b")
 
 @dataclass
 class ScriptArguments:
