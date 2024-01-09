@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../') 
 import os
 import torch
 from dataclasses import dataclass, field
@@ -25,7 +27,7 @@ DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
 
-model_dir = "./llama-2-7b"
+model_dir = "../../llama/llama-2-7b"
 model = LlamaForCausalLM.from_pretrained(model_dir)
 tokenizer = LlamaTokenizer.from_pretrained(model_dir)
 print("loaded")
