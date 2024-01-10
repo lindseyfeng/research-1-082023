@@ -92,7 +92,7 @@ def build_dataset(
 
         return new_examples
 
-    ds =  v.map(
+    ds = train_dataset.map(
         preprocess_function,
         batched=True,
         num_proc=num_proc,
