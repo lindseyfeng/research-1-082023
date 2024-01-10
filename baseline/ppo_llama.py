@@ -230,7 +230,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
     # Run PPO step
-    stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
+    stats = ppo_trainer.step(question_tensors, response_tensors, tensor_rewards)
     ppo_trainer.log_stats(stats, batch, tensor_rewards)
 
     if save_freq and epoch and epoch % save_freq == 0:
