@@ -122,7 +122,7 @@ def collator(data):
 # )
 
 config = PPOConfig(
-    steps = 2048,
+    steps = 5000,
     learning_rate=1e-5,
     init_kl_coef = 0.1,
     log_with="wandb",
@@ -209,7 +209,7 @@ output_min_length = 32
 output_max_length = 100
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
-output_dir= "./llama_ppo"
+output_dir= "./llama_ppo_step5000"
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
 
