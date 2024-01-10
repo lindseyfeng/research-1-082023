@@ -28,7 +28,7 @@ trainer = SFTTrainer(
     train_dataset=dataset,
     dataset_text_field="chosen",
     max_seq_length=512,
-    dataset_batch_size = 32,
+    dataset_batch_size = 8,
 )
 
 trainer.train()
