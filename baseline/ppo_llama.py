@@ -12,9 +12,12 @@ from transformers import (
     pipeline
 )
 
-from transformers import LlamaForCausalLM, LlamaTokenizer
+from transformers import LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
 from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed
 from trl.core import LengthSampler
+
+# torch.backends.cuda.matmul.allow_tf32 = True
+# torch.backends.cudnn.allow_tf32 = True
 
 DEFAULT_PAD_TOKEN = "[PAD]"
 DEFAULT_EOS_TOKEN = "</s>"
@@ -24,8 +27,6 @@ DEFAULT_UNK_TOKEN = "</s>"
 tqdm.pandas()
 
 model_dir = "../../llama/llama-2-7b"
-model = LlamaForCausalLM.from_pretrained(model_dir)
-tokenizer = LlamaTokenizer.from_pretrained(model_dir)
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 seed = 42
   
@@ -82,6 +83,8 @@ def build_dataset(
             tokenized_question = tokenizer(query, truncation=True)
             new_examples["query"].append(query)
             new_examples["input_ids"].append(tokenized_question["input_ids"])
+            
+        print(new_examples)
 
         return new_examples
 
@@ -101,20 +104,31 @@ def collator(data):
     return dict((key, [d[key] for d in data]) for key in data[0])
 
 
-reward_model_name = script_args.reward_model_name
+# config = PPOConfig(
+#     model_name=script_args.model_name,
+#     learning_rate=script_args.learning_rate,
+#     log_with=script_args.log_with,
+#     batch_size=script_args.batch_size,
+#     mini_batch_size=script_args.mini_batch_size,
+#     gradient_accumulation_steps=script_args.gradient_accumulation_steps,
+#     optimize_cuda_cache=True,
+#     early_stopping=script_args.early_stopping,
+#     target_kl=script_args.target_kl,
+#     ppo_epochs=script_args.ppo_epochs,
+#     seed=script_args.seed,
+# )
+
 config = PPOConfig(
-    model_name=script_args.model_name,
-    learning_rate=script_args.learning_rate,
-    log_with=script_args.log_with,
-    batch_size=script_args.batch_size,
-    mini_batch_size=script_args.mini_batch_size,
-    gradient_accumulation_steps=script_args.gradient_accumulation_steps,
-    optimize_cuda_cache=True,
-    early_stopping=script_args.early_stopping,
-    target_kl=script_args.target_kl,
-    ppo_epochs=script_args.ppo_epochs,
-    seed=script_args.seed,
-)
+    steps = 2048,
+    learning_rate=1e-5,
+    init_kl_coef = 0.1,
+    log_with="wandb",
+    ppo_epochs= 1,
+    mini_batch_size = 32,
+    batch_size = 64,
+    gradient_accumulation_steps = 4,
+    )
+  
 
 # We then define the arguments to pass to the sentiment analysis pipeline.
 # We set `return_all_scores` to True to get the sentiment score for each token.
@@ -125,45 +139,34 @@ rw_kwargs = {
     "truncation": True
 }
 
-if "decapoda" in script_args.model_name.lower():
-    tokenizer = LlamaTokenizer.from_pretrained(script_args.model_name)
-    # required for llama
-    tokenizer.add_special_tokens(
-        {
-            "eos_token": DEFAULT_EOS_TOKEN,
-            "bos_token": DEFAULT_BOS_TOKEN,
-            "unk_token": DEFAULT_UNK_TOKEN,
-            "pad_token": DEFAULT_PAD_TOKEN,
-        }
-    )
-else:
-    tokenizer = AutoTokenizer.from_pretrained(script_args.model_name)
-    if getattr(tokenizer, "pad_token", None) is None:
+tokenizer = LlamaTokenizer.from_pretrained(model_dir)
+if getattr(tokenizer, "pad_token", None) is None:
         tokenizer.pad_token = tokenizer.eos_token
 
 # We retrieve the dataloader by calling the `build_dataset` function.
-dataset = build_dataset(tokenizer, script_args.dataset_name)
+dataset = build_dataset(tokenizer, "Anthropic/hh-rlhf")
 
 # Now let's build the model, the reference model, and the tokenizer.
 current_device = Accelerator().local_process_index
 
-# lora_config = LoraConfig(
-#     r=16,
-#     lora_alpha=32,
-#     lora_dropout=0.05,
-#     bias="none",
-#     task_type="CAUSAL_LM",
-# )
-model = AutoModelForCausalLMWithValueHead.from_pretrained(
-    config.model_name,
-    load_in_8bit=True,
-    device_map={"": current_device},
-    # peft_config=lora_config,
+lora_config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    lora_dropout=0.05,
+    bias="none",
+    task_type="CAUSAL_LM",
 )
 
-optimizer = None
-if script_args.adafactor:
-    optimizer = Adafactor(
+
+model = AutoModelForCausalLMWithValueHead.from_pretrained(
+    model_dir,
+    load_in_8bit=True,
+    device_map={"": current_device},
+    peft_config=lora_config,
+)
+
+
+optimizer = Adafactor(
         filter(lambda p: p.requires_grad, model.parameters()),
         scale_parameter=False,
         relative_step=False,
@@ -188,13 +191,7 @@ ppo_trainer = PPOTrainer(
 device = ppo_trainer.accelerator.device
 if ppo_trainer.accelerator.num_processes == 1:
     device = 0 if torch.cuda.is_available() else "cpu"  # to avoid a ` pipeline` bug
-reward_model = pipeline(
-    "text-classification",
-    model=reward_model_name,
-    device_map={"": current_device},
-    model_kwargs={"load_in_8bit": True},
-    tokenizer=tokenizer,
-)
+
 
 # We then define the arguments to pass to the `generate` function. These arguments
 # are passed to the `generate` function of the PPOTrainer, which is a wrapper around
@@ -224,9 +221,10 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
 
     # Compute sentiment score
     texts = [q + r for q, r in zip(batch["query"], batch["response"])]
-    reward_outputs = reward_model(texts, **rw_kwargs)
-    rewards = [torch.tensor(output[0]["score"] - script_args.reward_baseline) for output in reward_outputs]
-
+    print(texts)
+    pipe_outputs = rm_pipe(texts, **pipe_kwargs)
+    rewards = [output[0]["score"] for output in pipe_outputs]
+    print(scires)
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
     ppo_trainer.log_stats(stats, batch, rewards)
