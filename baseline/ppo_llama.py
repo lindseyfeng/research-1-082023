@@ -11,6 +11,7 @@ from transformers import (
     HfArgumentParser,
     pipeline
 )
+from statistics import mean 
 
 from transformers import LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
 from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed
@@ -98,8 +99,7 @@ def build_dataset(
         num_proc=num_proc,
         remove_columns=original_columns,
     )
-    ds = ds.filter(lambda x: len(x["input_ids"]) < script_args.max_length, batched=False)
-
+    # ds = ds.filter(lambda x: len(x["input_ids"]) < script_args.max_length, batched=False)
     ds.set_format(type="torch")
     return ds
 
@@ -209,9 +209,10 @@ generation_kwargs = {
     "eos_token_id": 100_000,
 }
 output_min_length = 32
-output_max_length = script_args.output_max_length
+output_max_length = 100
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
-
+save_freq = 256
+output_dir= "./llama_ppo"
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
 
@@ -228,10 +229,10 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     print(texts)
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
-    print(scires)
+    print(mean(rewards))
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
     ppo_trainer.log_stats(stats, batch, rewards)
 
-    if script_args.save_freq and epoch and epoch % script_args.save_freq == 0:
-        ppo_trainer.save_pretrained(script_args.output_dir + f"step_{epoch}")
+    if save_freq and epoch and epoch % save_freq == 0:
+        ppo_trainer.save_pretrained(output_dir + f"step_{epoch}")
