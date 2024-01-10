@@ -4,7 +4,7 @@
 #     COMMIT: d5fecf30ba8011067b10cf51fede53a5ab6574e4
 
 # Parses arguments
-model_name_or_path=meta-llama/Llama-2-7b
+model_name_or_path=meta-llama/Llama-2-7b-hf
 dataset_path=data/hh_rlhf/sft
 output_dir=output_models/finetuned_llama2
 deepspeed_args="--master_port=11000"
