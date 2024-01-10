@@ -229,7 +229,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     texts = [q + r for q, r in zip(batch["query"], batch["response"])]
     print(texts)
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
-    rewards = [output[0]["score"] for output in pipe_outputs]
+    tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
     print(mean(rewards))
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
@@ -237,3 +237,6 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
 
     if save_freq and epoch and epoch % save_freq == 0:
         ppo_trainer.save_pretrained(output_dir + f"step_{epoch}")
+
+
+        
