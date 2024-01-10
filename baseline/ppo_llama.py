@@ -164,7 +164,6 @@ lora_config = LoraConfig(
 
 model = AutoModelForCausalLMWithValueHead.from_pretrained(
     model_dir,
-    load_in_8bit=True,
     device_map={"": current_device},
     peft_config=lora_config,
 )
