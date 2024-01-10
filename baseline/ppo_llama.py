@@ -29,6 +29,7 @@ tqdm.pandas()
 model_dir = "../../llama/llama-2-7b"
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 seed = 42
+device = "cuda" if torch.cuda.is_available() else "cpu"
   
 rm_pipe = pipeline(
       "sentiment-analysis",
@@ -83,7 +84,7 @@ def build_dataset(
             tokenized_question = tokenizer(query, truncation=True)
             new_examples["query"].append(query)
             new_examples["input_ids"].append(tokenized_question["input_ids"])
-            
+
         print(new_examples)
 
         return new_examples
