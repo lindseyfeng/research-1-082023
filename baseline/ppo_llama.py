@@ -83,10 +83,10 @@ def build_dataset(
         for question in examples["chosen"]:
             # dialogues = text.split("Assistant:")
             # question = [part.split("Human:")[1].strip() for part in dialogues if "Human:" in part][0]
-            start_index = question.find("Human")
+            start_index = question.find("Human")+6
             end_index = question.find("Assistant")
             question = question[start_index:end_index].strip()
-            query = "Question: " + question + "\n\nAnswer: "
+            query = "###Human: " + question + "\n\###Assistant: "
             tokenized_question = tokenizer(query, truncation=True)
             new_examples["query"].append(query)
             new_examples["input_ids"].append(tokenized_question["input_ids"])
