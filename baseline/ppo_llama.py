@@ -80,9 +80,10 @@ def build_dataset(
             "input_ids": [],
         }
         for question in examples["chosen"]:
-            start = original_string.index("Human: ")
-            end = original_string.index("?") + 1
-            question = original_string[start:end]
+            print(question)
+            start = question.index("Human: ")
+            end = question.index("?") + 1
+            question = question[start:end]
             query = "Question: " + question + "\n\nAnswer: "
             tokenized_question = tokenizer(query, truncation=True)
             new_examples["query"].append(query)
