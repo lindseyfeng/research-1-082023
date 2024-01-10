@@ -127,8 +127,8 @@ config = PPOConfig(
     init_kl_coef = 0.1,
     log_with="wandb",
     ppo_epochs= 1,
-    batch_size = 16,
-    gradient_accumulation_steps = 4,
+    batch_size = 24,
+    gradient_accumulation_steps = 8,
     )
   
 
@@ -223,8 +223,6 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
 
     # Compute sentiment score
     texts = ["###human: " + q +" ###assistant: "+ r for q, r in zip(batch["query"], batch["response"])]
-    print(texts)
-
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
     tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
