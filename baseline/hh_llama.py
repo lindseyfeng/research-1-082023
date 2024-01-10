@@ -29,7 +29,6 @@ trainer = SFTTrainer(
     dataset_text_field="chosen",
     max_seq_length=512,
     dataset_batch_size = 256,
-    gradient_accumulation_steps = 4
 )
 
 trainer.train()
