@@ -2,6 +2,7 @@ import torch
 from transformers import ( AutoModelForCausalLM, AutoTokenizer,
 pipeline,
 )
+from transformers import TrainingArguments
 from peft import LoraConfig, PeftModel 
 from trl import SFTTrainer
 from datasets import load_dataset
