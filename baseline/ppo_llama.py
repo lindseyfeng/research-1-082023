@@ -86,13 +86,10 @@ def build_dataset(
             start_index = question.find("Human")+6
             end_index = question.find("Assistant")
             question = question[start_index:end_index].strip()
-            query = "###Human: " + question + "\n\###Assistant: "
+            query = question
             tokenized_question = tokenizer(query, truncation=True)
             new_examples["query"].append(query)
             new_examples["input_ids"].append(tokenized_question["input_ids"])
-
-        print(new_examples)
-
         return new_examples
 
     ds = train_dataset.map(
@@ -226,11 +223,12 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     batch["response"] = tokenizer.batch_decode(response_tensors, skip_special_tokens=True)
 
     # Compute sentiment score
-    texts = [q + r for q, r in zip(batch["query"], batch["response"])]
+    texts = ["###human: " + q +" ###assistant: "+ r for q, r in zip(batch["query"], batch["response"])]
     print(texts)
+
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
     tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
-    print(mean(rewards))
+    print(tensor_rewards)
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, rewards)
     ppo_trainer.log_stats(stats, batch, rewards)
