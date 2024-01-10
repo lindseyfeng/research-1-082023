@@ -26,7 +26,7 @@ trainer = SFTTrainer(
     model = base_model,
     args = args,
     train_dataset=dataset,
-    dataset_text_field="text",
+    dataset_text_field="chosen",
     max_seq_length=512,
 )
 
