@@ -45,8 +45,8 @@ pipe_kwargs = {
       "batch_size": 1
     }
 
-parser = HfArgumentParser(ScriptArguments)
-script_args: ScriptArguments = parser.parse_args_into_dataclasses()[0]
+# parser = HfArgumentParser(ScriptArguments)
+# script_args: ScriptArguments = parser.parse_args_into_dataclasses()[0]
 
 set_seed(seed)
 
