@@ -127,8 +127,8 @@ config = PPOConfig(
     init_kl_coef = 0.1,
     log_with="wandb",
     ppo_epochs= 1,
-    batch_size = 24,
-    gradient_accumulation_steps = 8,
+    batch_size = 16,
+    gradient_accumulation_steps = 4,
     )
   
 
@@ -208,7 +208,7 @@ generation_kwargs = {
 output_min_length = 32
 output_max_length = 100
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
-save_freq = 256
+save_freq = 200
 output_dir= "./llama_ppo"
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
