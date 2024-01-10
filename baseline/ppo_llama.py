@@ -79,7 +79,10 @@ def build_dataset(
             "query": [],
             "input_ids": [],
         }
-        for question in examples["question"]:
+        for question in examples["chosen"]:
+            start = original_string.index("Human: ")
+            end = original_string.index("?") + 1
+            question = original_string[start:end]
             query = "Question: " + question + "\n\nAnswer: "
             tokenized_question = tokenizer(query, truncation=True)
             new_examples["query"].append(query)
@@ -89,7 +92,7 @@ def build_dataset(
 
         return new_examples
 
-    ds = train_dataset.map(
+    ds =  v.map(
         preprocess_function,
         batched=True,
         num_proc=num_proc,
