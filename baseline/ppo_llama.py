@@ -166,6 +166,8 @@ model = AutoModelForCausalLMWithValueHead.from_pretrained(
     peft_config=lora_config,
 )
 
+ref_dir = "../../llama/llama-2-7b"
+ref_model = create_reference_model(ref_dir)
 
 optimizer = Adafactor(
         filter(lambda p: p.requires_grad, model.parameters()),
@@ -174,9 +176,6 @@ optimizer = Adafactor(
         warmup_init=False,
         lr=config.learning_rate,
     )
-
-ref_dir = "../../llama/llama-2-7b"
-ref_model = create_reference_model(ref_dir)
 
 # We then build the PPOTrainer, passing the model, the reference model, the tokenizer
 ppo_trainer = PPOTrainer(
