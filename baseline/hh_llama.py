@@ -7,7 +7,7 @@ from peft import LoraConfig, PeftModel
 from trl import SFTTrainer
 from datasets import load_dataset
 
-model_name = "../../llama/llama-2-7b" 
+model_name = "./LMFlow/output_models/finetuned_llama2" 
 new_model = "output"
 device_map = {"": 0}
 

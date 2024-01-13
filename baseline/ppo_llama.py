@@ -27,7 +27,7 @@ DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
 
-model_dir = "../../llama/llama-2-7b"
+model_dir = "./LMFlow/output_models/finetuned_llama2"
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 seed = 42
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -209,7 +209,7 @@ output_min_length = 32
 output_max_length = 100
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
-output_dir= "./llama_ppo_step5000"
+output_dir= "./finetuned_llama_ppo"
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
 
