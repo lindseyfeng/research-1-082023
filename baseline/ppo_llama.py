@@ -210,7 +210,7 @@ output_min_length = 32
 output_max_length = 100
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
-output_dir= "./finetuned_llama_ppo"
+output_dir= "./finetuned_llama_1ppo"
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
 
