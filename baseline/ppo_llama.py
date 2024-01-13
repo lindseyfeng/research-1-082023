@@ -198,7 +198,7 @@ if ppo_trainer.accelerator.num_processes == 1:
 # are passed to the `generate` function of the PPOTrainer, which is a wrapper around
 # the `generate` function of the trained model.
 generation_kwargs = {
-    # "min_length": -1,
+    "min_length": -1,
     "top_k": 0.0,
     "top_p": 1.0,
     "do_sample": True,
