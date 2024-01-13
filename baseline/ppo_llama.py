@@ -167,7 +167,7 @@ model = AutoModelForCausalLMWithValueHead.from_pretrained(
 )
 
 ref_dir = "../../llama/llama-2-7b"
-ref_model = create_reference_model(ref_dir)
+ref_model = AutoModelForCausalLMWithValueHead.create_reference_model(ref_dir)
 
 optimizer = Adafactor(
         filter(lambda p: p.requires_grad, model.parameters()),
