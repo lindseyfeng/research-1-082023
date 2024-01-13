@@ -124,7 +124,7 @@ def collator(data):
 config = PPOConfig(
     steps = 2048,
     learning_rate=5e-6,
-    init_kl_coef = 0.01,
+    init_kl_coef = 0.15,
     log_with="wandb",
     ppo_epochs= 8,
     batch_size = 16,
@@ -175,11 +175,14 @@ optimizer = Adafactor(
         lr=config.learning_rate,
     )
 
+ref_dir = "../../llama/llama-2-7b"
+ref_model = create_reference_model(ref_dir)
+
 # We then build the PPOTrainer, passing the model, the reference model, the tokenizer
 ppo_trainer = PPOTrainer(
     config,
     model,
-    ref_model=None,
+    ref_model=ref_model,
     tokenizer=tokenizer,
     dataset=dataset,
     data_collator=collator,
@@ -203,13 +206,13 @@ generation_kwargs = {
     "top_p": 1.0,
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
-    "eos_token_id": -1
+    "eos_token_id": -1,
 }
 output_min_length = 32
 output_max_length = 100
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
-output_dir= "./finetuned_llama_1ppo"
+output_dir= "./finetuned_llama_ppo"
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
 
