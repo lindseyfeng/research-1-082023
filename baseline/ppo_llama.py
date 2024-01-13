@@ -14,7 +14,7 @@ from transformers import (
 from statistics import mean 
 
 from transformers import LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
-from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed
+from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed, PreTrainedModelWrapper, create_reference_model
 from trl.core import LengthSampler
 
 # torch.backends.cuda.matmul.allow_tf32 = True
@@ -167,7 +167,10 @@ model = AutoModelForCausalLMWithValueHead.from_pretrained(
 )
 
 ref_dir = "../../llama/llama-2-7b"
-ref_model = AutoModelForCausalLMWithValueHead.create_reference_model(ref_dir)
+ref_model = AutoModelForCausalLMWithValueHead.from_pretrained(model_dir)
+wrapped_model = PreTrainedModelWrapper(ref_model)
+reference_model = create_reference_model(wrapped_model)
+
 
 optimizer = Adafactor(
         filter(lambda p: p.requires_grad, model.parameters()),
@@ -181,7 +184,7 @@ optimizer = Adafactor(
 ppo_trainer = PPOTrainer(
     config,
     model,
-    ref_model=ref_model,
+    ref_model=reference_model,
     tokenizer=tokenizer,
     dataset=dataset,
     data_collator=collator,
