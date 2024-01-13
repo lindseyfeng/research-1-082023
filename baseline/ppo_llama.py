@@ -126,7 +126,7 @@ config = PPOConfig(
     learning_rate=5e-6,
     init_kl_coef = 0.05,
     log_with="wandb",
-    ppo_epochs= 4,
+    ppo_epochs= 8,
     batch_size = 16,
     gradient_accumulation_steps = 4,
     )
