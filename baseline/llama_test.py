@@ -10,6 +10,7 @@ ppo_dir = "/llama_ppo_step5000step_2000"
 
 base_model = LlamaForCausalLM.from_pretrained(base_dir)
 base_tokenizer = LlamaTokenizer.from_pretrained(base_dir)
+base_tokenizer.pad_token_id=base_tokenizer.eos_token_id
 # sft_model = LlamaForCausalLM.from_pretrained(sft_model_dir)
 # sft_tookenizer = LlamaTokenizer.from_pretrained(sft_model_dir)
 # ppo_model = LlamaForCausalLM.from_pretrained(ppo_dir)
@@ -41,7 +42,7 @@ print(num_batches)
 
 def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
-    input_ids = base_tokenizer(prompts, padding=True, pad_token_id=base_tokenizer.eos_token_id, return_tensors='pt').input_ids.to(device)
+    input_ids = base_tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = base_model.generate(input_ids, min_length = 200, max_length=600, pad_token_id=base_tokenizer.eos_token_id).to(device)
     generated_texts = base_tokenizer.batch_decode(outputs, skip_special_tokens=True)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
