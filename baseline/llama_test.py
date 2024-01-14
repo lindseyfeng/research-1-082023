@@ -68,4 +68,4 @@ for i in range(num_batches):
 print(len(all_rewards))
 average_reward = mean(all_rewards)
 print("Average Reward:", average_reward)
-print(all_responses[0])
+print(all_responses[100])
