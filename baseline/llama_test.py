@@ -47,6 +47,7 @@ print(num_batches)
 
 def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
+    print(prompts)
     input_ids = ppo_tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
     outputs = ppo_model.generate(input_ids, min_length = 200, max_length=600, pad_token_id=ppo_tokenizer.eos_token_id).to(device)
     generated_texts = ppo_tokenizer.batch_decode(outputs, skip_special_tokens=True)
