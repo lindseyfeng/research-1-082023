@@ -1,5 +1,8 @@
 from transformers import LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
 import random
+import torch
+from datasets import load_dataset
+from statistics import mean
 
 sft_model_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
