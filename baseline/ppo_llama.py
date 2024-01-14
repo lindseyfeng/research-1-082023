@@ -124,10 +124,10 @@ def collator(data):
 config = PPOConfig(
     steps = 2048,
     learning_rate=5e-6,
-    init_kl_coef = 0.15,
+    init_kl_coef = 0.3,
     log_with="wandb",
     ppo_epochs= 8,
-    batch_size = 16,
+    batch_size = 32,
     gradient_accumulation_steps = 4,
     )
   
@@ -184,7 +184,7 @@ optimizer = Adafactor(
 ppo_trainer = PPOTrainer(
     config,
     model,
-    ref_model=reference_model,
+    ref_model=None,
     tokenizer=tokenizer,
     dataset=dataset,
     data_collator=collator,
