@@ -45,9 +45,9 @@ print(num_batches)
 
 def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
-    input_ids = base_tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
-    outputs = base_model.generate(input_ids, min_length = 200, max_length=600, pad_token_id=base_tokenizer.eos_token_id).to(device)
-    generated_texts = base_tokenizer.batch_decode(outputs, skip_special_tokens=True)
+    input_ids = sft_tookenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
+    outputs = sft_model.generate(input_ids, min_length = 200, max_length=600, pad_token_id=sft_tookenizer.eos_token_id).to(device)
+    generated_texts = sft_tookenizer.batch_decode(outputs, skip_special_tokens=True)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
