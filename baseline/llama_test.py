@@ -10,6 +10,7 @@ ppo_dir = "/llama_ppo_step5000step_2000"
 
 base_model = LlamaForCausalLM.from_pretrained(base_dir)
 base_tokenizer = LlamaTokenizer.from_pretrained(base_dir)
+base_tokenizer.pad_token = tokenizer.eos_token
 # sft_model = LlamaForCausalLM.from_pretrained(sft_model_dir)
 # sft_tookenizer = LlamaTokenizer.from_pretrained(sft_model_dir)
 # ppo_model = LlamaForCausalLM.from_pretrained(ppo_dir)
