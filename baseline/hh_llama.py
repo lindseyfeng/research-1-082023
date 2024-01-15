@@ -27,7 +27,7 @@ def get_args():
     parser.add_argument("--shuffle_buffer", type=int, default=5000)
 
     parser.add_argument("--seq_length", type=int, default=1024)
-    parser.add_argument("--max_steps", type=int, default=10000)
+    parser.add_argument("--max_steps", type=int, default=2048)
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--gradient_accumulation_steps", type=int, default=8)
     parser.add_argument("--eos_token_id", type=int, default=49152)
@@ -38,7 +38,7 @@ def get_args():
     parser.add_argument("--weight_decay", type=float, default=0.05)
 
     parser.add_argument("--local_rank", type=int, default=0)
-    parser.add_argument("--fp16", action="store_true", default=False)
+    parser.add_argument("--fp16", action="store_true", default=True)
     parser.add_argument("--bf16", action="store_true", default=False)
     parser.add_argument("--gradient_checkpointing", action="store_true", default=False)
     parser.add_argument("--seed", type=int, default=0)
