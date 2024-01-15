@@ -12,7 +12,7 @@ from transformers import (
     pipeline
 )
 from statistics import mean 
-
+import re
 from transformers import LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
 from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed, PreTrainedModelWrapper, create_reference_model
 from trl.core import LengthSampler
@@ -51,6 +51,19 @@ pipe_kwargs = {
 
 set_seed(seed)
 
+def remove_tags(text):
+    """
+    Removes the substring "###Assistant" and any substring starting with "###human" in the middle of the text.
+    :param text: str, the input text
+    :return: str, the text with specified substrings removed
+    """
+    # Remove "###Assistant"
+    text = text.replace("###Assistant", "")
+
+    # Remove any substring starting with "###human"
+    text = re.sub(r'###Human.*$', '', text, flags=re.IGNORECASE)
+
+    return text.strip()
 
 # Below is an example function to build the dataset. In our case, we use the IMDB dataset
 # from the `datasets` library. One should customize this function to train the model on
@@ -227,10 +240,13 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
         **generation_kwargs,
     )
     batch["response"] = tokenizer.batch_decode(response_tensors, skip_special_tokens=True)
-
+    print(batch["response"])
     # Compute sentiment score
-    texts = ["###human: " + q +" ###assistant: "+ r for q, r in zip(batch["query"], batch["response"])]
+    response = [remove_tags(r) for r in batch["response"]]
+    texts = ["###Human: " + q +" ###Assistant: "+ r for q, r in zip(batch["query"], response)]
     print(texts)
+    response_tensors = tokenizer(response, padding=True, return_tensors="pt").input_ids
+    print(response_tensors)
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
     tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
