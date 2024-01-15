@@ -20,7 +20,15 @@ torch_dtype=torch.float16,
 device_map=device_map,
 )
 
-args = TrainingArguments(output_dir="./output")
+lora_config = LoraConfig(
+        r=16,
+        lora_alpha=32,
+        lora_dropout=0.05,
+        bias="none",
+        task_type="CAUSAL_LM",
+)
+
+args = TrainingArguments(output_dir="./output", report_to="wandb",)
 
 trainer = SFTTrainer(
     model = base_model,
@@ -29,6 +37,9 @@ trainer = SFTTrainer(
     dataset_text_field="chosen",
     max_seq_length=512,
     dataset_batch_size = 8,
+    peft_config=lora_config
 )
 
 trainer.train()
+print("Saving last checkpoint of the model")
+    trainer.model.save_pretrained(os.path.join(output_dir, "final_checkpoint/"))
