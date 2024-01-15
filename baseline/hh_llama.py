@@ -28,8 +28,8 @@ def get_args():
 
     parser.add_argument("--seq_length", type=int, default=1024)
     parser.add_argument("--max_steps", type=int, default=10000)
-    parser.add_argument("--batch_size", type=int, default=4)
-    parser.add_argument("--gradient_accumulation_steps", type=int, default=1)
+    parser.add_argument("--batch_size", type=int, default=64)
+    parser.add_argument("--gradient_accumulation_steps", type=int, default=8)
     parser.add_argument("--eos_token_id", type=int, default=49152)
 
     parser.add_argument("--learning_rate", type=float, default=1e-4)
@@ -99,7 +99,6 @@ def split_first_qa(text):
 
 def prepare_sample_text(example):
     """Prepare the text from a sample of the dataset."""
-    print(example)
     question, response = split_first_qa(example["chosen"])
     text = f"Question: {question}\n\nAnswer: {response}"
     return text
