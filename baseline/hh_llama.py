@@ -42,4 +42,4 @@ trainer = SFTTrainer(
 
 trainer.train()
 print("Saving last checkpoint of the model")
-    trainer.model.save_pretrained(output_dir+" final_checkpoint/"))
+trainer.model.save_pretrained(output_dir+" final_checkpoint/"))
