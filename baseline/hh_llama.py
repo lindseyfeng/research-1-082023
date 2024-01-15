@@ -81,13 +81,6 @@ def print_trainable_parameters(model):
         f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
     )
 
-
-def prepare_sample_text(example):
-    """Prepare the text from a sample of the dataset."""
-    question, response = split_first_qa(example)
-    text = f"Question: {question}\n\nAnswer: {response}"
-    return text
-
 def split_first_qa(text):
     """
     Splits the conversation and extracts the first question from 'Human' and the first answer from 'Assistant'.
@@ -101,6 +94,15 @@ def split_first_qa(text):
     first_assistant_part = first_assistant_match.group(1).strip() if first_assistant_match else None
 
     return first_human_part, first_assistant_part
+
+
+
+def prepare_sample_text(example):
+    """Prepare the text from a sample of the dataset."""
+    print(example)
+    question, response = split_first_qa(example)
+    text = f"Question: {question}\n\nAnswer: {response}"
+    return text
 
 
 def create_datasets(tokenizer, args):
