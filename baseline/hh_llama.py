@@ -91,7 +91,6 @@ def prepare_sample_text(example):
 def create_datasets(tokenizer, args):
     dataset = load_dataset(
         args.dataset_name,
-        data_dir=args.subset,
         split=args.split,
         use_auth_token=True,
         num_proc=args.num_workers if not args.streaming else None,
