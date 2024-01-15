@@ -100,7 +100,7 @@ def split_first_qa(text):
 def prepare_sample_text(example):
     """Prepare the text from a sample of the dataset."""
     print(example)
-    question, response = split_first_qa(example)
+    question, response = split_first_qa(example["chosen"])
     text = f"Question: {question}\n\nAnswer: {response}"
     return text
 
