@@ -84,8 +84,23 @@ def print_trainable_parameters(model):
 
 def prepare_sample_text(example):
     """Prepare the text from a sample of the dataset."""
-    text = f"Question: {example['question']}\n\nAnswer: {example['response_j']}"
+    question, response = split_first_qa(example)
+    text = f"Question: {question}\n\nAnswer: {response}"
     return text
+
+def split_first_qa(text):
+    """
+    Splits the conversation and extracts the first question from 'Human' and the first answer from 'Assistant'.
+    """
+    # Extract the first 'Human' part
+    first_human_match = re.search(r'Human: (.*?)\s*(?=Assistant:|$)', text, re.DOTALL)
+    first_human_part = first_human_match.group(1).strip() if first_human_match else None
+
+    # Extract the first 'Assistant' part
+    first_assistant_match = re.search(r'Assistant: (.*?)\s*(?=Human:|$)', text, re.DOTALL)
+    first_assistant_part = first_assistant_match.group(1).strip() if first_assistant_match else None
+
+    return first_human_part, first_assistant_part
 
 
 def create_datasets(tokenizer, args):
