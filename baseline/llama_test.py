@@ -6,16 +6,16 @@ from statistics import mean
 
 sft_model_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
-ppo_dir = "./llama_ppo_step5000step_2400"
+ppo_dir = "./output/checkpoint-1500"
 device = "cuda" if torch.cuda.is_available() else "cpu"
-base_model = LlamaForCausalLM.from_pretrained(base_dir).to(device)
-base_tokenizer = LlamaTokenizer.from_pretrained(base_dir)
-base_tokenizer.pad_token_id=base_tokenizer.eos_token_id
-base_tokenizer.padding_side = 'left'
+# base_model = LlamaForCausalLM.from_pretrained(base_dir).to(device)
+# base_tokenizer = LlamaTokenizer.from_pretrained(base_dir)
+# base_tokenizer.pad_token_id=base_tokenizer.eos_token_id
+# base_tokenizer.padding_side = 'left'
 # sft_model = LlamaForCausalLM.from_pretrained(sft_model_dir).to(device)
-# sft_tokenizer = LlamaTokenizer.from_pretrained(sft_model_dir)
-# sft_tokenizer.pad_token_id=sft_tokenizer.eos_token_id
-# sft_tokenizer.padding_side = 'left'
+sft_tokenizer = LlamaTokenizer.from_pretrained(sft_model_dir)
+sft_tokenizer.pad_token_id=sft_tokenizer.eos_token_id
+sft_tokenizer.padding_side = 'left'
 # ppo_model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
 # ppo_tokenizer = LlamaTokenizer.from_pretrained(ppo_dir)
 # ppo_tokenizer.pad_token_id=ppo_tokenizer.eos_token_id
