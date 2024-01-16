@@ -41,7 +41,7 @@ pipe_kwargs = {
 random.seed(42)
 test_dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
 selected_items = random.sample(test_dataset, 1000)
-batch_size = 10
+batch_size = 5
 num_batches = len(selected_items) // batch_size
 print(num_batches)
 
