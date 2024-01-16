@@ -27,7 +27,7 @@ DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
 
-model_dir = "./LMFlow/output_models/finetuned_llama2"
+model_dir = "./checkpoints/checkpoint-1000""
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 seed = 42
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -247,7 +247,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
     tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
-    print(torch.mean(torch.stack(tensor_rewards), dim=0))
+    print(torch.mean(torch.stack(t ensor_rewards), dim=0))
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, tensor_rewards)
     ppo_trainer.log_stats(stats, batch, tensor_rewards)
