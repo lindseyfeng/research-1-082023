@@ -142,6 +142,8 @@ config = PPOConfig(
     ppo_epochs= 8,
     batch_size = 32,
     gradient_accumulation_steps = 4,
+    cliprange_value = 0.3,
+    cliprange = 0,3
     )
   
 
