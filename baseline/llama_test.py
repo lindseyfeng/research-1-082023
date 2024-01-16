@@ -4,9 +4,9 @@ import torch
 from datasets import load_dataset
 from statistics import mean
 
+ppo_dir = "./llama_ppo_step5000step_2400"
 sft_model_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
-ppo_dir = "./llama_ppo_step5000step_2400"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # base_model = LlamaForCausalLM.from_pretrained(base_dir).to(device)
 # base_tokenizer = LlamaTokenizer.from_pretrained(base_dir)
