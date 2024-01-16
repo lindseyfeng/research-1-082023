@@ -142,8 +142,8 @@ config = PPOConfig(
     ppo_epochs= 8,
     batch_size = 32,
     gradient_accumulation_steps = 4,
-    cliprange_value = 0.3,
-    cliprange = 0.3
+    cliprange_value = 0.4,
+    cliprange = 0.4
     )
   
 
@@ -224,7 +224,8 @@ generation_kwargs = {
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
-    "max_new_tokens": 32
+    "max_new_tokens": 100,
+    "min_length": 100
 
 }
 output_min_length = 32
