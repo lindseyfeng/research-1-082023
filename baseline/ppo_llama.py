@@ -225,10 +225,8 @@ generation_kwargs = {
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
     "max_new_tokens": 100,
-    "min_length": 100
-
 }
-output_min_length = 32
+output_min_length = 50
 output_max_length = 100
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
@@ -248,7 +246,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     texts = ["###Human: " + q +" ###Assistant: "+ r for q, r in zip(batch["query"], batch["response"])]
     # response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
-    tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
+    tensor_rewards = [torch.tensor(output[0]["score"]-3, dtype=torch.float32) for output in pipe_outputs]
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, tensor_rewards)
