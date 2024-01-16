@@ -49,7 +49,7 @@ def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     print(prompts)
     input_ids = sft_tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
-    outputs = sft_model.generate(input_ids, min_length = 32, max_length=100, pad_token_id=base_tokenizer.eos_token_id).to(device)
+    outputs = sft_model.generate(input_ids, min_length = 32, max_length=100, pad_token_id=sft_tokenizer.eos_token_id).to(device)
     generated_texts = sft_tokenizer.batch_decode(outputs, skip_special_tokens=True)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
