@@ -140,8 +140,8 @@ config = PPOConfig(
     init_kl_coef = 0.1,
     log_with="wandb",
     ppo_epochs= 4,
-    batch_size = 32,
-    gradient_accumulation_steps = 8,
+    batch_size = 16,
+    gradient_accumulation_steps = 4,
     )
   
 
