@@ -12,14 +12,14 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # base_tokenizer = LlamaTokenizer.from_pretrained(base_dir)
 # base_tokenizer.pad_token_id=base_tokenizer.eos_token_id
 # base_tokenizer.padding_side = 'left'
-sft_model = LlamaForCausalLM.from_pretrained(sft_model_dir).to(device)
-sft_tokenizer = LlamaTokenizer.from_pretrained(sft_model_dir)
-sft_tokenizer.pad_token_id=sft_tokenizer.eos_token_id
-sft_tokenizer.padding_side = 'left'
-# ppo_model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
-# ppo_tokenizer = LlamaTokenizer.from_pretrained(ppo_dir)
-# ppo_tokenizer.pad_token_id=ppo_tokenizer.eos_token_id
-# ppo_tokenizer.padding_side = 'left'
+# sft_model = LlamaForCausalLM.from_pretrained(sft_model_dir).to(device)
+# sft_tokenizer = LlamaTokenizer.from_pretrained(sft_model_dir)
+# sft_tokenizer.pad_token_id=sft_tokenizer.eos_token_id
+# sft_tokenizer.padding_side = 'left'
+ppo_model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
+ppo_tokenizer = LlamaTokenizer.from_pretrained(ppo_dir)
+ppo_tokenizer.pad_token_id=ppo_tokenizer.eos_token_id
+ppo_tokenizer.padding_side = 'left'
 
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -48,9 +48,9 @@ print(num_batches)
 def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     print(prompts)
-    input_ids = sft_tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
-    outputs = sft_model.generate(input_ids, min_length = 32, max_length=100, pad_token_id=sft_tokenizer.eos_token_id).to(device)
-    generated_texts = sft_tokenizer.batch_decode(outputs, skip_special_tokens=True)
+    input_ids = ppo_tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
+    outputs = ppo_model.generate(input_ids, min_length = 32, max_length=100, pad_token_id=ppo_tokenizer.eos_token_id).to(device)
+    generated_texts = ppo_tokenizer.batch_decode(outputs, skip_special_tokens=True)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
