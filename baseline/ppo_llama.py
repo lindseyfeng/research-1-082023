@@ -142,7 +142,7 @@ config = PPOConfig(
     ppo_epochs= 1,
     batch_size = 32,
     mini_batch_size = 8,
-    gradient_accumulation_steps = 8,
+    gradient_accumulation_steps = 4, 
     )
   
 
