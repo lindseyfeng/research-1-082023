@@ -180,10 +180,10 @@ model = AutoModelForCausalLMWithValueHead.from_pretrained(
     peft_config=lora_config,
 )
 
-ref_dir = "../../llama/llama-2-7b"
-ref_model = AutoModelForCausalLMWithValueHead.from_pretrained(model_dir)
-wrapped_model = PreTrainedModelWrapper(ref_model)
-reference_model = create_reference_model(wrapped_model)
+# ref_dir = "../../llama/llama-2-7b"
+# ref_model = AutoModelForCausalLMWithValueHead.from_pretrained(model_dir)
+# wrapped_model = PreTrainedModelWrapper(ref_model)
+# reference_model = create_reference_model(wrapped_model)
 
 
 optimizer = Adafactor(
@@ -198,7 +198,6 @@ optimizer = Adafactor(
 ppo_trainer = PPOTrainer(
     config,
     model,
-    ref_model=None,
     tokenizer=tokenizer,
     dataset=dataset,
     data_collator=collator,
