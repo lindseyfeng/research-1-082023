@@ -141,7 +141,6 @@ config = PPOConfig(
     log_with="wandb",
     ppo_epochs= 1,
     batch_size = 32,
-    mini_batch_size = 2,
     gradient_accumulation_steps = 4, 
     )
   
@@ -244,7 +243,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     texts = ["###Human: " + q +" ###Assistant: "+ r for q, r in zip(batch["query"], batch["response"])]
     # response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
-    tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
+    tensor_rewards = [torch.tensor(output[0]["score"]-3, dtype=torch.float32) for output in pipe_outputs]
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, tensor_rewards)
