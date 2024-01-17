@@ -29,7 +29,7 @@ tqdm.pandas()
 
 model_dir = "./checkpoints/checkpoint-1000"
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
-seed = 42
+seed = 1111
 device = "cuda" if torch.cuda.is_available() else "cpu"
   
 rm_pipe = pipeline(
@@ -140,8 +140,8 @@ config = PPOConfig(
     init_kl_coef = 0.1,
     log_with="wandb",
     ppo_epochs= 1,
-    batch_size = 32,
-    mini_batch_size = 8,
+    batch_size = 16,
+    mini_batch_size = 4,
     gradient_accumulation_steps = 4, 
     )
   
