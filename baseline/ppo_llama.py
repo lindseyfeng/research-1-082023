@@ -6,6 +6,7 @@ from accelerate import Accelerator
 from datasets import load_dataset
 from peft import LoraConfig
 from tqdm import tqdm
+from peft import PeftModel  
 from transformers import (
     Adafactor,
     HfArgumentParser,
@@ -19,6 +20,13 @@ from trl.core import LengthSampler
 
 # torch.backends.cuda.matmul.allow_tf32 = True
 # torch.backends.cudnn.allow_tf32 = True
+lora_config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    lora_dropout=0.05,
+    bias="none",
+    task_type="CAUSAL_LM",
+)
 
 DEFAULT_PAD_TOKEN = "[PAD]"
 DEFAULT_EOS_TOKEN = "</s>"
@@ -27,7 +35,26 @@ DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
 
-model_dir = "./checkpoints/checkpoint-1000"
+model_name = "huggyllama/llama-7b"
+adapters_name = 'timdettmers/qlora-flan-7b'
+
+model = AutoModelForCausalLMWithValueHead.from_pretrained(
+    model_name,
+    load_in_4bit=True,
+    torch_dtype=torch.bfloat16,
+    device_map="auto",
+    max_memory= {i: '24000MB' for i in range(torch.cuda.device_count())},
+    quantization_config=BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_type='nf4'
+    ),
+    peft_config= lora_config
+)
+model = PeftModel.from_pretrained(model, adapters_name, )
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_13b")
 seed = 42
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -164,25 +191,7 @@ dataset = build_dataset(tokenizer, "Anthropic/hh-rlhf")
 # Now let's build the model, the reference model, and the tokenizer.
 current_device = Accelerator().local_process_index
 
-lora_config = LoraConfig(
-    r=16,
-    lora_alpha=32,
-    lora_dropout=0.05,
-    bias="none",
-    task_type="CAUSAL_LM",
-)
-
-
-model = AutoModelForCausalLMWithValueHead.from_pretrained(
-    model_dir,
-    device_map={"": current_device},
-    peft_config=lora_config,
-)
-
 ref_dir = "../../llama/llama-2-7b"
-ref_model = AutoModelForCausalLMWithValueHead.from_pretrained(model_dir)
-wrapped_model = PreTrainedModelWrapper(ref_model)
-reference_model = create_reference_model(wrapped_model)
 
 
 optimizer = Adafactor(
