@@ -50,9 +50,9 @@ generation_kwargs = {
     "eos_token_id": -1,
     "max_new_tokens": 100,
 }
-ppo_trainer = PPOTrainer(model)
 random.seed(1111)
 set_seed(1111)
+ppo_trainer = PPOTrainer(model)
 test_dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
 selected_items = random.sample(test_dataset, 1000)
 batch_size = 5
