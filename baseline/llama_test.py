@@ -3,6 +3,7 @@ import random
 import torch
 from datasets import load_dataset
 from statistics import mean
+from trl import PPOTrainer
 
 ppo_dir = "./llama_ppo_step5000step_2400"
 # ppo_dir = "./checkpoints/checkpoint-1000"
@@ -40,17 +41,28 @@ pipe_kwargs = {
       "batch_size": 1
     }
 
+generation_kwargs = {
+    "min_length": -1,
+    "top_k": 0.0,
+    "top_p": 1.0,
+    "do_sample": True,
+    "pad_token_id": tokenizer.pad_token_id,
+    "eos_token_id": -1,
+    "max_new_tokens": 100,
+}
+ppo_trainer = PPOTrainer(model)
 random.seed(1111)
 test_dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
 selected_items = random.sample(test_dataset, 1000)
 batch_size = 5
 num_batches = len(selected_items) // batch_size
 print(num_batches)
-
 def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     input_ids = ppo_tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
-    outputs = ppo_model.generate(input_ids, max_new_tokens=30, pad_token_id = ppo_tokenizer.pad_token_id, do_sample = True, top_k = 0 ).to(device)
+    outputs = PPOTrainer.generate(input_ids, 
+    return_prompt=False,
+     **generation_kwargs,).to(device)
     generated_texts = ppo_tokenizer.batch_decode(outputs, skip_special_tokens=True)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
