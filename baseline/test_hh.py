@@ -3,7 +3,7 @@ import random
 import torch
 from datasets import load_dataset
 from statistics import mean
-
+import re
 def split_first_qa(text):
     """
     Splits the conversation and extracts the first question from 'Human' and the first answer from 'Assistant'.
