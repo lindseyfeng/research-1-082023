@@ -4,8 +4,9 @@ import torch
 from datasets import load_dataset
 from statistics import mean
 
-ppo_dir = "./llama_ppo_step5000step_2400"
+# ppo_dir = "./llama_ppo_step5000step_2400"
 # ppo_dir = "./checkpoints/checkpoint-1000"
+ppo_dir = "./finetuned_llama_ppostep_2200"
 sft_model_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
 device = "cuda" if torch.cuda.is_available() else "cpu"

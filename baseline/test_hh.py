@@ -19,7 +19,7 @@ def split_first_qa(text):
     return "###human: " + first_human_part + " ###assistant: "  + first_assistant_part
 
 
-rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
+rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm")
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 rm_pipe = pipeline(
