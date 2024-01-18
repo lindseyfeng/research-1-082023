@@ -250,6 +250,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     stats = ppo_trainer.step(question_tensors, response_tensors, tensor_rewards)
     ppo_trainer.log_stats(stats, batch, tensor_rewards)
 
+ 
     if save_freq and epoch and epoch % save_freq == 0:
         ppo_trainer.save_pretrained(output_dir + f"step_{epoch}")
 
