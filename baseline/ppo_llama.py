@@ -141,7 +141,6 @@ config = PPOConfig(
     log_with="wandb",
     ppo_epochs= 4,
     batch_size = 16,
-    mini_batch_size = 2,
     gradient_accumulation_steps = 4, 
     )
   
