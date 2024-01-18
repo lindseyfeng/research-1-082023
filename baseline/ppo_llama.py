@@ -27,7 +27,7 @@ DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
 
-model_dir = "./checkpoints/checkpoint-1000"
+model_dir = "./LMFlow/output_models/finetuned_llama2"
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_13b")
 seed = 42
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -136,11 +136,12 @@ def collator(data):
 
 config = PPOConfig(
     steps = 2048,
-    learning_rate=1e-5,
-    init_kl_coef = 0.1,
+    learning_rate=5e-6,
+    init_kl_coef = 0.01,
     log_with="wandb",
     ppo_epochs= 4,
     batch_size = 16,
+    mini_batch_size = 2,
     gradient_accumulation_steps = 4, 
     )
   
