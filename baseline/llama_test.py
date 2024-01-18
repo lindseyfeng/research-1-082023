@@ -4,8 +4,8 @@ import torch
 from datasets import load_dataset
 from statistics import mean
 
-# ppo_dir = "./llama_ppo_step5000step_2400"
-ppo_dir = "./checkpoints/checkpoint-1000"
+ppo_dir = "./llama_ppo_step5000step_2400"
+# ppo_dir = "./checkpoints/checkpoint-1000"
 sft_model_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -17,8 +17,8 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # sft_tokenizer = LlamaTokenizer.from_pretrained(sft_model_dir)
 # sft_tokenizer.pad_token_id=sft_tokenizer.eos_token_id
 # sft_tokenizer.padding_side = 'left'
-model = LlamaForCausalLM.from_pretrained(base_dir).to(device)
-tokenizer = LlamaTokenizer.from_pretrained(base_dir)
+model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
+tokenizer = LlamaTokenizer.from_pretrained(ppo_dir)
 tokenizer.pad_token = "[PAD]"
 tokenizer.padding_side = "left"
 
@@ -70,3 +70,4 @@ print(len(all_rewards))
 average_reward = mean(all_rewards)
 print("Average Reward:", average_reward)
 print(all_responses[100])
+print("ppo")
