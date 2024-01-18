@@ -22,12 +22,12 @@ ppo_tokenizer = LlamaTokenizer.from_pretrained(ppo_dir)
 ppo_tokenizer.pad_token_id=ppo_tokenizer.eos_token_id
 ppo_tokenizer.padding_side = 'left'
 
-rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
+rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm")
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 rm_pipe = pipeline(
       "sentiment-analysis",
-      model="weqweasdas/hh_rlhf_rm_open_llama_3b",
+      model="weqweasdas/hh_rlhf_rm",
       device=device,
       tokenizer=rm_tokenizer,
       model_kwargs={"torch_dtype": torch.bfloat16}
