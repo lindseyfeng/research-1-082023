@@ -3,7 +3,7 @@ import random
 import torch
 from datasets import load_dataset
 from statistics import mean
-from trl import PPOTrainer, AutoModelForCausalLMWithValueHead
+from trl import PPOTrainer, set_seed, AutoModelForCausalLMWithValueHead
 
 ppo_dir = "./llama_ppo_step5000step_2400"
 # ppo_dir = "./checkpoints/checkpoint-1000"
@@ -52,6 +52,7 @@ generation_kwargs = {
 }
 ppo_trainer = PPOTrainer(model)
 random.seed(1111)
+set_seed(1111)
 test_dataset = load_dataset("Anthropic/hh-rlhf")["test"]["chosen"]
 selected_items = random.sample(test_dataset, 1000)
 batch_size = 5
