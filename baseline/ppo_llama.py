@@ -182,7 +182,6 @@ rw_kwargs = {
     "truncation": True
 }
 
-tokenizer = LlamaTokenizer.from_pretrained(model_dir)
 if getattr(tokenizer, "pad_token", None) is None:
         tokenizer.pad_token = tokenizer.eos_token
 
