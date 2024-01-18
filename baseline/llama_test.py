@@ -50,8 +50,8 @@ def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     print(prompts)
     input_ids = tokenizer(prompts, return_tensors='pt', padding=True).input_ids.to(device)
-    outputs = model.generate(input_ids).to(device)
-    generated_texts = tokenizer.batch_decode(outputs,  attention_mask=attention_mask, pad_token_id=pad_token_id skip_special_tokens=True)
+    outputs = model.generate(input_ids,  attention_mask=attention_mask, pad_token_id=pad_token_id).to(device)
+    generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
