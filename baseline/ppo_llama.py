@@ -197,7 +197,7 @@ optimizer = Adafactor(
 ppo_trainer = PPOTrainer(
     config,
     model,
-    ref_model = reference_model
+    ref_model = reference_model,
     tokenizer=tokenizer,
     dataset=dataset,
     data_collator=collator,
@@ -228,7 +228,7 @@ output_min_length = 50
 output_max_length = 100
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
-output_dir= "./finetuned_llama_ppo"
+output_dir= "./fllama_ppo"
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
 
