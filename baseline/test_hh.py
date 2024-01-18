@@ -44,7 +44,8 @@ num_batches = len(selected_items) // batch_size
 print(num_batches)
 
 def process_batch(batch):
-    prompts = [split_first_qa(text) for text in batch]
+    prompts = [text.replace("Human:", "###Human:").replace("Assistant:", "###Assistant:")
+ for text in batch]
     pipe_outputs = rm_pipe(prompts, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
     print("batch_avg: {}".format(mean(rewards)))
