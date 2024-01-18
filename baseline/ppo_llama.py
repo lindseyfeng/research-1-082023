@@ -10,7 +10,8 @@ from peft import PeftModel
 from transformers import (
     Adafactor,
     HfArgumentParser,
-    pipeline
+    pipeline,
+    BitsAndBytesConfig
 )
 from statistics import mean 
 import re
