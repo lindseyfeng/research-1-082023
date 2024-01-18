@@ -4,9 +4,9 @@ import torch
 from datasets import load_dataset
 from statistics import mean
 
-# ppo_dir = "./llama_ppo_step5000step_2400"
-ppo_dir = "./checkpoints/checkpoint-1000"
-ppo_dir = "./finetuned_llama_ppostep_1800"
+ppo_dir = "./llama_ppo_step5000step_2400"
+# ppo_dir = "./checkpoints/checkpoint-1000"
+# ppo_dir = "./finetuned_llama_ppostep_1800"
 # ppo_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -51,7 +51,7 @@ def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     print(prompts)
     input_ids = ppo_tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
-    outputs = ppo_model.generate(input_ids, max_new_tokens=30).to(device)
+    outputs = ppo_model.generate(input_ids, max_new_tokens=30, pad_token_id = tokenizer.pad_token_id, temperature = 0.6, top_p = 0.9,).to(device)
     generated_texts = ppo_tokenizer.batch_decode(outputs, skip_special_tokens=True)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
