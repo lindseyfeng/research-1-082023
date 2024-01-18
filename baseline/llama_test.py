@@ -19,7 +19,8 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # sft_tokenizer.padding_side = 'left'
 model = LlamaForCausalLM.from_pretrained(base_dir).to(device)
 tokenizer = LlamaTokenizer.from_pretrained(base_dir)
-tokenizer.pad_token = tokenizer.eos_token
+attention_mask = inputs.attention_mask
+pad_token_id = tokenizer.eos_token_id
 
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -50,7 +51,7 @@ def process_batch(batch):
     print(prompts)
     input_ids = tokenizer(prompts, return_tensors='pt', padding=True).input_ids.to(device)
     outputs = model.generate(input_ids).to(device)
-    generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+    generated_texts = tokenizer.batch_decode(outputs,  attention_mask=attention_mask, pad_token_id=pad_token_id skip_special_tokens=True)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
