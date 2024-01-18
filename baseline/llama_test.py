@@ -3,7 +3,7 @@ import random
 import torch
 from datasets import load_dataset
 from statistics import mean
-from trl import PPOTrainer. AutoModelForCausalLMWithValueHead
+from trl import PPOTrainer, AutoModelForCausalLMWithValueHead
 
 ppo_dir = "./llama_ppo_step5000step_2400"
 # ppo_dir = "./checkpoints/checkpoint-1000"
