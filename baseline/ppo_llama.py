@@ -96,7 +96,7 @@ def build_dataset(
         for question in examples["chosen"]:
             # dialogues = text.split("Assistant:")
             # question = [part.split("Human:")[1].strip() for part in dialogues if "Human:" in part][0]
-            start_index = question.find("Human")+6
+            start_index = question.find("Human")
             end_index = question.find("Assistant")
             question = question[start_index:end_index].strip()
             query = question
