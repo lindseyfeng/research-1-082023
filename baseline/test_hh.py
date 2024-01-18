@@ -24,7 +24,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 rm_pipe = pipeline(
       "sentiment-analysis",
-      model="weqweasdas/hh_rlhf_rm_open_llama_3b",
+      model="weqweasdas/hh_rlhf_rm",
       device=device,
       tokenizer=rm_tokenizer,
       model_kwargs={"torch_dtype": torch.bfloat16}
