@@ -19,10 +19,10 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # sft_tokenizer = LlamaTokenizer.from_pretrained(sft_model_dir)
 # sft_tokenizer.pad_token_id=sft_tokenizer.eos_token_id
 # sft_tokenizer.padding_side = 'left'
-ppo_model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
-ppo_tokenizer = LlamaTokenizer.from_pretrained(ppo_dir)
-ppo_tokenizer.pad_token_id=ppo_tokenizer.eos_token_id
-ppo_tokenizer.padding_side = 'left'
+model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
+tokenizer = LlamaTokenizer.from_pretrained(ppo_dir)
+tokenizer.pad_token_id=ppo_tokenizer.eos_token_id
+# tokenizer.padding_side = 'left'
 
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm")
 device = "cuda" if torch.cuda.is_available() else "cpu"
