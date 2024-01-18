@@ -51,8 +51,8 @@ def process_batch(batch):
     prompts = [text.split("Assistant:")[0].split("Human:")[1].strip() for text in batch]
     print(prompts)
     input_ids = ppo_tokenizer(prompts, padding=True, return_tensors='pt').input_ids.to(device)
-    outputs = ppo_model.generate(input_ids, min_length = 32, max_length=100, pad_token_id=ppo_tokenizer.eos_token_id).to(device)
-    generated_texts = ppo_tokenizer.batch_decode(outputs, skip_special_tokens=True)
+    outputs = ppo_model.generate(input_ids, max_new_tokens=20, pad_token_id=ppo_tokenizer.eos_token_id).to(device)
+    generated_texts = ppo_tokenizer.batch_decode(outputs)
     formatted_responses = ["###human: " + prompt + " ###assistant: " + generated_text[len(prompt):] for prompt, generated_text in zip(prompts, generated_texts)]
     pipe_outputs = rm_pipe(formatted_responses, **pipe_kwargs)
     rewards = [output[0]["score"] for output in pipe_outputs]
