@@ -218,14 +218,15 @@ if ppo_trainer.accelerator.num_processes == 1:
 generation_kwargs = {
     "min_length": -1,
     "top_k": 0.0,
-    "top_p": 1.0,
+    "top_p": 0.9,
+    "temperature": 1.2,
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
-    "max_new_tokens": 100,
+    "max_new_tokens": 200,
 }
-output_min_length = 50
-output_max_length = 100
+output_min_length = 100
+output_max_length = 200
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
 output_dir= "./fllama_ppo"
