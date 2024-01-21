@@ -218,8 +218,8 @@ if ppo_trainer.accelerator.num_processes == 1:
 generation_kwargs = {
     "min_length": -1,
     "top_k": 0.0,
-    "top_p": 1.0,
-    "temperature": 1.4,
+    "top_p": 0.9,
+    "temperature": 1.5,
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
