@@ -98,7 +98,7 @@ def build_dataset(
             # question = [part.split("Human:")[1].strip() for part in dialogues if "Human:" in part][0]
             start_index = question.find("Human")
             end_index = question.find("Assistant")
-            question = question[start_index:end_index].strip()
+            question = question[start_index+6:end_index].strip()
             query = question
             tokenized_question = tokenizer(query, truncation=True)
             new_examples["query"].append(query)
@@ -136,7 +136,7 @@ def collator(data):
 
 config = PPOConfig(
     steps = 1024,
-    learning_rate=5e-6,
+    learning_rate=5e-7,
     init_kl_coef = 0.05,
     log_with="wandb",
     ppo_epochs= 4,
@@ -218,15 +218,15 @@ if ppo_trainer.accelerator.num_processes == 1:
 generation_kwargs = {
     "min_length": -1,
     "top_k": 0.0,
-    "top_p": 1.0,
-    "temperature": 1.3,
+    "top_p": 0.9,
+    "temperature": 1.4,
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
-    "max_new_tokens": 200,
+    "max_new_tokens": 300,
 }
-output_min_length = 100
-output_max_length = 200
+output_min_length = 150
+output_max_length = 300
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
 output_dir= "./fllama_ppo"
@@ -241,10 +241,10 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     )
     batch["response"] = tokenizer.batch_decode(response_tensors, skip_special_tokens=True)
     # Compute sentiment score
-    response = [remove_tags(r) for r in batch["response"]]
+    # response = [remove_tags(r) for r in batch["response"]]
     texts = ["###Human: " + q +" ###Assistant: "+ r for q, r in zip(batch["query"], batch["response"])]
-    print(texts)
-    response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
+    # print(texts)
+    # response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
     tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
