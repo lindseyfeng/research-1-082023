@@ -28,13 +28,13 @@ DEFAULT_UNK_TOKEN = "</s>"
 tqdm.pandas()
 
 model_dir = "./checkpoints/checkpoint-1000"
-rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_13b")
+rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 seed = 42
 device = "cuda" if torch.cuda.is_available() else "cpu"
   
 rm_pipe = pipeline(
       "sentiment-analysis",
-      model="weqweasdas/hh_rlhf_rm_open_llama_13b",
+      model="weqweasdas/hh_rlhf_rm_open_llama_3b",
       device=device,
       tokenizer=rm_tokenizer,
       model_kwargs={"torch_dtype": torch.bfloat16}
