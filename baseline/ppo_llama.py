@@ -136,7 +136,7 @@ def collator(data):
 
 config = PPOConfig(
     steps = 1024,
-    learning_rate=5e-7,
+    learning_rate=1e-7,
     init_kl_coef = 0.05,
     log_with="wandb",
     ppo_epochs= 4,
@@ -218,7 +218,7 @@ if ppo_trainer.accelerator.num_processes == 1:
 generation_kwargs = {
     "min_length": -1,
     "top_k": 0.0,
-    "top_p": 0.9,
+    "top_p": 1.0,
     "temperature": 1.4,
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
