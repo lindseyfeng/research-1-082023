@@ -218,7 +218,7 @@ generation_kwargs = {
     "min_length": -1,
     "top_k": 0.0,
     "top_p": 0.9,
-    "temperature": 2,
+    "temperature": 2.0,
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
