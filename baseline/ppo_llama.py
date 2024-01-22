@@ -16,10 +16,6 @@ import re
 from transformers import LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
 from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed, PreTrainedModelWrapper, create_reference_model
 from trl.core import LengthSampler
-import wandb
-
-wandb.login()
-
 
 # torch.backends.cuda.matmul.allow_tf32 = True
 # torch.backends.cudnn.allow_tf32 = True
