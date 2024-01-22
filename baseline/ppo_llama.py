@@ -141,7 +141,7 @@ config = PPOConfig(
     steps = 2048,
     learning_rate=5e-6,
     init_kl_coef = 0.1,
-    log_with="tensorboard",
+    log_with="wandb",
     ppo_epochs= 4,
     batch_size = 16,
     gradient_accumulation_steps = 4, 
@@ -200,8 +200,8 @@ optimizer = Adafactor(
 ppo_trainer = PPOTrainer(
     config,
     model,
-    # ref_model = reference_model,
-    tokenizer=tokenizer,
+    ref_model = reference_model,
+    tokenizer=tokenizer,[]
     dataset=dataset,
     data_collator=collator,
     optimizer=optimizer,
@@ -222,7 +222,7 @@ generation_kwargs = {
     "min_length": -1,
     "top_k": 0.0,
     "top_p": 0.9,
-    "temperature": 1.7,
+    "temperature": 2.0,
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
