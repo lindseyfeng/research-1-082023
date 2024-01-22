@@ -53,7 +53,6 @@ pipe_kwargs = {
 set_seed(seed)
 
 def remove_tags(original_string):
-    print(original_string)
     modified_string = original_string.replace("###", "")
 
     # Then find the index of "Human:" in the modified string
@@ -143,7 +142,7 @@ config = PPOConfig(
     ppo_epochs= 4,
     batch_size = 16,
     gradient_accumulation_steps = 4, 
-    kl_penalty = 'abs'
+    kl_penalty = 'mse'
     )
   
 
