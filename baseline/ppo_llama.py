@@ -142,8 +142,8 @@ def collator(data):
 config = PPOConfig(
     steps = 2048,
     learning_rate= 1e-4,
-    init_kl_coef = 0.01,
-    log_with="wandb",
+    init_kl_coef = 0.1,
+    # log_with="tensorboard",
     ppo_epochs= 4,
     batch_size = 16,
     gradient_accumulation_steps = 4, 
