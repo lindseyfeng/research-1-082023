@@ -16,6 +16,9 @@ import re
 from transformers import LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
 from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed, PreTrainedModelWrapper, create_reference_model
 from trl.core import LengthSampler
+import wandb
+wandb.init(settings=wandb.Settings(_service_wait=60))
+
 
 # torch.backends.cuda.matmul.allow_tf32 = True
 # torch.backends.cudnn.allow_tf32 = True
@@ -29,7 +32,7 @@ tqdm.pandas()
 
 model_dir = "./checkpoints/checkpoint-1000"
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_13b")
-seed = 42
+seed = 420
 device = "cuda" if torch.cuda.is_available() else "cpu"
   
 rm_pipe = pipeline(
