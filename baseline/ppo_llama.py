@@ -183,10 +183,10 @@ model = AutoModelForCausalLMWithValueHead.from_pretrained(
     peft_config=lora_config,
 )
 print(model.training)
-base_dir = "../../llama/llama-2-7b"
-ref_model = AutoModelForCausalLMWithValueHead.from_pretrained(base_dir)
-wrapped_model = PreTrainedModelWrapper(ref_model)
-reference_model = create_reference_model(wrapped_model)
+# base_dir = "../../llama/llama-2-7b"
+# ref_model = AutoModelForCausalLMWithValueHead.from_pretrained(base_dir)
+# wrapped_model = PreTrainedModelWrapper(ref_model)
+# reference_model = create_reference_model(wrapped_model)
 
 
 optimizer = Adafactor(
@@ -226,7 +226,7 @@ generation_kwargs = {
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
-    # "max_new_tokens": 50,
+    "max_new_tokens": 50,
 }
 output_min_length = 30
 output_max_length = 70
