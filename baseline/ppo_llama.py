@@ -201,7 +201,7 @@ ppo_trainer = PPOTrainer(
     config,
     model,
     ref_model = reference_model,
-    tokenizer=tokenizer,[]
+    tokenizer=tokenizer,
     dataset=dataset,
     data_collator=collator,
     optimizer=optimizer,
