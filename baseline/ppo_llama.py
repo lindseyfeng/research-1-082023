@@ -53,11 +53,8 @@ pipe_kwargs = {
 set_seed(seed)
 
 def remove_tags(original_string):
-
+    print(original_string)
     modified_string = original_string.replace("###", "")
-    modified_string = modified_string.replace("###Human: ", "")
-    modified_string = modified_string.replace("###Assistant: ", "")
-    modified_string = original_string.replace("### ", "")
 
     # Then find the index of "Human:" in the modified string
     index = modified_string.find("Human:")
@@ -244,8 +241,10 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
         **generation_kwargs,
     )
     batch["response"] = tokenizer.batch_decode(response_tensors, skip_special_tokens=True)
+    print(batch["response"])
     # Compute sentiment score
     response = [remove_tags(r) for r in batch["response"]]
+    print(response)
     texts = ["###Human: " + q +" ###Assistant: "+ r for q, r in zip(batch["query"], batch["response"])]
     print(texts)
     response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
