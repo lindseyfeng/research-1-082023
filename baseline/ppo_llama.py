@@ -16,10 +16,6 @@ import re
 from transformers import LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
 from trl import AutoModelForCausalLMWithValueHead, PPOConfig, PPOTrainer, set_seed, PreTrainedModelWrapper, create_reference_model
 from trl.core import LengthSampler
-import wandb
-
-wandb.init(settings=wandb.Settings(_service_wait=60))
-wandb.login()
 
 
 # torch.backends.cuda.matmul.allow_tf32 = True
@@ -143,7 +139,7 @@ config = PPOConfig(
     steps = 2048,
     learning_rate= 1e-4,
     init_kl_coef = 0.1,
-    # log_with="tensorboard",
+    log_with="wandb",
     ppo_epochs= 4,
     batch_size = 16,
     gradient_accumulation_steps = 4, 
