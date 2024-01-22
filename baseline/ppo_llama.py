@@ -52,19 +52,19 @@ pipe_kwargs = {
 
 set_seed(seed)
 
-def remove_tags(text):
-    """
-    Removes the substring "###Assistant" and any substring starting with "###human" in the middle of the text.
-    :param text: str, the input text
-    :return: str, the text with specified substrings removed
-    """
-    # Remove "###Assistant"
-    text = text.replace("###Assistant: ", "")
+def remove_tags(original_string):
 
-    # Remove any substring starting with "###human"
-    text = re.sub(r'###Human.*$', '', text, flags=re.IGNORECASE)
+    modified_string = original_string.replace("###", "")
 
-    return text.strip()
+    # Then find the index of "Human:" in the modified string
+    index = modified_string.find("Human:")
+
+    # If "Human:" is found, cut the string
+    if index != -1:
+        return modified_string[:index].replace("Assistant:", "")
+    else:
+        # Return the modified string if "Human:" is not found
+        return modified_string.replace("Assistant:", "")
 
 # Below is an example function to build the dataset. In our case, we use the IMDB dataset
 # from the `datasets` library. One should customize this function to train the model on
@@ -137,8 +137,8 @@ def collator(data):
 
 config = PPOConfig(
     steps = 2048,
-    learning_rate= 1e-4,
-    init_kl_coef = 0.1,
+    learning_rate= 5e-5,
+    init_kl_coef = 0.2,
     log_with="wandb",
     ppo_epochs= 4,
     batch_size = 16,
@@ -244,7 +244,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     # Compute sentiment score
     response = [remove_tags(r) for r in batch["response"]]
     texts = ["###Human: " + q +" ###Assistant: "+ r for q, r in zip(batch["query"], batch["response"])]
-    # print(texts)
+    print(texts)
     response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
     tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
