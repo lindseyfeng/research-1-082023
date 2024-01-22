@@ -30,7 +30,7 @@ DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
 
-model_dir = "./checkpoints/checkpoint-1000"
+model_dir = "./LMFlow/output_models/finetuned_llama2"
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_13b")
 seed = 42
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -222,14 +222,14 @@ generation_kwargs = {
     "min_length": -1,
     "top_k": 0.0,
     "top_p": 1.0,
-    "temperature": 1.5,
+    "temperature": 1.3,
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
     "max_new_tokens": 30,
 }
 output_min_length = 30
-output_max_length = 60
+output_max_length = 50
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
 output_dir= "./fllama_ppo"
@@ -244,10 +244,10 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     )
     batch["response"] = tokenizer.batch_decode(response_tensors, skip_special_tokens=True)
     # Compute sentiment score
-    # response = [remove_tags(r) for r in batch["response"]]
+    response = [remove_tags(r) for r in batch["response"]]
     texts = ["###Human: " + q +" ###Assistant: "+ r for q, r in zip(batch["query"], batch["response"])]
     # print(texts)
-    # response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
+    response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
     tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
