@@ -222,14 +222,14 @@ generation_kwargs = {
     "min_length": -1,
     "top_k": 0.0,
     "top_p": 1.0,
-    "temperature": 1.7,
+    "temperature": 1.5,
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
-    "max_new_tokens": 50,
+    "max_new_tokens": 30,
 }
-output_min_length = 50
-output_max_length = 200
+output_min_length = 30
+output_max_length = 60
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
 output_dir= "./fllama_ppo"
