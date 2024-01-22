@@ -179,7 +179,8 @@ model = AutoModelForCausalLMWithValueHead.from_pretrained(
     peft_config=lora_config,
 )
 print(model.training)
-ref_model = AutoModelForCausalLMWithValueHead.from_pretrained(model_dir)
+base_dir = "../../llama/llama-2-7b"
+ref_model = AutoModelForCausalLMWithValueHead.from_pretrained(base_dir)
 wrapped_model = PreTrainedModelWrapper(ref_model)
 reference_model = create_reference_model(wrapped_model)
 
