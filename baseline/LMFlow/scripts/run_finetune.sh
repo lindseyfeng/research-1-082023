@@ -46,8 +46,8 @@ deepspeed ${deepspeed_args} \
     --model_name_or_path ${model_name_or_path} \
     --dataset_path ${dataset_path} \
     --output_dir ${output_dir} --overwrite_output_dir \
-    --num_train_epochs 0.01 \
-    --learning_rate 2e-5 \
+    --num_train_epochs 0.1 \
+    --learning_rate 1e-5 \
     --block_size 512 \
     --per_device_train_batch_size 1 \
     --deepspeed configs/ds_config_zero3.json \

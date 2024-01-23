@@ -28,6 +28,8 @@ DEFAULT_UNK_TOKEN = "</s>"
 tqdm.pandas()
 
 model_dir = "./LMFlow/output_models/finetuned_llama2"
+base_dir = "../../llama/llama-2-7b"
+peft_dir = "./checkpoints/checkpoint-1000"
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 seed = 42
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -174,10 +176,13 @@ lora_config = LoraConfig(
 
 
 model = AutoModelForCausalLMWithValueHead.from_pretrained(
-    model_dir,
+    peft_dir,
     device_map={"": current_device},
     peft_config=lora_config,
 )
+
+
+
 print(model.training)
 # base_dir = "../../llama/llama-2-7b"
 # ref_model = AutoModelForCausalLMWithValueHead.from_pretrained(base_dir)
