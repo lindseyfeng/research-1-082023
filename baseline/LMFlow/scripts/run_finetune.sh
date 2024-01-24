@@ -4,9 +4,9 @@
 #     COMMIT: d5fecf30ba8011067b10cf51fede53a5ab6574e4
 
 # Parses arguments
-model_name_or_path=meta-llama/Llama-2-7b-hf
+model_name_or_path=lmsys/vicuna-7b-v1.5
 dataset_path=data/hh_rlhf/sft
-output_dir=output_models/finetuned_llama2
+output_dir=output_models/vicuna_7b_hh
 deepspeed_args="--master_port=11000"
 
 while [[ $# -ge 1 ]]; do
@@ -49,7 +49,7 @@ deepspeed ${deepspeed_args} \
     --num_train_epochs 0.1 \
     --learning_rate 1e-5 \
     --block_size 512 \
-    --per_device_train_batch_size 1 \
+    --per_device_train_batch_size 4 \
     --deepspeed configs/ds_config_zero3.json \
     --fp16 \
     --run_name finetune \
