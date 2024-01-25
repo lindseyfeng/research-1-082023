@@ -33,6 +33,10 @@ peft_dir = "./checkpoints/checkpoint-1000"
 rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3b")
 seed = 42
 device = "cuda" if torch.cuda.is_available() else "cpu"
+
+tokenizer = AutoTokenizer.from_pretrained(vicuna_dir)
+if getattr(tokenizer, "pad_token", None) is None:
+        tokenizer.pad_token = tokenizer.eos_token
   
 rm_pipe = pipeline(
       "sentiment-analysis",
@@ -155,10 +159,6 @@ rw_kwargs = {
     "batch_size": 16,
     "truncation": True
 }
-
-tokenizer = LlamaTokenizer.from_pretrained(peft_dir)
-if getattr(tokenizer, "pad_token", None) is None:
-        tokenizer.pad_token = tokenizer.eos_token
 
 # We retrieve the dataloader by calling the `build_dataset` function.
 dataset = build_dataset(tokenizer, "Anthropic/hh-rlhf")
