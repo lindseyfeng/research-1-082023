@@ -147,7 +147,6 @@ config = PPOConfig(
     ppo_epochs= 4,
     batch_size = 32,
     gradient_accumulation_steps = 4, 
-    kl_penalty = 'abs'
     )
   
 
