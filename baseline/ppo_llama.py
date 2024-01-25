@@ -247,7 +247,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     # # Compute sentiment score
     # response = [remove_tags(r) for r in batch["response"]]
     # print(response)
-    texts = ["###Human: " + q +" ###Assistant: "+ r for q, r in zip(batch["query"], response)]
+    texts = ["###Human: " + q +" ###Assistant: "+ r for q, r in zip(batch["query"], batch["response"])]
     # print(texts)
     # response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
