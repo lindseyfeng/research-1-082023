@@ -26,7 +26,7 @@ DEFAULT_BOS_TOKEN = "</s>"
 DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
-vicuna_dir = "./LMFlow/output_models/fvicuna_7b_hh"
+vicuna_dir = "./LMFlow/output_models/vicuna_7b_hh"
 model_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
 peft_dir = "./checkpoints/checkpoint-1000"
