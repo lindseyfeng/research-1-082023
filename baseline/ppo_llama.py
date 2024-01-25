@@ -26,7 +26,7 @@ DEFAULT_BOS_TOKEN = "</s>"
 DEFAULT_UNK_TOKEN = "</s>"
 
 tqdm.pandas()
-
+vicuna_dir = "lmsys/vicuna-7b-v1.5"
 model_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
 peft_dir = "./checkpoints/checkpoint-1000"
@@ -137,11 +137,11 @@ def collator(data):
 
 config = PPOConfig(
     steps = 2048,
-    learning_rate= 5e-6,
+    learning_rate= 1.41e-5,
     init_kl_coef = 0.1,
     log_with="wandb",
     ppo_epochs= 4,
-    batch_size = 16,
+    batch_size = 32,
     gradient_accumulation_steps = 4, 
     kl_penalty = 'abs'
     )
@@ -176,7 +176,7 @@ lora_config = LoraConfig(
 
 
 model = AutoModelForCausalLMWithValueHead.from_pretrained(
-    peft_dir,
+    vicuna_dir,
     device_map={"": current_device},
     peft_config=lora_config,
 )
@@ -223,7 +223,6 @@ generation_kwargs = {
     "min_length": -1,
     "top_k": 0.0,
     "top_p": 1.0,
-    "temperature": 1.1,
     "do_sample": True,
     "pad_token_id": tokenizer.pad_token_id,
     "eos_token_id": -1,
@@ -233,7 +232,7 @@ output_min_length = 30
 output_max_length = 70
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
-output_dir= "./fllama_ppo"
+output_dir= "./fvicuna_ppo"
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
 
