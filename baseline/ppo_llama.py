@@ -34,7 +34,7 @@ rm_tokenizer = AutoTokenizer.from_pretrained("weqweasdas/hh_rlhf_rm_open_llama_3
 seed = 42
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-tokenizer = AutoTokenizer.from_pretrained(vicuna_dir)
+tokenizer = AutoTokenizer.from_pretrained("lmsys/vicuna-7b-v1.5")
 if getattr(tokenizer, "pad_token", None) is None:
         tokenizer.pad_token = tokenizer.eos_token
   
@@ -175,7 +175,7 @@ lora_config = LoraConfig(
 
 
 model = AutoModelForCausalLMWithValueHead.from_pretrained(
-    vicuna_dir,
+    "lmsys/vicuna-7b-v1.5",
     device_map={"": current_device},
     peft_config=lora_config,
 )
@@ -231,7 +231,7 @@ output_min_length = 30
 output_max_length = 70
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
-output_dir= "./fvicuna_ppo"
+output_dir= "./vicuna_ppo"
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
 
