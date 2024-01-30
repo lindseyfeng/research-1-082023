@@ -6,7 +6,8 @@ from statistics import mean
 
 # ppo_dir = "./llama_ppo_step5000step_2400"
 # ppo_dir = "./checkpoints/checkpoint-1000"
-ppo_dir = "./finetuned_llama_ppostep_2200"
+# ppo_dir = "./finetuned_llama_ppostep_2200"
+ppo_dir = "./vicuna_ppostep_2000"
 sft_model_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -19,7 +20,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # sft_tokenizer.pad_token_id=sft_tokenizer.eos_token_id
 # sft_tokenizer.padding_side = 'left'
 model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
-tokenizer = LlamaTokenizer.from_pretrained(ppo_dir)
+tokenizer = AutoTokenizer.from_pretrained(ppo_dir)
 tokenizer.pad_token = "[PAD]"
 tokenizer.padding_side = "left"
 
