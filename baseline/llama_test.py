@@ -1,4 +1,4 @@
-from transformers import pipeline, LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
+from transformers import pipeline, LlamaForCausalLM, LlamaTokenizer, AutoTokenizer， AutoModelForCausalLM
 import random
 import torch
 from datasets import load_dataset
@@ -19,7 +19,8 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # sft_tokenizer = LlamaTokenizer.from_pretrained(sft_model_dir)
 # sft_tokenizer.pad_token_id=sft_tokenizer.eos_token_id
 # sft_tokenizer.padding_side = 'left'
-model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
+# model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
+model = AutoModelForCausalLM.from_pretrained(ppo_dir).to(device)
 tokenizer = AutoTokenizer.from_pretrained(ppo_dir)
 tokenizer.pad_token = "[PAD]"
 tokenizer.padding_side = "left"
