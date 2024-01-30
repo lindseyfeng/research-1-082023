@@ -1,4 +1,4 @@
-from transformers import pipeline, LlamaForCausalLM, LlamaTokenizer, AutoTokenizer， AutoModelForCausalLM
+from transformers import pipeline, LlamaForCausalLM, LlamaTokenizer, AutoTokenizer, AutoModelForCausalLM
 import random
 import torch
 from datasets import load_dataset
