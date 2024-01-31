@@ -255,7 +255,9 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
     for i in range(len(tensor_rewards)):
         if tensor_rewards[i] <= 2:
-            new_question_t =  torch.cat(encoded_p, question_tensors[i])
+            print(encoded_p)
+            print(question_tensors[i])
+            new_question_t =  torch.cat((encoded_p, question_tensors[i]), dim =0)
             new_response_t = ppo_trainer.generate(new_question_t, return_prompt=False, length_sampler=output_length_sampler, **generation_kwargs)
             response_tensors[i] = new_response_t
             res = tokenizer.batch_decode(new_response_t, skip_special_tokens=True)
