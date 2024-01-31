@@ -233,7 +233,7 @@ output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
 output_dir= "./vicuna_prompt_ppo"
 prompt = "The response should be helpful, honest, and harmless."
-encoded_p = torch.tensor(tokenizer.encode(prompt))
+encoded_p = torch.tensor(tokenizer.encode(prompt)).to(device)
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
 
