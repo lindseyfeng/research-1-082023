@@ -145,7 +145,7 @@ config = PPOConfig(
     init_kl_coef = 0.1,
     log_with="wandb",
     ppo_epochs= 4,
-    batch_size = 32,
+    batch_size = 1, #32
     gradient_accumulation_steps = 4, 
     )
   
@@ -228,7 +228,7 @@ generation_kwargs = {
     "max_new_tokens": 50,
 }
 output_min_length = 30
-output_max_length = 70
+output_max_length = 100
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
 output_dir= "./vicuna_prompt_ppo"
@@ -257,7 +257,10 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
         if tensor_rewards[i] <= 2:
             new_question_t =  torch.cat((encoded_p, question_tensors[i]), dim =0)
             new_response_t = ppo_trainer.generate(new_question_t, return_prompt=False, length_sampler=output_length_sampler, **generation_kwargs)
+            print(response_tensors)
+            print(new_response_t)
             response_tensors[i] = new_response_t
+            print(response_tensors)
             res = tokenizer.decode(new_response_t.tolist()[0], skip_special_tokens=True)
             print(res)
             text = "###Human: " + batch["query"][i] +" ###Assistant: "+ res
