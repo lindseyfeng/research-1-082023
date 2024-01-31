@@ -261,7 +261,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
             new_response_t = ppo_trainer.generate(new_question_t, return_prompt=False, length_sampler=output_length_sampler, **generation_kwargs)
             print(new_response_t)
             response_tensors[i] = new_response_t
-            res = tokenizer.batch_decode(new_response_t, skip_special_tokens=True)
+            res = tokenizer.decode(new_response_t, skip_special_tokens=True)
             print(res)
             text = "###Human: " + batch["query"][i] +" ###Assistant: "+ res[0]
             print(text)
