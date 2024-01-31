@@ -259,7 +259,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
             new_response_t = ppo_trainer.generate(new_question_t, return_prompt=False, length_sampler=output_length_sampler, **generation_kwargs).tolist()[0]
             print(response_tensors)
             print(new_response_t)
-            response_tensors[i] = [torch.tensor(new_response_t)].to(device)
+            response_tensors[i] = torch.tensor(new_response_t).to(device)
             print(response_tensors)
             res = tokenizer.decode(new_response_t.tolist()[0], skip_special_tokens=True)
             print(res)
