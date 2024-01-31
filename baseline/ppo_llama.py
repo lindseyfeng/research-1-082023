@@ -273,6 +273,9 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
 
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
     # Run PPO step
+    print(question_tensors)
+    print(response_tensors)
+    print(tensor_rewards)
     stats = ppo_trainer.step(question_tensors, response_tensors, tensor_rewards)
     ppo_trainer.log_stats(stats, batch, tensor_rewards)
 
