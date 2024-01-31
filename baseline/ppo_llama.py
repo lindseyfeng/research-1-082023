@@ -261,7 +261,7 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
             print(new_response_t)
             response_tensors[i] = torch.tensor(new_response_t).to(device)
             print(response_tensors)
-            res = tokenizer.decode(new_response_t.tolist()[0], skip_special_tokens=True)
+            res = tokenizer.decode(new_response_t, skip_special_tokens=True)
             print(res)
             text = "###Human: " + batch["query"][i] +" ###Assistant: "+ res
             print("text: ", text)
