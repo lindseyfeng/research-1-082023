@@ -231,7 +231,9 @@ output_min_length = 30
 output_max_length = 70
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 save_freq = 200
-output_dir= "./vicuna_ppo"
+output_dir= "./vicuna_prompt_ppo"
+prompt = "The response should be helpful, honest, and harmless."
+encoded_p = torch.tensor(tokenizer.encode(prompt))
 for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     question_tensors = batch["input_ids"]
 
@@ -251,6 +253,17 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
     # response_tensors = [torch.tensor(tokenizer.encode(r)) for r in response]
     pipe_outputs = rm_pipe(texts, **pipe_kwargs)
     tensor_rewards = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs]
+    for i in range(len(tensor_rewards)):
+        if tensor_rewards[i] <= 2:
+            new_question_t =  torch.cat(encoded_p, question_tensors[i])
+            new_response_t = ppo_trainer.generate(new_question_t, return_prompt=False, length_sampler=output_length_sampler, **generation_kwargs)
+            response_tensors[i] = new_response_t
+            res = tokenizer.batch_decode(new_response_t, skip_special_tokens=True)
+            text = "###Human: " + batch["query"][i] +" ###Assistant: "+ res
+            pipe_outputs = rm_pipe(text, **pipe_kwargs)
+            tensor_r = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs][0]
+            tensor_rewards[i] = tensor_r
+
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
     # Run PPO step
     stats = ppo_trainer.step(question_tensors, response_tensors, tensor_rewards)
