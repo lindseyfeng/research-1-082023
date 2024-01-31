@@ -265,9 +265,11 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
             print(res)
             text = "###Human: " + batch["query"][i] +" ###Assistant: "+ res
             print("text: ", text)
+            print(tensor_rewards)
             pipe_outputs = rm_pipe(text, **pipe_kwargs)
             tensor_r = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs][0]
             tensor_rewards[i] = tensor_r
+            print(tensor_rewards)
 
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
     # Run PPO step
