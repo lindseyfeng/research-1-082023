@@ -261,7 +261,8 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
             new_response_t = ppo_trainer.generate(new_question_t, return_prompt=False, length_sampler=output_length_sampler, **generation_kwargs)
             response_tensors[i] = new_response_t
             res = tokenizer.batch_decode(new_response_t, skip_special_tokens=True)
-            text = "###Human: " + batch["query"][i] +" ###Assistant: "+ res
+            print(res)
+            text = "###Human: " + batch["query"][i] +" ###Assistant: "+ res[0]
             pipe_outputs = rm_pipe(text, **pipe_kwargs)
             tensor_r = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs][0]
             tensor_rewards[i] = tensor_r
