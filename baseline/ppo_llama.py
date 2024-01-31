@@ -257,25 +257,25 @@ for epoch, batch in tqdm(enumerate(ppo_trainer.dataloader)):
         if tensor_rewards[i] <= 2:
             new_question_t =  torch.cat((encoded_p, question_tensors[i]), dim =0)
             new_response_t = ppo_trainer.generate(new_question_t, return_prompt=False, length_sampler=output_length_sampler, **generation_kwargs).tolist()[0]
-            print(response_tensors)
+            # print(response_tensors)
             print(new_response_t)
             response_tensors[i] = torch.tensor(new_response_t).to(device)
-            print(response_tensors)
+            # print(response_tensors)
             res = tokenizer.decode(new_response_t, skip_special_tokens=True)
             print(res)
             text = "###Human: " + batch["query"][i] +" ###Assistant: "+ res
-            print("text: ", text)
-            print(tensor_rewards)
+            # print("text: ", text)
+            # print(tensor_rewards)
             pipe_outputs = rm_pipe(text, **pipe_kwargs)
             tensor_r = [torch.tensor(output[0]["score"], dtype=torch.float32) for output in pipe_outputs][0]
             tensor_rewards[i] = tensor_r
-            print(tensor_rewards)
+            # print(tensor_rewards)
 
     print(torch.mean(torch.stack(tensor_rewards), dim=0))
     # Run PPO step
-    print(question_tensors)
-    print(response_tensors)
-    print(tensor_rewards)
+    # print(question_tensors)
+    # print(response_tensors)
+    # print(tensor_rewards)
     stats = ppo_trainer.step(question_tensors, response_tensors, tensor_rewards)
     ppo_trainer.log_stats(stats, batch, tensor_rewards)
 
