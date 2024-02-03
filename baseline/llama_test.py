@@ -10,7 +10,7 @@ from statistics import mean
 # ppo_dir = "./fvicuna_ppostep_2000"
 # ppo_dir = "./LMFlow/output_models/vicuna_7b_hh"
 # ppo_dir = "lmsys/vicuna-7b-v1.5"
-ppo_dir = "./vicuna_prompt_ppostep_2000"
+ppo_dir = "./vicuna_prompt_ppostep_1500"
 sft_model_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
 device = "cuda" if torch.cuda.is_available() else "cpu"
