@@ -183,7 +183,7 @@ if __name__ == "__main__":
     # print(f"Percentile Label: {quantiles}")
 
     # 3. Load evaluation dataset
-    eval_dataset = get_hh("validation", sanity_check=script_args.sanity_check)
+    eval_dataset = get_hh("test", sanity_check=script_args.sanity_check)
 
     # 4. initialize training arguments:
     training_args = TrainingArguments(
