@@ -24,7 +24,7 @@ class ScriptArguments:
 
     # training parameters
     model_name_or_path: Optional[str] = field(
-        default="lmsys/vicuna-7b-v1.5,
+        default="lmsys/vicuna-7b-v1.5",
         metadata={"help": "the location of the SFT model name or path"},
     )
     learning_rate: Optional[float] = field(default=5e-4, metadata={"help": "optimizer learning rate"})
