@@ -10,7 +10,8 @@ from statistics import mean
 # ppo_dir = "./fvicuna_ppostep_2000"
 # ppo_dir = "./LMFlow/output_models/vicuna_7b_hh"
 # ppo_dir = "lmsys/vicuna-7b-v1.5"
-ppo_dir = "./vicuna_prompt_ppostep_1600"
+# ppo_dir = "./vicuna_prompt_ppostep_1600"
+ppo_dir = "./results"
 sft_model_dir = "./LMFlow/output_models/finetuned_llama2"
 base_dir = "../../llama/llama-2-7b"
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -24,6 +25,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # sft_tokenizer.padding_side = 'left'
 # model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
 model = AutoModelForCausalLM.from_pretrained(ppo_dir).to(device)
+model.load_adapter("./results/final_checkpoint")
 tokenizer = AutoTokenizer.from_pretrained(ppo_dir)
 tokenizer.pad_token = "[PAD]"
 tokenizer.padding_side = "left"
