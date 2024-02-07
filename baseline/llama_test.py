@@ -27,8 +27,8 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # sft_tokenizer.padding_side = 'left'
 # model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
 m = AutoModelForCausalLM.from_pretrained(ppo_dir).to(device)
-model = PeftModel.from_pretrained(m, adapters_name)
-model.load_adapter(adapter_dir)
+model = PeftModel.from_pretrained(m, adapter_dir)
+model = model.merge_and_unload()
 tokenizer = AutoTokenizer.from_pretrained(ppo_dir)
 tokenizer.pad_token = "[PAD]"
 tokenizer.padding_side = "left"
