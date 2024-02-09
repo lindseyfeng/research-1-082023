@@ -66,7 +66,7 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
     #     saved_idx = list(np.load(args.saved_idx).astype(int))
     # except:
     #     saved_idx = []    
-    # annotated = []
+    annotated = []
     # for i in range(len(outputs1)):
 
         # if i in saved_idx:
