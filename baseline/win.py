@@ -70,8 +70,8 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
     for i in random_numbers:
         results = []
         
-        text1 = outputs1[i]
-        text2 = outputs2[i]
+        text1 = output1[i]
+        text2 = output2[i]
         instruction1, ans1 = extract_question_and_answer_with_re(text1)
         instruction2, ans2 = extract_question_and_answer_with_re(text2)
         if instruction1 != insturction2:
