@@ -87,7 +87,8 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         text = text.replace("||output_1||", ans1)
         text = text.replace("||output_2||", ans2)
 
-        completion = call_gpt(text, args)
+        # completion = call_gpt(text, args)
+        print(text, text1, text2)
         
 
         print(text, completion)
