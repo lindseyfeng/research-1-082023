@@ -12,6 +12,27 @@ from tqdm import tqdm
 import jsonlines
 import numpy as np
 import openai
+import random
+import re
+
+random.seed(42)
+
+def extract_question_and_answer_with_re(text):
+    # This regex pattern looks for the content after "###human: " and before " ###assistant:",
+    # capturing both the question and the answer as separate groups without assumptions on the "###assistant:" content.
+    pattern = r"###human: (.*?) ###assistant:(.*)"
+    
+    # Search for the pattern in the given text
+    match = re.search(pattern, text, re.DOTALL)
+    
+    # If a match is found, return the captured groups (the question and the answer),
+    # otherwise return None or an appropriate message.
+    if match:
+        question = match.group(1).strip()
+        answer = match.group(2).strip()
+        return question, answer
+    else:
+        return "No question and answer found.", ""
 
 def call_gpt(data, args):
     openai.api_key = args.api_key
@@ -28,49 +49,45 @@ def call_gpt(data, args):
 
 
 def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
-    outputs1 = []
-    outputs2 = []
-    data = []
-    
-
     ties, wins, loses = 0,0,0
-    with jsonlines.open(args.input_file1) as reader:
-        for obj in reader:
-            outputs1.append(obj)
-    
-    with jsonlines.open(args.input_file2) as reader:
-        for obj in reader:
-            outputs2.append(obj)
-    
-    with jsonlines.open(args.data_path) as reader:
-        for obj in reader:
-            data.append(obj)
+    with open(args.input_file1, 'r') as file:
+        output1 = json.load(file)
+    with open(args.input_file2, 'r') as file:
+        output2 = json.load(file)
     
     # data = data[:730]
 
-    try:
-        saved_idx = list(np.load(args.saved_idx).astype(int))
-    except:
-        saved_idx = []    
-    annotated = []
-    for i in range(len(outputs1)):
+    # try:
+    #     saved_idx = list(np.load(args.saved_idx).astype(int))
+    # except:
+    #     saved_idx = []    
+    # annotated = []
+    # for i in range(len(outputs1)):
 
-        if i in saved_idx:
-            continue
+        # if i in saved_idx:
+        #     continue
 
+
+    random_numbers = [random.randint(0, 999) for _ in range(100)]
+    for i in random_numbers:
         results = []
-            
-        instruction = data[i]['instruction']
-        output1 = outputs1[i]['model_responses']
-        output2 = outputs2[i]['model_responses']
+        
+        text1 = outputs1[i]
+        text2 = outputs2[i]
+        instruction1, ans1 = extract_question_and_answer_with_re(text1)
+        instruction2, ans2 = extract_question_and_answer_with_re(text2)
+        if instruction1 != insturction2:
+            print(instruction1)
+            print(insturction2)
+            continue
 
         # Analyze with prompt 1 first
         with open("summarize_prompt.txt", "r") as f:
             text = f.read()
 
-        text = text.replace("||instruction||", instruction)
-        text = text.replace("||output_1||", output1)
-        text = text.replace("||output_2||", output2)
+        text = text.replace("||instruction||", instruction1)
+        text = text.replace("||output_1||", ans1)
+        text = text.replace("||output_2||", ans2)
 
         completion = call_gpt(text, args)
         
@@ -140,11 +157,10 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument("--api_key", type=str, default="")
-    parser.add_argument("--input_file1", default="./tldr_instruction_test.jsonl")
+    parser.add_argument("--input_file1", default="base_vicuna_ppo_response1000.json")
     parser.add_argument("--input_file2", default="./tldr_instruction_test.jsonl")
-    parser.add_argument("--output_file", default="./claude_eval")
+    parser.add_argument("--output_file", default="./gpt_eval")
     parser.add_argument("--saved_idx")
-    parser.add_argument("--data_path", default="./tldr_instruction_test.jsonl")
     parser.add_argument("--max_tokens_to_sample", type=int, default=128)
     parser.add_argument("--top_k", type=int, default=250)
     parser.add_argument("--top_p", type=float, default=1.0)
