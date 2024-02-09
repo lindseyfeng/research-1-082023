@@ -41,7 +41,7 @@ def call_gpt(data, args):
             "content": data
         }
     ],
-    model="gpt-4",
+    model="gpt-3.5-turbo",
 )
 #     chat_completion = client.chat.completions.create(
 #         prompt = data,
@@ -120,7 +120,7 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         completion = call_gpt(text, args)
 
         print(text, completion)
-
+        print(completion[-5:])
         if completion is None:
             result = -10
         elif "A" in completion[-5:]:
