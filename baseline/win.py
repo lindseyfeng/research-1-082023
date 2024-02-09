@@ -156,7 +156,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--api_key", type=str, default="")
     parser.add_argument("--input_file1", default="base_vicuna_ppo_response1000.json")
-    parser.add_argument("--input_file2", default="./tldr_instruction_test.jsonl")
+    parser.add_argument("--input_file2", default="dpo_vicuna_response1000.json")
     parser.add_argument("--output_file", default="./gpt_eval")
     parser.add_argument("--saved_idx")
     parser.add_argument("--max_tokens_to_sample", type=int, default=128)
