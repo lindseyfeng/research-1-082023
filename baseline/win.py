@@ -50,7 +50,7 @@ def call_gpt(data, args):
 #         max_tokens = 100
 # )
 
-    return content = chat_completion.choices[0].message.content
+    return chat_completion.choices[0].message.content
 
 
 def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
