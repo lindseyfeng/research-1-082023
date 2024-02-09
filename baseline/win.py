@@ -9,7 +9,7 @@ import datetime
 import time
 from tqdm import tqdm
 import numpy as np
-import openai
+from openai import OpenAI
 import random
 import re
 
@@ -33,17 +33,14 @@ def extract_question_and_answer_with_re(text):
         return "No question and answer found.", ""
 
 def call_gpt(data, args):
-    openai.api_key = args.api_key
-    response = openai.Completion.create(
-        model="gpt-4", # Specify the model
-        prompt=data, # Your prompt to the model
-        temperature=0, # Controls the randomness. Closer to 1 means more creative.
-        max_tokens=100, # Maximum length of the output
-        top_p=1, # Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.
-        frequency_penalty=0, # Decreases the likelihood of repeating the same line verbatim.
-        presence_penalty=0 # Decreases the likelihood of repeating the same topic.
-    )
-    return response
+    client = OpenAI(api_key=args.api_key)
+    chat_completion = client.chat.completions.create(
+        prompt = data,
+        temperature= 0,
+        model="gpt-4",
+        max_tokens = 100
+)
+    return chat_completion
 
 
 def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
