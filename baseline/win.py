@@ -41,7 +41,7 @@ def call_gpt(data, args):
             "content": data
         }
     ],
-    model="gpt-3.5-turbo",
+    model="gpt-4",
 )
 #     chat_completion = client.chat.completions.create(
 #         prompt = data,
@@ -50,7 +50,7 @@ def call_gpt(data, args):
 #         max_tokens = 100
 # )
 
-    return chat_completion
+    return content = chat_completion.choices[0].message.content
 
 
 def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
