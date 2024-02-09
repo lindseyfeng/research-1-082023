@@ -66,7 +66,7 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         #     continue
 
 
-    random_numbers = [random.randint(0, 999) for _ in range(100)]
+    random_numbers = [random.randint(0, 999) for _ in range(1)]
     for i in random_numbers:
         results = []
         
@@ -87,8 +87,7 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         text = text.replace("||output_1||", ans1)
         text = text.replace("||output_2||", ans2)
 
-        # completion = call_gpt(text, args)
-        print(text, text1, text2)
+        completion = call_gpt(text, args)
         
 
         print(text, completion)
@@ -104,13 +103,12 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         results.append(result)
 
         # Analyze with prompt 2 first
-        with open("basic_prompt.txt", "r") as f:
+        with open("summarize_prompt.txt", "r") as f:
             text = f.read()
     
         text = text.replace("||instruction||", instruction)
-        text = text.replace("||output_1||", output2)
-        text = text.replace("||output_2||", output1)
-        print(text)
+        text = text.replace("||output_1||", ans2)
+        text = text.replace("||output_2||", ans1)
 
         completion = call_gpt(text, args)
 
@@ -125,6 +123,7 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         else:
             result = -10
         results.append(result)
+
         if sum(results) == 1:
             print("TIE")
             ties += 1
@@ -142,8 +141,8 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         print("--------------------------------------------")
         
         if -10 not in results:
-            saved_idx.append(i)
-            np.save(args.saved_idx, saved_idx)
+            # saved_idx.append(i)
+            # np.save(args.saved_idx, saved_idx)
                 
             with jsonlines.open(f"{args.output_file}.jsonl", mode='a') as writer:
                 writer.write_all([annotated[-1]])
