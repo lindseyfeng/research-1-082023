@@ -35,11 +35,23 @@ def extract_question_and_answer_with_re(text):
 def call_gpt(data, args):
     client = OpenAI(api_key=args.api_key)
     chat_completion = client.chat.completions.create(
-        prompt = data,
-        temperature= 0,
-        model="gpt-4",
-        max_tokens = 100
+    messages=[
+        {
+            "role": "user",
+            "content": data,
+            "temperature":0,
+            "max_tokens":100
+        }
+    ],
+    model="gpt-4",
 )
+#     chat_completion = client.chat.completions.create(
+#         prompt = data,
+#         temperature= 0,
+#         model="gpt-4",
+#         max_tokens = 100
+# )
+
     return chat_completion
 
 
