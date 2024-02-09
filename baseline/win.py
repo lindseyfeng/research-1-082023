@@ -36,7 +36,7 @@ def call_gpt(data, args):
     openai.api_key = args.api_key
     response = openai.Completion.create(
         model="gpt-4", # Specify the model
-        prompt="What is the capital of France?", # Your prompt to the model
+        prompt=data, # Your prompt to the model
         temperature=0, # Controls the randomness. Closer to 1 means more creative.
         max_tokens=100, # Maximum length of the output
         top_p=1, # Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.
