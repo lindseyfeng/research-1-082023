@@ -5,17 +5,15 @@ from datasets import load_dataset
 from statistics import mean
 from peft import PeftModel  
 
-# ppo_dir = "./llama_ppo_step5000step_2400"
-# ppo_dir = "./checkpoints/checkpoint-1000"
-# ppo_dir = "./finetuned_llama_ppostep_2200"
 # ppo_dir = "./fvicuna_ppostep_2000"
+ppo_dir = "./vicuna_ppostep_2000"
 # ppo_dir = "./LMFlow/output_models/vicuna_7b_hh"
 # ppo_dir = "lmsys/vicuna-7b-v1.5"
 # ppo_dir = "./vicuna_prompt_ppostep_1600"
-ppo_dir = "./results"
-adapter_dir = "./results/final_checkpoint"
-sft_model_dir = "./LMFlow/output_models/finetuned_llama2"
-base_dir = "../../llama/llama-2-7b"
+# ppo_dir = "./results"
+# adapter_dir = "./results/final_checkpoint"
+# sft_model_dir = "./LMFlow/output_models/finetuned_llama2"
+# base_dir = "../../llama/llama-2-7b"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # base_model = LlamaForCausalLM.from_pretrained(base_dir).to(device)
 # base_tokenizer = LlamaTokenizer.from_pretrained(base_dir)
@@ -25,10 +23,10 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # sft_tokenizer = LlamaTokenizer.from_pretrained(sft_model_dir)
 # sft_tokenizer.pad_token_id=sft_tokenizer.eos_token_id
 # sft_tokenizer.padding_side = 'left'
-# model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
-m = AutoModelForCausalLM.from_pretrained(ppo_dir).to(device)
-model = PeftModel.from_pretrained(m, adapter_dir)
-model = model.merge_and_unload()
+model = LlamaForCausalLM.from_pretrained(ppo_dir).to(device)
+# m = AutoModelForCausalLM.from_pretrained(ppo_dir).to(device)
+# model = PeftModel.from_pretrained(m, adapter_dir)
+# model = model.merge_and_unload()
 tokenizer = AutoTokenizer.from_pretrained(ppo_dir)
 tokenizer.pad_token = "[PAD]"
 tokenizer.padding_side = "left"
@@ -81,4 +79,6 @@ print(len(all_rewards))
 average_reward = mean(all_rewards)
 print("Average Reward:", average_reward)
 print(all_responses[100])
-print("ppo")
+output_file_path = 'base_vicuna_ppo_response1000.json'
+with open(output_file_path, 'w') as file:
+    json.dump(all_responses, file)

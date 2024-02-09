@@ -27,7 +27,7 @@ class ScriptArguments:
         default="lmsys/vicuna-7b-v1.5",
         metadata={"help": "the location of the SFT model name or path"},
     )
-    learning_rate: Optional[float] = field(default=5e-4, metadata={"help": "optimizer learning rate"})
+    learning_rate: Optional[float] = field(default=5e-5, metadata={"help": "optimizer learning rate"})
     lr_scheduler_type: Optional[str] = field(default="cosine", metadata={"help": "the lr scheduler type"})
     warmup_steps: Optional[int] = field(default=100, metadata={"help": "the number of warmup steps"})
     weight_decay: Optional[float] = field(default=0.05, metadata={"help": "the weight decay"})
@@ -202,7 +202,7 @@ if __name__ == "__main__":
 
     # 6. train
     dpo_trainer.train()
-    dpo_trainer.save_model(script_args.output_dir)
+    dpo_trainer.save_model(script_args.x)
 
     # 7. save
     output_dir = os.path.join(script_args.output_dir, "final_checkpoint")
