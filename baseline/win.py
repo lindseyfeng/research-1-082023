@@ -2,14 +2,12 @@
 ## Follow instructions here for setup before running this code:
 ## https://quip-amazon.com/Lvo3A3JhGftQ/Using-Claude-from-AWS-Bedrock-Endpoint
 
-import boto3
 import json
 import argparse
 import os 
 import datetime
 import time
 from tqdm import tqdm
-import jsonlines
 import numpy as np
 import openai
 import random
