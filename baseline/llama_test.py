@@ -6,8 +6,8 @@ from statistics import mean
 from peft import PeftModel  
 import json
 
-# ppo_dir = "./fvicuna_ppostep_2000"
-ppo_dir = "./vicuna_ppostep_2000"
+ppo_dir = "./fvicuna_ppostep_2000"
+# ppo_dir = "./vicuna_ppostep_2000"
 # ppo_dir = "./LMFlow/output_models/vicuna_7b_hh"
 # ppo_dir = "lmsys/vicuna-7b-v1.5"
 # ppo_dir = "./vicuna_prompt_ppostep_1600"
@@ -80,6 +80,6 @@ print(len(all_rewards))
 average_reward = mean(all_rewards)
 print("Average Reward:", average_reward)
 print(all_responses[100])
-output_file_path = 'base_vicuna_ppo_response1000.json'
+output_file_path = 'sft_vicuna_ppo_response1000.json'
 with open(output_file_path, 'w') as file:
     json.dump(all_responses, file)
