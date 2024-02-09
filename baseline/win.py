@@ -74,7 +74,7 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         #     continue
 
 
-    random_numbers = [random.randint(0, 999) for _ in range(1)]
+    random_numbers = [random.randint(0, 999) for _ in range(100)]
     for i in random_numbers:
         results = []
         
