@@ -38,9 +38,7 @@ def call_gpt(data, args):
     messages=[
         {
             "role": "user",
-            "content": data,
-            "temperature":0,
-            "max_tokens":100
+            "content": data
         }
     ],
     model="gpt-3.5-turbo",
