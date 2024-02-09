@@ -143,7 +143,7 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
                             "results": results})
 
         print("--------------------------------------------")
-        print(f"{i} / {len(outputs1)}, ties: {ties}, wins: {wins}, loses: {loses}")
+        print(f"{i} / {len(output1)}, ties: {ties}, wins: {wins}, loses: {loses}")
         print("--------------------------------------------")
         
         if -10 not in results:
