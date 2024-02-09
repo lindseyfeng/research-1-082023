@@ -120,7 +120,6 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         completion = call_gpt(text, args)
 
         print(text, completion)
-        print(completion[-5:])
         if completion is None:
             result = -10
         elif "A" in completion[-5:]:
@@ -138,9 +137,9 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
             wins += 1
         elif sum(results) == 2:
             loses += 1
-        annotated.append({"instruction": instruction,
-                            "output1": output1,
-                            "output2": output2,
+        annotated.append({"instruction": instruction1,
+                            "output1": ans1,
+                            "output2": ans2,
                             "results": results})
 
         print("--------------------------------------------")
