@@ -113,7 +113,7 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         with open("summarize_prompt.txt", "r") as f:
             text = f.read()
     
-        text = text.replace("||instruction||", instruction)
+        text = text.replace("||instruction||", instruction1)
         text = text.replace("||output_1||", ans2)
         text = text.replace("||output_2||", ans1)
 
