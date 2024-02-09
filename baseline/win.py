@@ -74,7 +74,7 @@ def pairwise_eval(args, data_path="../test_data/test_all.jsonl"):
         text2 = output2[i]
         instruction1, ans1 = extract_question_and_answer_with_re(text1)
         instruction2, ans2 = extract_question_and_answer_with_re(text2)
-        if instruction1 != insturction2:
+        if instruction1 != instruction2:
             print(instruction1)
             print(insturction2)
             continue
